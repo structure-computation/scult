@@ -39,3 +39,5 @@ compact_DATA:
 
 codegen:
 	cd LMT/include/codegen; scons
+clean:
+	cd LMT/include/codegen; scons -c
