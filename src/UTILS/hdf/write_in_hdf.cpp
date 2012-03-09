@@ -157,8 +157,8 @@ void LEVEL::write_geometry_hdf(DATA_USER &data_user){
         name_list<< name_group_1 << "/list_" << i ;
         String name_piece;
         name_piece << name_group_1 << "/list_" << piece_on_edge[i];
-        PRINT(name_piece);
-        PRINT(name_list);
+        //PRINT(name_piece);
+        //PRINT(name_list);
         hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());
         hdf.add_tag(name_list,"edge_of_1","");    
     }   
@@ -167,8 +167,8 @@ void LEVEL::write_geometry_hdf(DATA_USER &data_user){
         name_list<< name_group_1 << "/list_" << i+Geometry.nb_list_elements_1_edge ;
         String name_piece;
         name_piece << name_group_1 << "/list_" << i;    
-        PRINT(name_piece);
-        PRINT(name_list);
+        //PRINT(name_piece);
+        //PRINT(name_list);
         hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());       
         hdf.add_tag(name_list,"edge_of_1",name_piece.c_str());       
     }
@@ -178,9 +178,9 @@ void LEVEL::write_geometry_hdf(DATA_USER &data_user){
         String name_piece0, name_piece1;
         name_piece0 << name_group_1 << "/list_" << data_user.group_inter[i].adj_num_group_elem[0];    
         name_piece1 << name_group_1 << "/list_" << data_user.group_inter[i].adj_num_group_elem[1];    
-        PRINT(name_piece0);
-        PRINT(name_piece1);
-        PRINT(name_list);
+        //PRINT(name_piece0);
+        //PRINT(name_piece1);
+        //PRINT(name_list);
         hdf.add_tag(name_list,"edge_of_0",name_piece0.c_str());       
         hdf.add_tag(name_list,"edge_of_1",name_piece1.c_str());       
     }
@@ -604,7 +604,7 @@ void LEVEL::write_fields(DATA_USER &data_user, Vec<TYPE> &q, int nt_total, TYPE 
         }
         String name_smises;
         name_smises <<name_fields<<"/sigma_von_mises/pt_"<<nt_total;
-        PRINT(sigma_von_mises_hdf);
+        //PRINT(sigma_von_mises_hdf);
         sigma_von_mises_hdf.write_to(hdf,name_smises.c_str());
         hdf.write_tag(name_sigma,"time",val_time);
         hdf.write_tag(name_epsilon,"time",val_time);
