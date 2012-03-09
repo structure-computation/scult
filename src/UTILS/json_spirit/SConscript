@@ -1,0 +1,11 @@
+Import('env')
+
+liste_json = [ 
+'json_spirit_reader.cpp',
+'json_spirit_value.cpp',
+'json_spirit_writer.cpp'
+]
+
+liste_json_final = env.Library('json_spirit',liste_json)
+
+Return('liste_json_final')

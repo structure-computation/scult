@@ -1,0 +1,445 @@
+import "EF/std_elements.met"
+
+type_patterns  := [Triangle, Triangle_6, Tetra, Tetra_10]
+cible_patterns := [Triangle, Triangle_6, Tetra, Tetra_10]
+# type_patterns  := [Triangle, Triangle_6, Tetra]
+# cible_patterns := [Triangle, Triangle_6, Tetra]
+
+class Pattern[ type ]
+
+#********************************************************************************************
+# attribut
+#********************************************************************************************
+#attribut de niveau sup---------------------------------------------------------------------
+    num_in_domain := -1             # numéro locale du motif ou de la sst dans le domaine
+
+#attribut de niveau courrant----------------------------------------------------------------
+    id := -1
+    name  := "PATTERN_Triangle_6"
+    base_xdmf := "Tri_6"
+    base_skin_xdmf := "Edge_3"
+    Type_elem := Triangle_6
+    Type_elem_sides := Bar_3
+    side_interface_id := 0
+    sub_Type_elem_sides := Bar_5
+    static nb_nodes_eq := 2
+    static nb_sides := 3
+    static nb_var_inter:=1
+    nb_nodes_side := 3
+    sub_elem_sides_repnodes := Vec[Vec[Op]]()
+    nb_repnodes := 3 
+    test_nodes := Vec[Vec[Op]]()
+    permutation := Vec[Op]()
+
+    if type== Triangle
+        id = 0
+        name  = "PATTERN_Triangle"
+        base_xdmf = "Triangle"
+        base_skin_xdmf = "Polygon"
+        Type_elem = Triangle
+        Type_elem_sides = Bar
+        side_interface_id = 0
+        sub_Type_elem_sides = Bar_3
+        nb_nodes_eq = 1
+        nb_sides = 3
+        nb_var_inter =1
+        permutation = [0,2,1]
+#        sub_elem_sides_repnodes = [[0,1,2],[2,3,4]]
+        sub_elem_sides_repnodes = [[0,2],[2,1]]
+        nb_repnodes = 2
+        nb_nodes_side = 2
+        test_nodes = [[0,0],[1,0],[0,1]]
+    else if type== Triangle_6
+        id = 1
+        name  = "PATTERN_Triangle_6"
+        base_xdmf = "Tri_6"
+        base_skin_xdmf = "Edge_3"
+        Type_elem = Triangle_6
+        Type_elem_sides = Bar_3
+        side_interface_id = 1
+        sub_Type_elem_sides = Bar_5
+        nb_nodes_eq = 2
+        nb_sides = 3
+        nb_var_inter =1
+        nb_nodes_side = 3
+        permutation = [0,2,1,5,4,3]
+#        sub_elem_sides_repnodes = [[0,1,2],[2,3,4]]
+        sub_elem_sides_repnodes = [[0,3,2],[3,1,4]]
+        nb_repnodes = 3
+        test_nodes = [[0,0],[1,0],[0,1],[0.5,0],[0.5,0.5],[0,0.5]]
+    else if type ==  Tetra
+        id = 2
+        name  = "PATTERN_Tetra"
+        base_xdmf = "Tetrahedron"
+        base_skin_xdmf = "Triangle"
+        Type_elem = Tetra
+        Type_elem_sides = Triangle
+        side_interface_id = 2
+        sub_Type_elem_sides = Triangle_6
+        nb_nodes_eq = 4
+        nb_sides = 4
+        nb_nodes_side = 3
+        permutation = [0,2,1,3]
+#        sub_elem_sides_repnodes = [[0,1,2,5,6,9],[2,3,4,7,8,11],[11,10,9,7,6,2],[9,10,11,12,13,14]]
+        sub_elem_sides_repnodes = [[0,3,5],[3,1,4],[4,5,3],[5,4,2]]
+        nb_repnodes = 3
+        nb_var_inter=2
+        test_nodes = [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+    else if type ==  Tetra_10
+        id = 3
+        name  = "PATTERN_Tetra_10"
+        base_xdmf = "Tet_10"
+        base_skin_xdmf = "Tri_6"
+        Type_elem = Tetra_10
+        Type_elem_sides = Triangle_6
+        side_interface_id = 3
+        sub_Type_elem_sides = Triangle_15
+        nb_nodes_eq = 4
+        nb_sides = 4
+        nb_nodes_side = 6
+        permutation = [0,2,1,3,6,5,4,7,9,8]
+#        sub_elem_sides_repnodes = [[0,1,2,5,6,9],[2,3,4,7,8,11],[11,10,9,7,6,2],[9,10,11,12,13,14]]
+        sub_elem_sides_repnodes =  [[0,2,9,1,6,5],[2,4,11,3,8,7],[11,9,2,10,6,7],[9,11,14,10,13,12]]
+                                 
+        nb_repnodes = 6
+        nb_var_inter=2
+        test_nodes = [[0,0,0],[1,0,0],[0,1,0],[0,0,1],[0.5,0,0],[0.5,0.5,0],[0,0.5,0],[0,0,0.5],[0.5,0,0.5],[0,0.5,0.5]]
+    
+    else if type== Quad
+        id = 4
+        name  = "PATTERN_Quad"
+        base_xdmf = "Quadrilateral"
+        base_skin_xdmf = "Polygon"
+        Type_elem = Quad
+        Type_elem_sides = Bar
+        side_interface_id = 0
+        sub_Type_elem_sides = Bar_3
+        nb_nodes_eq = 1
+        nb_sides = 4
+        nb_var_inter = 1
+        nb_nodes_side = 3
+        permutation = [0,3,2,1]
+        sub_elem_sides_repnodes = [[0,2],[2,1]]
+        nb_nodes_side = 2
+        test_nodes = [[0,0],[1,0],[1,1],[0,1]]
+
+    else if type== Hexa
+        id = 4
+        name  = "PATTERN_Hexa"
+        base_xdmf = "Hexahedron"
+        base_skin_xdmf = "Quadrilateral"
+        Type_elem = Hexa
+        Type_elem_sides = Quad
+        side_interface_id = 4
+        sub_Type_elem_sides = Quad_9
+        nb_nodes_eq = 4
+        nb_sides = 4
+        nb_var_inter = 2
+        nb_nodes_side = 4
+        permutation = [0,3,2,1,4,7,6,5]
+        sub_elem_sides_repnodes = [[0,4,8,7],[4,1,5,8],[7,8,6,3],[8,5,2,6]]
+        nb_nodes_side = 4
+        test_nodes = [[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]]
+
+    elem  := SymbolicElement[ Type_elem ]()
+    elem.assume_const_jac = 1
+    static dim   := elem.dim
+    side_elem := Type_elem::children
+    static nb_nodes := Type_elem::nb_nodes
+    side_type := SymbolicElement[ Type_elem_sides ]()
+
+    sides := Vec[SymbolicElement[ Type_elem_sides, dim ],nb_sides]()
+#~    nb_motifs_in_group := symbol("c_level_CPU->group_motif[i_group].nb_Pattern")
+    nb_motifs_in_group_s := symbol("c_level_CPU->group_motif[i_group].nb_Pattern") #multiple de 16 du nombre de motifs dans le groupe~#
+    children_type := SymbolicElement[ Type_elem_sides ]()
+    static nb_elems_on_side := nb_nodes_eq
+    elems_side := Vec[Vec[SymbolicElement[ Type_elem_sides, dim ], nb_elems_on_side],nb_sides]()
+    
+    sub_elem_sides_nodes := sub_Type_elem_sides::points
+    elems_on_side_var_inter := Vec[Vec[Vec[Op,nb_var_inter],nb_repnodes],nb_nodes_eq]()
+    for i in 0..nb_nodes_eq
+        for j in 0..nb_repnodes
+            elems_on_side_var_inter[i][j] =  sub_elem_sides_nodes[sub_elem_sides_repnodes[i][j]]
+#definition des variables utilisables sur le motif et les sides
+    U := Vec[Vec[Op,Type_elem::nb_nodes],dim]() #deplacement solution 
+    
+#variables sur les sides
+    W_from_U := Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]() #extraction du deplacement sur les sides à partir de U, tel que W_from_U[side]=N*U
+    W :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    F :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    Wchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    Fchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    oldW :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    oldF :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    k :=  Vec[Op,nb_sides]() #direction de recherche sur les sides
+    U_on_elem_sides := Vec[ Vec[ Vec[ Vec[Op, Type_elem_sides::nb_nodes ],dim],nb_elems_on_side],nb_sides]()
+    U_on_sides :=  Vec[ Vec[ Vec[Op, Type_elem_sides::nb_nodes ],dim],nb_sides]()
+
+#N := Vec[Vec[Vec[Op,children_type.nb_nodes],nb_elems_on_side],nb_sides]()
+    
+    N := Vec[Mat[Op,Gen[nb_nodes_eq,children_type.nb_nodes]],nb_sides]()
+    M := Vec[Vec[Op,nb_nodes_eq],nb_sides]()
+    
+#attribut de niveau inferieur----------------------------------------------------------------
+    four_Triangle_6_nodes := Triangle_15::points
+    four_Triangle_6_repnodes := [[0,1,2,5,6,9],[2,3,4,7,8,11],[11,10,9,7,6,2],[9,10,11,12,13,14]]
+    four_Triangle_6 := Vec[SymbolicElement[ Triangle_6 ], 4]()
+    
+    
+    
+#********************************************************************************************
+# méthodes
+#********************************************************************************************
+#méthodes de niveau courrant----------------------------------------------------------------
+#initialisation des position des noeuds de elem ------------------
+    def def_mesh_pos_nodes_elem(num_group, num_elem_in_group)
+      for d in 0 .. dim
+        for i in 0 .. elem.points.size
+          elem.pos_nodes[i][d] = symbol("geometry_compact->mesh_nodes[$d][geometry_compact->group_elements[$num_group].mesh_connectivities[$i][$num_elem_in_group]]")
+
+    def def_pos_nodes_elem_motif(num_group, num_elem_in_group)
+      for d in 0 .. dim
+        for i in 0 .. elem.points.size
+          elem.pos_nodes[i][d] = symbol("geometry_compact->nodes[$d][geometry_compact->group_elements[$num_group].connectivities[$i][$num_elem_in_group]]")
+
+    def def_pos_nodes_test()
+        for d in 0 .. dim
+            for i in 0 .. elem.points.size
+                elem.pos_nodes[i][d] = test_nodes[i][d]
+    
+#creation des elements sur chaque side
+    def create_sides()
+#def_pos_nodes_test()
+#def_pos_nodes_elem_motif("num_S_group", "num_motif_in_group")
+        for num_side in 0 .. nb_sides
+            current_side := child_cast( elem.children( 1 )[num_side] )
+            for d in 0 .. dim
+                for i in 0 .. side_elem[0][1].size
+                    sides[num_side].pos_nodes[i][d] = elem.pos_nodes[ side_elem[num_side][1][i] ][d]
+            for i in 0 .. nb_elems_on_side
+                for p in 0 .. elems_side[num_side][ i ].points.size
+                    elems_side[num_side][ i ].pos_nodes[ p ] = sides[num_side].pos.subs( sides[num_side].var_inter, elems_on_side_var_inter[i][p])
+
+#definition des variables utilisées pour le calcul
+    def define_vars(num_group,num_elem_in_group)        
+        for d in 0 .. dim
+            for num_node in 0 .. nb_nodes
+                U[d][num_node] = symbol("U$(num_node)_$(d)" )
+        vars_metil :=[W,F,Wchap,Fchap,oldW,oldF]
+        vars_cpp_name :=["side_W","side_F","side_Wchap","side_Fchap","oldW","oldF"]
+        for num_side in 0 .. nb_sides
+            for var in 0..vars_metil.size
+                for d in 0 .. dim
+                    for num_node_eq in 0 .. nb_nodes_eq
+                        vars_metil[var][num_side][num_node_eq][d]=symbol("field_compact->"+vars_cpp_name[var]+"[$d][$num_node_eq][$num_side][$num_elem_in_group]")
+            k[num_side]=symbol("field_compact->group_elements[$(num_group)].side_k[$num_side][$num_elem_in_group]")
+            
+    
+    def read_side_N(num_group,num_elem_in_group)        
+        define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            for num_node_eq in 0 .. nb_nodes_eq
+                for num_node in 0 .. children_type.points.size
+                    N[num_side][num_node_eq,num_node]=symbol("geometry_compact->group_elements[$num_group].side_N[$num_node][$num_node_eq][$num_side][$num_elem_in_group]")
+    
+#ecriture vers cpp d'une variable de type vecteur de symboles pour les sides
+    def write_side_vars(var_metil,var_name_in_cpp,cw)
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+                for num_node_eq in 0 .. nb_nodes_eq 
+                    cw.add("$(c_field)->champ_side_motif[i_group]."+var_name_in_cpp+"[$d][$num_node_eq][$num_side][num_motif_in_group]", var_metil[num_side][num_node_eq][d], reassign )
+
+#integration de deux variables definies toutes les deux sur les sides 
+    def integrate_on_side_FW(num_side, Fd, Wd)
+        res := Op()
+        for d in 0 .. dim
+            for i in 0 .. nb_elems_on_side
+                # res = res+ Fd[i][d]*Wd[i][d]*elems_side[num_side][ i ].measure
+                deg_p := elems_side[num_side][ i ].order_interpolation[ 0 ]
+                res = res+ Fd[i][d]*Wd[i][d]*elems_side[num_side][ i ].gauss_num_integration(1,true,deg_p)
+                
+        return res
+
+    def define_M()
+        for num_side in 0 .. nb_sides
+            formulation_W := integrate_on_side_FW(num_side, F[num_side], W[num_side])
+            for i in 0 .. nb_elems_on_side
+                M[num_side][i]=(formulation_W.diff(F[num_side][i][0])).diff(W[num_side][i][0])
+                
+
+#definition du deplacement U sur les sides à partir du vecteur U defini sur la sst
+    def define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+#creation de l'interpolation du depl sur le side
+                for p in 0 .. sides[num_side].points.size
+                    U_on_sides[num_side][d][p] = U[d][side_elem[num_side][1][p]]
+                fctU_on_side := sides[num_side].interpolation( U_on_sides[num_side][d], "lagrange" )
+#creation de l'interpolation du depl sur l'element du side
+                for i in 0 .. nb_elems_on_side
+                    for p in 0 .. elems_side[num_side][ i ].points.size
+                    U_on_elem_sides[num_side][i][d][p] = fctU_on_side.subs(sides[num_side].var_inter,elems_on_side_var_inter[i][p])
+
+    
+#integration du produit U*Fd avec Fd variable definie sur les sides et U provenant de la SST
+    def integrate_on_side_FU(num_side, Fd)
+        res := Op()
+        for d in 0 .. elem.dim
+            for i in 0 .. nb_elems_on_side
+                fctU_on_elem_side := elems_side[num_side][ i ].interpolation(U_on_elem_sides[num_side][i][d], "lagrange")
+#integration du depl interpolé sur le side
+                deg_p := elems_side[num_side][ i ].order_interpolation[ 0 ]
+                res = res+ Fd[i][d]*elems_side[num_side][ i ].gauss_num_integration(fctU_on_elem_side,true,deg_p)
+        return res
+
+    def define_N()
+        define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            formulation_W := integrate_on_side_FW(num_side, F[num_side], W[num_side])
+            formulation_U := integrate_on_side_FU(num_side, F[num_side])
+            for i in 0 .. nb_elems_on_side
+                M:=(formulation_W.diff(F[num_side][i][0])).diff(W[num_side][i][0])
+                N1 := Vec[Op,children_type.nb_nodes]()
+                for p in 0 .. children_type.nb_nodes
+                    N[num_side][i,p]= ((formulation_U.diff(F[num_side][i][0])).diff(U_on_sides[num_side][0][p]))/M
+
+    def calculate_energy_isotropy(material_data)
+        E := material_data.E
+        nu := material_data.nu
+        rho := material_data.rho
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( U[d] , "lagrange")
+        deg_p := elem.order_interpolation[ 0 ]
+        elastical_energy := 1/2 * elem.gauss_num_integration( elem.grad_sym( fctU ) : hooke_iso( E, nu, dim ) : elem.grad_sym( fctU ),true,deg_p )
+        print "Ajout calcul direction pour test"
+        calculate_search_direction(E)
+        return elastical_energy
+
+# a modifier pour le comportement orthotrope
+    def calculate_energy_orthotropy(material_data)
+        E11 := material_data.E11
+        nu12 := material_data.nu12
+        rho := material_data.rho
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( U[d] )
+        elastical_energy := 1/2 * elem.gauss_num_integration( elem.grad_sym( fctU ) : hooke_iso( E11, nu12, dim ) : elem.grad_sym( fctU ) )
+        return elastical_energy
+
+    def calculate_search_direction(E)
+        for num_side in 0 .. nb_sides
+            mes := sides[num_side].measure
+            if name=="PATTERN_Triangle_6"
+                k[num_side] = (E+E)/(2*mes)
+            else if name=="PATTERN_Tetra_10"
+                k[num_side] = (E+E)/(2*sqrt(mes))
+
+    def calculate_rigidity_matrix_of_linear_step(ener)
+#definition des deplacements de bord en fonction de U
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+              Wd := N[num_side]*U_on_sides[num_side][d]
+              for num_node_eq in 0 .. nb_nodes_eq
+                  W_from_U[num_side][num_node_eq][d]=Wd[num_node_eq]
+        formulation := ener
+
+        for num_side in 0 .. nb_sides
+            formulation += integrate_on_side_FU(num_side,k[num_side]*W_from_U[num_side])
+        U_syms := Vec[Op]()
+        for i in 0 .. elem.nb_nodes
+            for d in 0 .. dim
+                U_syms.push_back(U[d][i])
+        mat_rigidity := formulation.diff( U_syms ).diff( U_syms )
+        return mat_rigidity
+
+    def calculate_second_member_of_linear_step_1()
+        define_U_on_sides()
+        second_member := Op()
+        for num_side in 0 .. nb_sides
+            second_member += integrate_on_side_FU(num_side,Fchap[num_side]+k[num_side]*(Wchap[num_side]))
+        U_syms := Vec[Op]()
+        for i in 0 .. elem.nb_nodes
+            for d in 0 .. dim
+                U_syms.push_back(U[d][i])
+        vec_second_member := second_member.diff(U_syms)
+        return vec_second_member
+       
+    def extract_F_W_from_U()
+        for d in 0 .. dim
+            for num_node in 0 .. nb_nodes
+                U[d][num_node] = symbol("U[$d+$(num_node*dim)]" )
+        define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+                Wd := N[num_side]*U_on_sides[num_side][d]
+                for num_node_eq in 0 .. nb_nodes_eq
+                    W_from_U[num_side][num_node_eq][d]=Wd[num_node_eq]
+            W[num_side]=W_from_U[num_side]
+            F[num_side]=Fchap[num_side]+k[num_side]*(Wchap[num_side]-W[num_side])
+            
+        
+    def relaxation()
+        mu:=0.8 # coefficient de relaxation
+        for num_side in 0 .. nb_sides
+            W[num_side]=(1-mu)*oldW[num_side]+mu*W[num_side]
+            F[num_side]=(1-mu)*oldF[num_side]+mu*F[num_side]
+            oldW[num_side]=W[num_side]
+            oldF[num_side]=F[num_side]
+    
+    def calculate_error_num()
+        error_num := Op()
+        for num_side in 0 .. nb_sides
+            err_F := F[num_side]-Fchap[num_side]
+            err_W := W[num_side]-Wchap[num_side]
+            error_num += integrate_on_side_FW(num_side, 1/k[num_side]*err_F, err_F )
+            error_num += integrate_on_side_FW(num_side, k[num_side]*err_W, err_W )
+        return error_num
+    
+    def calculate_error_den()
+        error_den := Op()
+        for num_side in 0 .. nb_sides
+            err_F := F[num_side]+Fchap[num_side]
+            err_W := W[num_side]+Wchap[num_side]
+            error_den += integrate_on_side_FW(num_side, 1/k[num_side]*err_F, err_F )
+            error_den += integrate_on_side_FW(num_side, k[num_side]*err_W, err_W )
+        return error_den
+        
+#méthodes de niveau inf----------------------------------------------------------------
+#définition de la position des noeuds
+    def make_level_inf()
+      for i in 0 .. four_Triangle_6_repnodes.size
+        for p in 0 .. four_Triangle_6[ i ].points.size
+          four_Triangle_6[ i ].pos_nodes[ p ] = elem.pos.subs( elem.var_inter, four_Triangle_6_repnodes[ i ][ p ] )
+    
+#projection de la valeur au centre des 4 triangles
+    def project_val_on_level_inf(vec_elem_val_node)
+      make_four_Triangle_6()
+      four_Triangle_6_val_node := Vec[ Vec[ Op, 6], 4 ]
+      val_on_elem := elem.interpolation( vec_elem_val_node )
+      for i in 0 .. four_Triangle_6.size
+        for p in 0 .. four_Triangle_6[ i ].points.size
+          four_Triangle_6_val_node[ i ][ p ] = val_on_elem.subs( elem.var_inter, four_Triangle_6[ i ].points[ p ] )
+
+      four_Triangle_6_val_on_center := Vec[ Op, 4 ]
+      for i in 0 .. four_Triangle_6.size
+        val_on_current_Triangle := four_Triangle_6[ i ].interpolation( four_Triangle_6_val_node[ i ] )
+        four_Triangle_6_val_on_center[ i ] = val_on_current_Triangle.subs( four_Triangle_6[ i ].var_inter, four_Triangle_6[ i ].get_center_of_var_inter() )
+
+      return four_Triangle_6_val_on_center
+  
+#intégration de la valeur sur chacun des 4 triangles
+    def integrate_val_on_level_inf(vec_elem_val_node)
+      make_four_Triangle_6()
+      four_Triangle_6_val_node := Vec[ Vec[ Op, 6], 4 ]
+      val_on_elem := elem.interpolation( vec_elem_val_node )
+      for i in 0 .. four_Triangle_6.size
+        for p in 0 .. four_Triangle_6[ i ].points.size
+          four_Triangle_6_val_node[ i ][ p ] = val_on_elem.subs( elem.var_inter, four_Triangle_6[ i ].points[ p ] )
+      
+      four_Triangle_6_integrated_val := Vec[ Op, 4 ]
+      for i in 0 .. four_Triangle_6.size
+        val_on_current_Triangle := four_Triangle_6[ i ].interpolation( four_Triangle_6_val_node[ i ] )
+        four_Triangle_6_integrated_val[ i ] = four_Triangle_6[ i ].gauss_num_integration(val_on_current_Triangle)
+      
+      return four_Triangle_6_integrated_val

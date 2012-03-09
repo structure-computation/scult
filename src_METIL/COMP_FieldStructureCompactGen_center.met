@@ -1,0 +1,84 @@
+import "pattern.met"
+
+
+def write_head_FieldStructureCompactGen_center_h( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include <iostream>
+        #include <fstream>
+        #include <cassert> 
+        #include <Metil/BasicVec.h>
+        #include <Metil/StructCompactor.h>
+        #include <Metil/CudaMetil.h>
+        #include "GeometryCompactClass.h"
+        #include "FieldStructureCompactClass.h"
+        using namespace Metil;
+        /// Fonctions inline (travaillant sur un motif) et global (travaillant sur une liste de motif sur GPU) permettant de calculer le centre d'un element dans les group_elements
+    
+
+def write_FieldStructureCompactGen_center_h( pattern, fout )
+        fout <<<<
+            //for pattern $(pattern.name )
+            __inline__ void calculate_elements_center_$(pattern.id )(GeometryCompactClass *geometry_compact, FieldStructureCompactClass *field_structure_compact ,int i_group, int i_elem);
+            __global__ void global_calculate_elements_center_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, FieldStructureCompactClass *field_structure_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements);
+            void global_calculate_elements_center_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, FieldStructureCompactClass *field_structure_compact_CPU, int i_group);
+    
+
+def write_head_FieldStructureCompactGen_center_cu( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include "FieldStructureCompactGen_center.h"
+
+   
+def write_inline_calculate_elements_center( pattern, fout )
+    cw := CodeWriterAlt()
+    pt := pattern.elem.pos.subs( pattern.elem.var_inter, pattern.elem.get_center_of_var_inter() )
+    info  pt[0]
+    for d in 0 .. pattern.dim
+        cw.add( "field_structure_compact->group_elements[i_group].pt[$d][i_elem]", pt[d], reassign )
+
+    fout <<<<
+        __inline__ void calculate_elements_center_$(pattern.id )(GeometryCompactClass *geometry_compact, FieldStructureCompactClass *field_structure_compact ,int i_group, int i_elem){  
+            $(cw.to_string())
+        }
+     
+
+def write_global_calculate_elements_center_GPU( pattern, fout )
+    fout <<<<
+        __global__ void global_calculate_elements_center_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, FieldStructureCompactClass *field_structure_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements){
+            int i_elem = i_grid * sizeGrid * blockDim.x + blockIdx.x * blockDim.x + threadIdx.x;
+            if(i_elem <nb_elements){
+                calculate_elements_center_$(pattern.id )(geometry_compact_GPU, field_structure_compact_GPU, i_group, i_elem);
+            }
+        }
+    
+def write_global_calculate_elements_center_CPU( pattern, fout )
+    fout <<<<
+        void global_calculate_elements_center_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, FieldStructureCompactClass *field_structure_compact_CPU, int i_group){
+            for(int i_elem=0; i_elem<geometry_compact_CPU->group_elements[i_group].nb_elements ; i_elem++)
+                calculate_elements_center_$(pattern.id )(geometry_compact_CPU, field_structure_compact_CPU, i_group, i_elem);
+        }
+    
+#------------------------------------------------
+# appel des fonctions pour la génération du code
+# -----------------------------------------------
+
+file_generate_h := File( "../src/COMPUTE/FieldStructureCompactGen_center.h", "w" )
+file_generate_cu := File( "../src/COMPUTE/FieldStructureCompactGen_center.cu", "w" )
+
+write_head_FieldStructureCompactGen_center_h( file_generate_h )
+write_head_FieldStructureCompactGen_center_cu( file_generate_cu )
+
+print "génération des codes calculate_side_M"
+for type in type_patterns
+    print "Pattern "+type
+    pattern := Pattern[ type ]()
+    write_FieldStructureCompactGen_center_h( pattern, file_generate_h )
+    pattern.def_pos_nodes_elem_motif("i_group", "i_elem")
+    pattern.define_vars("i_group", "i_elem") 
+    write_inline_calculate_elements_center( pattern, file_generate_cu )
+    write_global_calculate_elements_center_GPU( pattern, file_generate_cu )
+    write_global_calculate_elements_center_CPU( pattern, file_generate_cu )
+

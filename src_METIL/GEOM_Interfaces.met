@@ -1,0 +1,105 @@
+import "interface.met"
+
+# définition des class fictives pour les paramètre template
+# ----------------------------------------------------------------------------------------------------------
+def generate_class_interface( type_interfaces, fout )
+    fout <<<< 
+        //
+        // Description: fichier généré par GEOM_Interfaces.met 
+        //
+        //
+        // Author: Jeremie Bellec <j.bellec@structure-computation.com>, (C) 2011
+        //
+        // Copyright: See COPYING file that comes with this distribution
+        //
+        //
+        
+        #ifndef INTERFACES_H
+        #define INTERFACES_H
+        
+        #include <Metil/BasicVec.h>
+        
+        using namespace Metil;
+        
+        struct Interfaces{
+            //atributs **********************************************************************************************
+            struct Types{
+                std::string name ;
+                int id ;
+                int dim ;
+                int nb_nodes ;
+                int nb_nodes_eq ; 
+                int nb_vertex_nodes ; 
+                
+                template<class TB,class TP>
+                void apply_bs( TB &res, TP ) const {
+                    res.set_type( "Types" );
+                    APPLY_WN( res, id );
+                    APPLY_WN( res, dim );
+                    APPLY_WN( res, nb_nodes );
+                    APPLY_WN( res, nb_nodes_eq );
+                    APPLY_WN( res, nb_vertex_nodes );
+                }
+            };
+            BasicVec< Types > types;
+            
+            
+            //méthodes **********************************************************************************************
+            Types* find_type(int id_){
+                for(int num_type=0; num_type<$(type_interfaces.size); num_type++){
+                    if(types[num_type].id == id_){
+                        return &types[num_type];
+                        break;
+                    }
+                }
+            }
+            
+            int find_index_type(int id_){
+                for(int num_type=0; num_type<$(type_interfaces.size); num_type++){
+                    if(types[num_type].id == id_){
+                        return num_type ;
+                        break;
+                    }
+                }
+            }
+            
+            template<class TB,class TP>
+            void apply_bs( TB &res, TP ) const {
+                res.set_type( "Interfaces" );
+                APPLY_WN( res, types );
+            }
+                  
+            Interfaces(){
+                types.resize($(type_interfaces.size));
+    
+    num_type := 0
+    for type_interface in type_interfaces
+        info type_interface
+        interface := Interface[type_interface,1,"perfect"]()
+        fout <<<< 
+                    //
+                    // type $num_type = $(interface.name) --------------------------------------
+                    types[$num_type].name = "$(interface.name)";
+                    types[$num_type].id = $(interface.id);
+                    types[$num_type].dim = $(interface.dim);
+                    types[$num_type].nb_nodes = $(interface.nb_nodes);
+                    types[$num_type].nb_nodes_eq = $(interface.nb_nodes_eq);
+                    types[$num_type].nb_vertex_nodes = $(interface.nb_vertex_nodes);
+        num_type+=1
+
+    fout <<< "    }"
+    fout <<< "};"
+    fout <<< "#endif //INTERFACES_H"
+
+
+
+# apelle des fonction pour la génération du code
+# ----------------------------------------------------------------------------------------------------------
+
+name_file := "../src/GEOMETRY/Interfaces.h"
+fout := File( name_file, "w" ) 
+generate_class_interface(type_interfaces, fout )
+    
+
+
+

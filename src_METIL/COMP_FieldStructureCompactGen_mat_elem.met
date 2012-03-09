@@ -1,0 +1,117 @@
+import "pattern.met"
+
+
+def write_head_FieldStructureCompactGen_mat_elem_h( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include <iostream>
+        #include <fstream>
+        #include <cassert> 
+        #include <Metil/BasicVec.h>
+        #include <Metil/StructCompactor.h>
+        #include <Metil/CudaMetil.h>
+        #include "GeometryCompactClass.h"
+        #include "FieldStructureCompactClass.h"
+        using namespace Metil;
+        /// Fonctions inline (travaillant sur un motif) et global (travaillant sur une liste de motif sur GPU) permettant de calculer les matrices élémentaires d'un element dans les group_elements
+    
+
+def write_FieldStructureCompactGen_mat_elem_h( pattern, fout )
+        fout <<<<
+            //for pattern $(pattern.name )
+            __inline__ void calculate_elements_mat_elem_$(pattern.id )(GeometryCompactClass *geometry_compact, FieldStructureCompactClass *field_structure_compact ,int i_group, int i_elem);
+            __global__ void global_calculate_elements_mat_elem_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, FieldStructureCompactClass *field_structure_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements);
+            void global_calculate_elements_mat_elem_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, FieldStructureCompactClass *field_structure_compact_CPU, int i_group);
+    
+
+def write_head_FieldStructureCompactGen_mat_elem_cu( fout )
+    fout <<<<
+        // generated file
+        // 
+        #ifdef METIL_COMP_DIRECTIVE
+        #pragma gpu_flag -arch=sm_21 --maxrregcount 62 --opencc-options -OPT:Olimit=0
+        #endif
+        #include "FieldStructureCompactGen_elements_mat_elem.h"
+
+   
+def write_inline_calculate_elements_mat_elem( pattern, fout )
+    cw := CodeWriterAlt()
+    # e := pattern.elem
+    #pattern.elem.assume_const_jac = 1
+    # symbols
+    # P_syms := Vec[Op]()
+    U_syms := Vec[Op]()
+    for num_node in 0 .. pattern.elem.nb_nodes
+        for d in 0 .. pattern.elem.dim
+            # P_syms.push_back(symbol("nodes[(elements[$num_node+ne]*DIM+$d)]","P_$("XYZ"[d])^$num_node") )
+            U_syms.push_back( symbol("U[$d][connectivity[$num_node][num_elem]]", "U_$("XYZ"[d])^$num_node") ) # U n'est pas sorti donc on se moque de savoir comment il est stocké
+        # e.pos_nodes[ num_node ] = pattern
+
+    U := Vec[Op,pattern.elem.dim]( function = pattern.elem.interpolation( U_syms[ pattern.elem.dim * ( 0... ) + _0 ] ) )
+    
+    E  := symbol("field_structure_compact->group_elements[i_group].mat_prop[0][i_elem]")
+    nu := symbol("field_structure_compact->group_elements[i_group].mat_prop[1][i_elem]")
+
+    deg_p := pattern.elem.order_interpolation[ 0 ]
+    ene := 1/2 * pattern.elem.gauss_num_integration( pattern.elem.grad_sym( U ) : hooke_iso( E, nu, pattern.elem.dim ) : pattern.elem.grad_sym( U ),true,deg_p )
+    
+    M := ene.diff( U_syms ).diff( U_syms )
+
+    cpt := 0
+    for i in 0 .. U_syms.size
+        for j in 0 .. i + 1
+            cw.add( "field_structure_compact->group_elements[i_group].mat_elem[$(i*(i+1)/2+j)][i_elem]", M( i, j ), add )
+ 
+
+     
+    fout <<<< 
+        __inline__ void calculate_elements_mat_elem_$(pattern.id )(GeometryCompactClass *geometry_compact, FieldStructureCompactClass *field_structure_compact ,int i_group, int i_elem) {
+        $(cw.to_string( 8 ))
+        }
+
+
+     
+
+def write_global_calculate_elements_mat_elem_GPU( pattern, fout )
+    fout <<<<
+        __global__ void global_calculate_elements_mat_elem_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, FieldStructureCompactClass *field_structure_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements){
+            int i_elem = i_grid * sizeGrid * blockDim.x + blockIdx.x * blockDim.x + threadIdx.x;
+            if(i_elem <nb_elements){
+                calculate_elements_mat_elem_$(pattern.id )(geometry_compact_GPU, field_structure_compact_GPU, i_group, i_elem);
+            }
+        }
+    
+def write_global_calculate_elements_mat_elem_CPU( pattern, fout )
+    fout <<<<
+        void global_calculate_elements_mat_elem_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, FieldStructureCompactClass *field_structure_compact_CPU, int i_group){
+            for(int i_elem=0; i_elem<geometry_compact_CPU->group_elements[i_group].nb_elements ; i_elem++)
+                calculate_elements_mat_elem_$(pattern.id )(geometry_compact_CPU, field_structure_compact_CPU, i_group, i_elem);
+        }
+    
+#------------------------------------------------
+# appel des fonctions pour la génération du code
+# -----------------------------------------------
+
+file_generate_h := File( "../src/COMPUTE/FieldStructureCompactGen_elements_mat_elem.h", "w" )
+file_generate_cu := File( "../src/COMPUTE/FieldStructureCompactGen_elements_mat_elem.cu", "w" )
+
+write_head_FieldStructureCompactGen_mat_elem_h( file_generate_h )
+write_head_FieldStructureCompactGen_mat_elem_cu( file_generate_cu )
+
+for type in type_patterns
+    pattern := Pattern[ type ]()
+    write_FieldStructureCompactGen_mat_elem_h( pattern, file_generate_h )
+file_generate_h.close()
+
+print "génération des codes mat_elem"
+for type in type_patterns
+    print "Pattern "+type
+    pattern := Pattern[ type ]()
+    pattern.def_pos_nodes_elem_motif("i_group", "i_elem")
+    pattern.define_vars("i_group", "i_elem") 
+    write_inline_calculate_elements_mat_elem( pattern, file_generate_cu )
+    write_global_calculate_elements_mat_elem_GPU( pattern, file_generate_cu )
+    write_global_calculate_elements_mat_elem_CPU( pattern, file_generate_cu )
+    file_generate_cu.flush()
+

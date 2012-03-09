@@ -1,0 +1,536 @@
+import "EF/std_elements.met"
+import "Data_materials.met"
+
+class Motif[ type , nb_elems_on_arete]
+
+#********************************************************************************************
+# attribut
+#********************************************************************************************
+#attribut de niveau sup---------------------------------------------------------------------
+    num_in_domain := -1             # numéro locale du motif ou de la sst dans le domaine
+    
+#attribut de niveau courrant----------------------------------------------------------------
+    name  := "Triangle"
+    name_children  := "Bar"
+    name_xdmf  := "Triangle"    
+    Type_elements_0 := Triangle
+    
+    Type_elements_1 := Bar
+    static nb_nodes_eq_on_side := nb_elems_on_arete
+    static nb_sides := 3
+    static nb_var_inter:=1
+    sub_elem_sides_repnodes := Vec[Vec[Op]]()
+    test_nodes := Vec[Vec[Op]]()
+    static element_0_nb_nodes := 3
+    static element_1_nb_nodes := 2
+    static nb_nodes := 1 #nombre de noeuds du maillage de la geometrie
+    static nb_elements_0 := 1 #nombre d'elements du maillage de la geometrie
+    static nb_elements_1 := 1 #nombre d'elements du maillage d'un coté de la geometrie
+    static nb_nodes_1 := 1 #nombre de noeuds sur un coté de la geometrie
+
+    if type== Triangle
+        name  = "Triangle"
+        name_children  = "Bar"
+        name_xdmf ="Triangle"
+        Type_elements_0 = Triangle
+        Type_elements_1 = Bar
+        nb_sides = 3        
+        nb_nodes_eq_on_side = nb_elems_on_arete
+        nb_var_inter =1
+        test_nodes =[[0,0],[1,0],[0,1]]
+        element_1_nb_nodes = 2
+        element_0_nb_nodes = 3
+        nb_nodes=((nb_elems_on_arete+1)*(nb_elems_on_arete+2)/2)
+        nb_elements_0=nb_elems_on_arete*nb_elems_on_arete
+        nb_elements_1=nb_elems_on_arete
+        nb_nodes_1=nb_elems_on_arete+1
+    else if type ==  Tetra
+        name  = "Tetra"
+        name_children  = "Triangle"
+        name_xdmf ="Tetrahedron"
+        Type_elements_0 = Tetra
+        Type_elements_1 = Triangle
+        nb_nodes_eq_on_side = nb_elems_on_arete*nb_elems_on_arete
+        nb_sides = 4
+        test_nodes =[[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+        element_1_nb_nodes = 3
+        element_0_nb_nodes = 4      
+        if nb_elems_on_arete==2
+            nb_nodes=10
+            nb_elements_0=8
+            nb_elements_1=4
+            nb_nodes_1=6
+        else
+            print "Probleme : Nombre de decoupage sur les aretes d'un Tetra égal à 2 uniquement"
+
+    print name
+    
+    geometry  := SymbolicElement[ Type_elements_0 ]()
+    static dim   := geometry.dim
+
+
+#definition de la geometrie    
+    nodes := Vec[Vec[Op,dim],nb_nodes]()
+#~    nodes := Vec[Vec[Float32,dim],nb_nodes]()    ~#
+    elements_0 := Vec[SymbolicElement[ Type_elements_0 ],nb_elements_0]()    
+    list_elements_0 := Vec[Vec[Int32,element_0_nb_nodes],nb_elements_0]()    
+    elements_1 := Vec[Vec[SymbolicElement[ Type_elements_1, dim ],nb_elements_1],nb_sides]()    
+    list_elements_1 := Vec[Vec[Vec[Int32,element_1_nb_nodes],nb_elements_1], nb_sides]()    
+    list_nodes_1 := Vec[Vec[Int32,nb_nodes_1],nb_sides]()    
+    list_parents_of_1 := Vec[Vec[Int32,nb_elements_1], nb_sides]()    
+
+#definition des variables utilisables sur le motif et les sides
+    U := Vec[Vec[Op,nb_nodes],dim]() #deplacement solution 
+    epsilon_glob:= Vec[Mat[Op,Gen[dim,dim]],nb_elements_0]()
+    sigma_glob:= Vec[Mat[Op,Gen[dim,dim]],nb_elements_0]()
+    sigma_von_mises_glob:= Vec[Op,nb_elements_0]()
+
+    def def_geometry_nodes()
+      for d in 0 .. dim
+        for i in 0 .. geometry.points.size
+          geometry.pos_nodes[i][d] = symbol("data_user_node[$d+S_apex[$i*nsst_s+ns]*$dim]")
+
+    def def_geometry_nodes_test()
+        for d in 0 .. dim
+            for i in 0 .. geometry.points.size
+                geometry.pos_nodes[i][d] = test_nodes[i][d]
+
+    def define_vars_test()
+        fctU := Vec[Op,dim]()
+        Ugeom := Vec[Vec[Float32,element_0_nb_nodes],dim]() #deplacement solution 
+        for d in 0 .. dim
+            for num_node in 0 .. element_0_nb_nodes
+                Ugeom[d][num_node] = test_nodes[num_node][d]
+        for d in 0 .. dim        
+            fctU[d] = geometry.interpolation( Ugeom[d] , "lagrange")
+            for num_node in 0 .. nb_nodes
+#~                U[d][num_node] = symbol("q[ns+sst_s*($d+$(dim*num_node))]" )~#
+                U[d][num_node] = fctU[d].subs(geometry.var_inter,nodes[num_node])
+
+    def define_vars()
+        for d in 0 .. dim        
+            for num_node in 0 .. nb_nodes
+                U[d][num_node] = symbol("q[ns+nsst_s*($d+$(dim*num_node))]" )
+      
+    #creation des noeuds pour un tetra avec un decoupage de 2 sur les aretes
+    def create_nodes_tetra()
+        #creation des noeuds sommets
+        for i in 0..geometry.points.size
+            nodes[i]=geometry.pos_nodes[i]
+        #creation des noeuds milieux des aretes
+        nodes[4]=(geometry.pos_nodes[0]+geometry.pos_nodes[1])/2
+        nodes[5]=(geometry.pos_nodes[1]+geometry.pos_nodes[2])/2
+        nodes[6]=(geometry.pos_nodes[2]+geometry.pos_nodes[0])/2
+        nodes[7]=(geometry.pos_nodes[1]+geometry.pos_nodes[3])/2
+        nodes[8]=(geometry.pos_nodes[2]+geometry.pos_nodes[3])/2
+        nodes[9]=(geometry.pos_nodes[0]+geometry.pos_nodes[3])/2
+    
+    #creation des noeuds quel que soit le decoupage sur les aretes d'un triangle
+    def create_nodes_triangle()
+        num:=0
+        for i in 0..(nb_elems_on_arete+1)
+            for j in 0..(nb_elems_on_arete+1-i)
+                nodes[num]=geometry.pos_nodes[0]+(geometry.pos_nodes[1]-geometry.pos_nodes[0])*j/nb_elems_on_arete+(geometry.pos_nodes[2]-geometry.pos_nodes[0])*i/nb_elems_on_arete
+                num+=1
+  
+    def create_list_elements_0_triangle()
+        nb_nodes_loc:=0
+        num:=0
+        for i in  0..nb_elems_on_arete
+            nb_nodes_lign:=nb_elems_on_arete+1-i;
+            for j in 0..(nb_elems_on_arete-i)
+                list_elements_0[num][0]=j+nb_nodes_loc
+                list_elements_0[num][1]=j+1+nb_nodes_loc
+                list_elements_0[num][2]=nb_nodes_lign+j+nb_nodes_loc
+                num+=1
+            for j in 1..(nb_elems_on_arete-i)
+                list_elements_0[num][0]=j+nb_nodes_loc
+                list_elements_0[num][1]=j+nb_nodes_loc+nb_nodes_lign
+                list_elements_0[num][2]=j-1+nb_nodes_loc+nb_nodes_lign                
+                num+=1
+            nb_nodes_loc+=nb_nodes_lign
+
+    def create_list_elements_1_bar()
+        if(nb_elems_on_arete==2)
+            list_elements_1=[[[0, 1], [1, 2]],[[2, 4], [4, 5]],[[5, 3], [3, 0]]]
+            list_parents_of_1=[[0,1],[1,3],[3,0]]
+            list_nodes_1=[[0,1,2],[2,4,5],[5,3,0]]
+        else if (nb_elems_on_arete==3)
+            list_elements_1=[[[0, 1], [1, 2], [2, 3]],[[3, 6], [6, 8], [8, 9]],[[9, 7], [7, 4], [4, 0]]]
+            list_parents_of_1=[[0,1,2],[2,6,8],[6,5,0]]
+            list_nodes_1=[[0,1,2,3],[3,6,8,9],[9,7,4,0]]     
+        else if (nb_elems_on_arete==4)
+            list_elements_1=[[[0, 1], [1, 2], [2, 3], [3, 4]],[[4, 8], [8, 11], [11, 13], [13, 14]],[[14, 12], [12, 9], [9, 5], [5, 0]]]
+            list_nodes_1=[[0,1,2,3,4],[4,8,11,13,14],[14,12,9,5,0]]
+            list_parents_of_1=[[0,1,2,3],[3,9,13,15],[15,12,7,0]]
+        
+    #creation du maillage obtenu par découpage de la geometrie du motif
+    def create_mesh()
+        if( type == Triangle)
+            create_nodes_triangle()
+            create_list_elements_0_triangle()
+            create_list_elements_1_bar()
+        else 
+            create_nodes_tetra()
+            list_elements_0=[[0,4,6,9],[1,5,4,7],[2,6,5,8],[3,8,7,9],[4,5,9,7],[5,9,7,8],[5,6,9,8],[5,9,6,4]]
+            list_elements_1=[[[0, 4, 6],[4, 1, 5],[4, 5, 6],[6, 5, 2]],
+                             [[1, 5, 7],[5, 2, 8],[5, 8, 7],[7, 8, 3]],
+                             [[2, 8, 6],[8, 3, 9],[8, 9, 6],[6, 9, 0]],
+                             [[3, 9, 7],[9, 0, 4],[9, 4, 7],[7, 4, 1]]]
+            list_parents_of_1=[[0,1,7,2],[1,2,5,3],[2,3,6,0],[3,0,4,1]]
+            list_nodes_1=[[0,4,1,6,5,2],[1,5,2,7,8,3],[2,8,3,6,9,0],[3,9,0,7,4,1]]
+
+        for i in 0..list_elements_0.size
+            for j in 0.. element_0_nb_nodes
+                elements_0[i].pos_nodes[j]=nodes[list_elements_0[i][j]]
+
+        for nside in 0..nb_sides
+            for i in 0..nb_elements_1
+                for j in 0.. element_1_nb_nodes
+                    elements_1[nside][i].pos_nodes[j]=nodes[list_elements_1[nside][i][j]]
+
+
+    def calculate_elem_epsilon_on_cdg(elem,Uloc)
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( Uloc[d] , "lagrange")
+        epsilon :=elem.grad_sym( fctU )
+        epsilon_cdg := epsilon.subs( elem.var_inter, elem.get_center_of_var_inter() )
+        return epsilon_cdg
+
+    def calculate_elem_sigma_on_cdg(material_data,elem,Uloc)
+        E := material_data.E
+        nu := material_data.nu
+        rho := material_data.rho        
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( Uloc[d] , "lagrange")
+        epsilon :=elem.grad_sym( fctU )
+        sigma:= sigma_hooke_iso( epsilon, E, nu )
+        sigma_cdg := sigma.subs( elem.var_inter, elem.get_center_of_var_inter() )
+        return sigma_cdg
+    
+    def calc_sigma_von_mises(sigma)
+        dim := sigma.nb_rows
+        Id := Mat[ Op, Gen[dim,dim] ]( function = x => x[0] == x[1] )
+        sigma_D := sigma-1/3*trace(sigma)*Id
+        sigma_von_mises := sqrt(3/2*trace(sigma_D*sigma_D))
+        return sigma_von_mises
+    
+    def calculate_elem_sigma_von_mises_on_cdg(material_data, elem, Uloc)
+        E := material_data.E
+        nu := material_data.nu
+        rho := material_data.rho        
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( Uloc[d] , "lagrange")
+        #sigma:= hooke_iso( E, nu, dim ) : elem.grad_sym( fctU ) 
+        epsilon :=elem.grad_sym( fctU )
+        sigma:= sigma_hooke_iso( epsilon, E, nu )
+        sigma_von_mises := calc_sigma_von_mises(sigma)
+        sigma_von_mises_cdg := sigma_von_mises.subs( elem.var_inter, elem.get_center_of_var_inter() )
+        return sigma_von_mises_cdg
+
+    def calculate_quantities()
+        for i in 0..nb_elements_0
+            #definition de Uloc
+            Uloc := Vec[Vec[Op,element_0_nb_nodes],dim]() #deplacement solution 
+            for d in 0 .. dim
+                for num_node in 0 .. element_0_nb_nodes
+                    Uloc[d][num_node] = U[d][list_elements_0[i][num_node]]
+            epsilon_glob[i] = calculate_elem_epsilon_on_cdg(elements_0[i],Uloc)
+            sigma_glob[i] = calculate_elem_sigma_on_cdg(Data_isotropy(),elements_0[i],Uloc)
+            sigma_von_mises_glob[i] = calculate_elem_sigma_von_mises_on_cdg(Data_isotropy(),elements_0[i],Uloc)
+            # print epsilon_glob[i]
+
+    def extract_dep_on_side(num_side)
+        Uside := Vec[Vec[Op,nb_nodes_1],dim]()
+        for d in 0 .. dim
+            for num_node in 0..nb_nodes_1
+                Uside[d][num_node] = U[d][list_nodes_1[num_side][num_node]]
+        return Uside
+        
+    # sides := Vec[SymbolicElement[ Type_elem_sides, dim ],nb_sides]()
+    # nb_motifs_in_group := symbol("c_level_CPU->group_motif[i_group].nb_Motif")
+    # nb_motifs_in_group_s := symbol("c_level_CPU->group_motif[i_group].nb_Motif") #multiple de 16 du nombre de motifs dans le groupe
+    # children_type := SymbolicElement[ Type_elem_sides ]()
+    # static nb_elems_on_side := nb_nodes_eq
+    # elems_side := Vec[Vec[SymbolicElement[ Type_elem_sides, dim ], nb_elems_on_side],nb_sides]()
+    
+    # sub_elem_sides_nodes := sub_Type_elem_sides::points
+    # elems_on_side_var_inter := Vec[Vec[Vec[Op,nb_var_inter],nb_repnodes],nb_nodes_eq]()
+    # for i in 0..nb_nodes_eq
+        # for j in 0..nb_repnodes
+            # elems_on_side_var_inter[i][j] =  sub_elem_sides_nodes[sub_elem_sides_repnodes[i][j]]
+# #definition des variables utilisables sur le motif et les sides
+    # U := Vec[Vec[Op,Type_elem::nb_nodes],dim]() #deplacement solution 
+    
+# #variables sur les sides
+    # W_from_U := Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]() #extraction du deplacement sur les sides à partir de U, tel que W_from_U[side]=N*U
+    # W :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    # F :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    # Wchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    # Fchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    # oldW :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    # oldF :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],nb_sides]()
+    # k :=  Vec[Op,nb_sides]() #direction de recherche sur les sides
+    # U_on_elem_sides := Vec[ Vec[ Vec[ Vec[Op, Type_elem_sides::nb_nodes ],dim],nb_elems_on_side],nb_sides]()
+    # U_on_sides :=  Vec[ Vec[ Vec[Op, Type_elem_sides::nb_nodes ],dim],nb_sides]()
+
+# #N := Vec[Vec[Vec[Op,children_type.nb_nodes],nb_elems_on_side],nb_sides]()
+    
+    # N := Vec[Mat[Op,Gen[nb_nodes_eq,children_type.nb_nodes]],nb_sides]()
+    
+# #attribut de niveau inferieur----------------------------------------------------------------
+    # four_Triangle_6_nodes := Triangle_15::points
+    # four_Triangle_6_repnodes := [[0,1,2,5,6,9],[2,3,4,7,8,11],[11,10,9,7,6,2],[9,10,11,12,13,14]]
+    # four_Triangle_6 := Vec[SymbolicElement[ Triangle_6 ], 4]()
+    
+    
+    
+#********************************************************************************************
+# méthodes
+#********************************************************************************************
+#méthodes de niveau courrant----------------------------------------------------------------
+#initialisation des position des noeuds de elem ------------------
+    # def def_pos_nodes_elem_motif(num_group, num_motif_in_group)
+      # for d in 0 .. dim
+        # for i in 0 .. elem.points.size
+          # elem.pos_nodes[i][d] = symbol("c_level_CPU->group_motif[$num_group].pos_nodes[$d][$i][$num_motif_in_group]")
+
+    # def def_pos_nodes_test()
+        # for d in 0 .. dim
+            # for i in 0 .. elem.points.size
+                # elem.pos_nodes[i][d] = test_nodes[i][d]
+#~    
+#creation des elements sur chaque side
+    def create_sides()
+#def_pos_nodes_test()
+#def_pos_nodes_elem_motif("num_S_group", "num_motif_in_group")
+        for num_side in 0 .. nb_sides
+            current_side := child_cast( elem.children( 1 )[num_side] )
+            for d in 0 .. dim
+                for i in 0 .. side_elem[0][1].size
+                    sides[num_side].pos_nodes[i][d] = elem.pos_nodes[ side_elem[num_side][1][i] ][d]
+            for i in 0 .. nb_elems_on_side
+                for p in 0 .. elems_side[num_side][ i ].points.size
+                    elems_side[num_side][ i ].pos_nodes[ p ] = sides[num_side].pos.subs( sides[num_side].var_inter, elems_on_side_var_inter[i][p])
+
+#definition des variables utilisées pour le calcul
+    def define_vars(c_field,c_level_calcul)        
+        for d in 0 .. dim
+            for num_node in 0 .. nb_nodes
+                U[d][num_node] = symbol("U$(num_node)_$(d)" )
+        vars_metil :=[W,F,Wchap,Fchap,oldW,oldF]
+        vars_cpp_name :=["side_W","side_F","side_Wchap","side_Fchap","oldW","oldF"]
+        for num_side in 0 .. nb_sides
+            for var in 0..vars_metil.size
+                for d in 0 .. dim
+                    for num_node_eq in 0 .. nb_nodes_eq
+                        vars_metil[var][num_side][num_node_eq][d]=symbol("$(c_field)->champ_side_motif[i_group]."+vars_cpp_name[var]+"[$d][$num_node_eq][$num_side][num_motif_in_group]")
+            k[num_side]=symbol("$(c_level_calcul)->group_motif[i_group].side_k[$num_side][num_motif_in_group]")
+            
+    
+    def read_side_N()        
+        define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            for num_node_eq in 0 .. nb_nodes_eq
+                for num_node in 0 .. children_type.points.size
+                    N[num_side][num_node_eq,num_node]=symbol("c_level_CPU->group_motif[i_group].side_N[$num_node][$num_node_eq][$num_side][num_motif_in_group]")
+    
+   def read_N()        
+        for num_side in 0 .. nb_sides
+            for num_node_eq in 0 .. nb_nodes_eq
+                for num_node in 0 .. nb_nodes_side
+                    N[num_side][num_node_eq,num_node]=symbol("c_level_CPU->group_motif[i_group].side_N[$num_node][$num_node_eq][$num_side][num_motif_in_group]")
+                    
+#ecriture vers cpp d'une variable de type vecteur de symboles pour les sides
+    def write_side_vars(var_metil,var_name_in_cpp,cw)
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+                for num_node_eq in 0 .. nb_nodes_eq 
+                    cw.add("$(c_field)->champ_side_motif[i_group]."+var_name_in_cpp+"[$d][$num_node_eq][$num_side][num_motif_in_group]", var_metil[num_side][num_node_eq][d], reassign )
+
+#integration de deux variables definies toutes les deux sur les sides 
+    def integrate_on_side_FW(num_side, Fd, Wd)
+        res := Op()
+        for d in 0 .. dim
+            for i in 0 .. nb_elems_on_side
+                res = res+ Fd[i][d]*Wd[i][d]*elems_side[num_side][ i ].measure
+        return res
+
+#definition du deplacement U sur les sides à partir du vecteur U defini sur la sst
+    def define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+#creation de l'interpolation du depl sur le side
+                for p in 0 .. sides[num_side].points.size
+                    U_on_sides[num_side][d][p] = U[d][side_elem[num_side][1][p]]
+                fctU_on_side := sides[num_side].interpolation( U_on_sides[num_side][d], "lagrange" )
+#creation de l'interpolation du depl sur l'element du side
+                for i in 0 .. nb_elems_on_side
+                    for p in 0 .. elems_side[num_side][ i ].points.size
+                    U_on_elem_sides[num_side][i][d][p] = fctU_on_side.subs(sides[num_side].var_inter,elems_on_side_var_inter[i][p])
+
+    
+#integration du produit U*Fd avec Fd variable definie sur les sides et U provenant de la SST
+    def integrate_on_side_FU(num_side, Fd)
+        res := Op()
+        for d in 0 .. elem.dim
+            for i in 0 .. nb_elems_on_side
+                fctU_on_elem_side := elems_side[num_side][ i ].interpolation(U_on_elem_sides[num_side][i][d], "lagrange")
+#integration du depl interpolé sur le side
+                deg_p := elems_side[num_side][ i ].order_interpolation[ 0 ]
+                res = res+ Fd[i][d]*elems_side[num_side][ i ].integration(fctU_on_elem_side,true,deg_p)
+        return res
+
+    def define_N()
+        define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            formulation_W := integrate_on_side_FW(num_side, F[num_side], W[num_side])
+            formulation_U := integrate_on_side_FU(num_side, F[num_side])
+            for i in 0 .. nb_elems_on_side
+                M:=(formulation_W.diff(F[num_side][i][0])).diff(W[num_side][i][0])
+                N1 := Vec[Op,children_type.nb_nodes]()
+                for p in 0 .. children_type.nb_nodes
+                    N[num_side][i,p]= ((formulation_U.diff(F[num_side][i][0])).diff(U_on_sides[num_side][0][p]))/M
+
+    def calculate_energy_isotropy(material_data)
+        E := material_data.E
+        nu := material_data.nu
+        rho := material_data.rho
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( U[d] , "lagrange")
+        elastical_energy := 1/2 * elem.integration( elem.grad_sym( fctU ) : hooke_iso( E, nu, dim ) : elem.grad_sym( fctU ) )
+        print "Ajout calcul direction pour test"
+        calculate_search_direction(E)
+        return elastical_energy
+
+# a modifier pour le comportement orthotrope
+    def calculate_energy_orthotropy(material_data)
+        E11 := material_data.E11
+        nu12 := material_data.nu12
+        rho := material_data.rho
+        fctU := Vec[Op,dim]()
+        for d in 0 .. dim
+            fctU[d] = elem.interpolation( U[d] )
+        elastical_energy := 1/2 * elem.integration( elem.grad_sym( fctU ) : hooke_iso( E11, nu12, dim ) : elem.grad_sym( fctU ) )
+        return elastical_energy
+
+    def calculate_search_direction(E)
+        for num_side in 0 .. nb_sides
+            mes := sides[num_side].measure
+            if name=="Motif_Triangle_6"
+                k[num_side] = (E+E)/(2*mes)
+            else if name=="Motif_Tetra_10"
+                k[num_side] = (E+E)/(2*sqrt(mes))
+
+    def calculate_rigidity_matrix_of_linear_step(ener)
+#definition des deplacements de bord en fonction de U
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+              Wd := N[num_side]*U_on_sides[num_side][d]
+              for num_node_eq in 0 .. nb_nodes_eq
+                  W_from_U[num_side][num_node_eq][d]=Wd[num_node_eq]
+        formulation := ener
+
+        for num_side in 0 .. nb_sides
+            formulation += integrate_on_side_FU(num_side,k[num_side]*W_from_U[num_side])
+        U_syms := Vec[Op]()
+        for i in 0 .. elem.nb_nodes
+            for d in 0 .. dim
+                U_syms.push_back(U[d][i])
+        mat_rigidity := formulation.diff( U_syms ).diff( U_syms )
+        return mat_rigidity
+
+    def calculate_second_member_of_linear_step_1()
+        define_U_on_sides()
+        second_member := Op()
+        for num_side in 0 .. nb_sides
+            second_member += integrate_on_side_FU(num_side,Fchap[num_side]+k[num_side]*(Wchap[num_side]))
+        U_syms := Vec[Op]()
+        for i in 0 .. elem.nb_nodes
+            for d in 0 .. dim
+                U_syms.push_back(U[d][i])
+        vec_second_member := second_member.diff(U_syms)
+        return vec_second_member
+       
+    def extract_F_W_from_U()
+        for d in 0 .. dim
+            for num_node in 0 .. nb_nodes
+                U[d][num_node] = symbol("U[$d+$(num_node*dim)]" )
+        define_U_on_sides()
+        for num_side in 0 .. nb_sides
+            for d in 0 .. dim
+                Wd := N[num_side]*U_on_sides[num_side][d]
+                for num_node_eq in 0 .. nb_nodes_eq
+                    W_from_U[num_side][num_node_eq][d]=Wd[num_node_eq]
+            W[num_side]=W_from_U[num_side]
+            F[num_side]=Fchap[num_side]+k[num_side]*(Wchap[num_side]-W[num_side])
+            
+        
+    def relaxation()
+        mu:=0.8 # coefficient de relaxation
+        for num_side in 0 .. nb_sides
+            W[num_side]=(1-mu)*oldW[num_side]+mu*W[num_side]
+            F[num_side]=(1-mu)*oldF[num_side]+mu*F[num_side]
+            oldW[num_side]=W[num_side]
+            oldF[num_side]=F[num_side]
+    
+    def calculate_error_num()
+        error_num := Op()
+        for num_side in 0 .. nb_sides
+            err_F := F[num_side]-Fchap[num_side]
+            err_W := W[num_side]-Wchap[num_side]
+            error_num += integrate_on_side_FW(num_side, 1/k[num_side]*err_F, err_F )
+            error_num += integrate_on_side_FW(num_side, k[num_side]*err_W, err_W )
+        return error_num
+    
+    def calculate_error_den()
+        error_den := Op()
+        for num_side in 0 .. nb_sides
+            err_F := F[num_side]+Fchap[num_side]
+            err_W := W[num_side]+Wchap[num_side]
+            error_den += integrate_on_side_FW(num_side, 1/k[num_side]*err_F, err_F )
+            error_den += integrate_on_side_FW(num_side, k[num_side]*err_W, err_W )
+        return error_den
+        
+#méthodes de niveau inf----------------------------------------------------------------
+#définition de la position des noeuds
+    def make_level_inf()
+      for i in 0 .. four_Triangle_6_repnodes.size
+        for p in 0 .. four_Triangle_6[ i ].points.size
+          four_Triangle_6[ i ].pos_nodes[ p ] = elem.pos.subs( elem.var_inter, four_Triangle_6_repnodes[ i ][ p ] )
+    
+#projection de la valeur au centre des 4 triangles
+    def project_val_on_level_inf(vec_elem_val_node)
+      make_four_Triangle_6()
+      four_Triangle_6_val_node := Vec[ Vec[ Op, 6], 4 ]
+      val_on_elem := elem.interpolation( vec_elem_val_node )
+      for i in 0 .. four_Triangle_6.size
+        for p in 0 .. four_Triangle_6[ i ].points.size
+          four_Triangle_6_val_node[ i ][ p ] = val_on_elem.subs( elem.var_inter, four_Triangle_6[ i ].points[ p ] )
+
+      four_Triangle_6_val_on_center := Vec[ Op, 4 ]
+      for i in 0 .. four_Triangle_6.size
+        val_on_current_Triangle := four_Triangle_6[ i ].interpolation( four_Triangle_6_val_node[ i ] )
+        four_Triangle_6_val_on_center[ i ] = val_on_current_Triangle.subs( four_Triangle_6[ i ].var_inter, four_Triangle_6[ i ].get_center_of_var_inter() )
+
+      return four_Triangle_6_val_on_center
+  
+#intégration de la valeur sur chacun des 4 triangles
+    def integrate_val_on_level_inf(vec_elem_val_node)
+      make_four_Triangle_6()
+      four_Triangle_6_val_node := Vec[ Vec[ Op, 6], 4 ]
+      val_on_elem := elem.interpolation( vec_elem_val_node )
+      for i in 0 .. four_Triangle_6.size
+        for p in 0 .. four_Triangle_6[ i ].points.size
+          four_Triangle_6_val_node[ i ][ p ] = val_on_elem.subs( elem.var_inter, four_Triangle_6[ i ].points[ p ] )
+      
+      four_Triangle_6_integrated_val := Vec[ Op, 4 ]
+      for i in 0 .. four_Triangle_6.size
+        val_on_current_Triangle := four_Triangle_6[ i ].interpolation( four_Triangle_6_val_node[ i ] )
+        four_Triangle_6_integrated_val[ i ] = four_Triangle_6[ i ].integration(val_on_current_Triangle)
+      
+      return four_Triangle_6_integrated_val~#

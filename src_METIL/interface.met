@@ -1,0 +1,318 @@
+import "EF/std_elements.met"
+type_interfaces  := [Bar, Bar_3, Triangle, Triangle_6 ]
+
+class Interface[ name , nb_subdivisions, type_inter]
+    static dim := 2
+    static nb_nodes := 2
+    static nb_vertex_nodes := 2
+    static nb_nodes_eq := 2
+    Type_elem_sides := name
+    test_neq := Vec[Vec[Op]]()
+    test_vec := Vec[Vec[Op]]()
+    test_nodes := Vec[Vec[Op]]()
+    id := -1
+
+    if (name==Bar)
+        id=0
+        dim = 2
+        nb_nodes = 2
+        nb_vertex_nodes = 2
+        nb_nodes_eq = 2
+        Type_elem_sides = Bar
+        test_neq = [[1,0],[1,0]]
+        test_vec = [[1,2],[3,4]]
+        test_nodes = [[0,0],[1,0]]        
+    else if (name==Bar_3)
+        id=1
+        dim = 2
+        nb_nodes = 3
+        nb_vertex_nodes = 2
+        nb_nodes_eq = 2
+        Type_elem_sides = Bar_3
+        test_neq = [[1,0],[1,0]]
+        test_vec = [[1,2],[3,4]]
+        test_nodes = [[0,0],[1,0],[0.5,0]]        
+    else if (name==Triangle)
+        id=2
+        dim = 3
+        nb_nodes = 3
+        nb_vertex_nodes = 3
+        nb_nodes_eq = 4
+        Type_elem_sides = Triangle
+        test_neq = [[-1,0,0],[-1,0,0],[-1,0,0],[-1,0,0]]
+        test_vec = [[1,2,3],[4,5,6],[1,2,3],[4,5,6]]
+        test_nodes = [[0,0,0],[1,0,0],[0,1,0]]
+    else if (name==Triangle_6)
+        id=3
+        dim = 3
+        nb_nodes = 6
+        nb_vertex_nodes = 3
+        nb_nodes_eq = 4
+        Type_elem_sides = Triangle_6
+        test_neq = [[-1,0,0],[-1,0,0],[-1,0,0],[-1,0,0]]
+        test_nodes = [[0,0,0],[1,0,0],[0,1,0],[0.5,0,0],[0.5,0.5,0],[0,0.5,0]]        
+        test_vec = [[1,2,3],[4,5,6],[1,2,3],[4,5,6]]
+    else if (name==Quad)
+        id=4
+        dim = 3
+        nb_nodes = 4
+        nb_vertex_nodes = 4
+        nb_nodes_eq = 4
+        Type_elem_sides = Quad
+        test_neq = [[-1,0,0],[-1,0,0],[-1,0,0],[-1,0,0]]
+        test_vec = [[1,2,3],[4,5,6],[1,2,3],[4,5,6]]
+        test_nodes = [[0,0,0],[1,0,0],[1,1,0],[0,1,0]]
+
+    else
+        print "Nom d'interface non défini"
+    elem := SymbolicElement[ Type_elem_sides, dim ]()        #geometrie de base de l'interface
+
+    sides := Vec[SymbolicElement[ Type_elem_sides, dim ],2]()
+    sub_elems_sides := Vec[SymbolicElement[Type_elem_sides,dim],nb_nodes_eq]()
+    W :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],2]()
+    Wp :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],2]()
+    F :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],2]()
+    Wchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],2]()
+    Wpchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],2]()
+    Fchap :=  Vec[Vec[Vec[Op,dim],nb_nodes_eq],2]()
+    dir := Op()
+    young_modulus := Vec[Op,2]()
+    neq := Vec[Vec[Op,dim],nb_nodes_eq]()
+    gap := Vec[Vec[Op,dim],nb_nodes_eq]()
+    W0 :=  Vec[Op,dim]()
+    W1 :=  Vec[Op,dim]()
+    F0 :=  Vec[Op,dim]()
+    F1 :=  Vec[Op,dim]()
+    Wchap0 :=  Vec[Op,dim]()
+    Wchap1 :=  Vec[Op,dim]()
+    Fchap0 :=  Vec[Op,dim]()
+    Fchap1 :=  Vec[Op,dim]()
+    nloc :=  Vec[Op,dim]()
+    G :=  Vec[Op,dim]()
+    nodeseq := Vec[Vec[Op,dim],nb_nodes_eq]()
+    Mloc := Vec[Op,nb_nodes_eq]()
+
+    Ne := Vec[Op,elem.nb_nodes]()         #operateur de passage des noeuds de l'element au cdg (nodeeq)
+    Me := Op()                            #mesure de l'element
+
+
+    # expr_champ_group := "c_field_CPU->champ_side_motif[num_group]."
+    # expr_level_group := "c_level_CPU->"+type_group+"[num_group]."
+    # expr_operator_group := "c_level_operator_CPU->group_motif[num_group]."
+    # champ_vars_metil_name :=[W,F,Wchap,Fchap]
+    # champ_vars_cpp_name :=["side_W","side_F","side_Wchap","side_Fchap"]
+
+    # num_motifs := Vec[String,2]()
+    num_sides := Vec[String,2]()
+    beg := Op() #utilise pour la correspondance entre les noeuds equivalents sur les side
+    # for i in 0..2
+        # num_motifs[i] = expr_level_group+"I_num_Motif[$i][num_inter]"
+        # num_sides[i] = expr_level_group+"I_num_Sides_Motif[$i][num_inter]"
+        # young_modulus[i]=symbol("E[$i]")
+    # beg = symbol(expr_level_group+"I_repnode[num_inter]*$nb_nodes_eq")
+    
+    num_sides[0] = "I_side[i]"
+    num_sides[1] = "I_side[i+nb.i_$(type_inter)_s]"
+    beg = symbol("I_corresp[i]*nb.nodeseq")
+    ni := symbol("nsst+num_side*nb.sst_s")
+    for num_node_eq in 0 .. nb_nodes_eq
+      Mloc[num_node_eq]=symbol("S_side_M[$ni+nb.side_s*$num_node_eq]")
+
+    def define_vars_loc(rep_node)
+        for d in 0 .. dim
+            Wchap0[d]=symbol("side_Wchap[$(num_sides[0])+nb.side_s*($d+$dim*$rep_node)]")
+            Wchap1[d]=symbol("side_Wchap[$(num_sides[1])+nb.side_s*($d+$dim*$rep_node)]")
+            Fchap0[d]=symbol("side_Fchap[$(num_sides[0])+nb.side_s*($d+$dim*$rep_node)]")
+            Fchap1[d]=symbol("side_Fchap[$(num_sides[1])+nb.side_s*($d+$dim*$rep_node)]")
+            W0[d]=symbol("side_W[$(num_sides[0])+nb.side_s*($d+$dim*$rep_node)]")
+            W1[d]=symbol("side_W[$(num_sides[1])+nb.side_s*($d+$dim*$rep_node)]")
+            F0[d]=symbol("side_F[$(num_sides[0])+nb.side_s*($d+$dim*$rep_node)]")
+            F1[d]=symbol("side_F[$(num_sides[1])+nb.side_s*($d+$dim*$rep_node)]")
+            nloc[d]=symbol("neq[$(num_sides[0])+nb.side_s*$d]")
+   
+        dir=symbol("side_k[$(num_sides[0])]")
+        
+
+    def define_vars()
+        for d in 0 .. dim
+            for num_node_eq in 0 .. nb_nodes_eq
+                Wchap[0][num_node_eq][d]=symbol("side_Wchap[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]")
+                Wchap[1][num_node_eq][d]=symbol("side_Wchap[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]")
+                Wpchap[0][num_node_eq][d]=symbol("side_Wpchap[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]")
+                Wpchap[1][num_node_eq][d]=symbol("side_Wpchap[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]")
+                Fchap[0][num_node_eq][d]=symbol("side_Fchap[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]")
+                Fchap[1][num_node_eq][d]=symbol("side_Fchap[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]")
+                W[0][num_node_eq][d]=symbol("side_W[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]")
+                W[1][num_node_eq][d]=symbol("side_W[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]")
+                Wp[0][num_node_eq][d]=symbol("side_Wp[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]")
+                Wp[1][num_node_eq][d]=symbol("side_Wp[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]")
+                F[0][num_node_eq][d]=symbol("side_F[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]")
+                F[1][num_node_eq][d]=symbol("side_F[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]")
+                neq[num_node_eq][d]=symbol("neq[$(num_sides[0])+nb.side_s*$d]")
+                gap[num_node_eq][d]=symbol("gap[$(num_sides[0])+nb.side_s*$d]")
+                nodeseq[num_node_eq][d]=symbol("nodeseq[$ni+nb.side_s*$(d+num_node_eq*dim)]")
+                G[d]=symbol("G[$ni+$d*nb.side_s]")
+   
+                 #neq[num_node_eq][d]=test_neq[num_node_eq][d]
+        dir=symbol("side_k[$(num_sides[0])]")
+
+#definition des noeuds pour l'element d'interface considéré
+    def def_pos_nodes_elem(num_group, num_elem_in_group)
+      for d in 0 .. dim
+        for i in 0 .. elem.points.size
+          elem.pos_nodes[i][d] = symbol("geometry_compact->nodes[$d][geometry_compact->group_interfaces[$num_group].connectivities[$i][$num_elem_in_group]]")
+
+    def def_pos_nodes_elem_test()
+      for d in 0 .. dim
+        for i in 0 .. elem.nb_nodes
+          elem.pos_nodes[i][d] = test_nodes[i][d]
+
+    def define_Me()
+        Me=elem.measure
+
+    def define_Ne()
+        U:=Vec[Op,elem.nb_nodes]()
+        for i_node in 0 .. elem.nb_nodes
+            U[i_node]=symbol("U$i_node")
+        fctU_on_elem := elem.interpolation( U, "lagrange" )
+        deg_p :=  elem.order_interpolation[ 0 ]
+        formulation_U:=elem.gauss_num_integration(fctU_on_elem,true,deg_p)
+        for i_node in 0..elem.nb_nodes
+            Ne[i_node]=formulation_U.diff(U[i_node])
+
+#ecriture vers cpp d'une variable de type vecteur de symboles
+    def write_vars_0(var_metil,var_name_in_cpp,cw)
+        for d in 0 .. dim
+            for num_node_eq in 0 .. nb_nodes_eq
+                cw.add(var_name_in_cpp+"[$(num_sides[0])+nb.side_s*($(d+dim*num_node_eq))]", var_metil[num_node_eq][d], reassign )
+
+    def write_vars_1(var_metil,var_name_in_cpp,cw)
+        for d in 0 .. dim
+            for num_node_eq in 0 .. nb_nodes_eq
+                cw.add(var_name_in_cpp+"[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$num_node_eq])]", var_metil[num_node_eq][d], reassign )
+    
+
+    def write_vars_0_1(cw)
+        write_vars_0(Wpchap[0],"side_Wpchap",cw)
+        write_vars_0(Fchap[0],"side_Fchap",cw)
+        write_vars_1(Wpchap[1],"side_Wpchap",cw)
+        write_vars_1(Fchap[1],"side_Fchap",cw)
+    
+    def write_vars_loc_0(var_metil,var_name_in_cpp,cw,rep_node)
+        for d in 0 .. dim
+            cw.add(var_name_in_cpp+"[$(num_sides[0])+nb.side_s*($d+$dim*$rep_node)]", var_metil[d], reassign )
+
+    def write_vars_loc_1(var_metil,var_name_in_cpp,cw,rep_node)
+        for d in 0 .. dim
+            cw.add(var_name_in_cpp+"[$(num_sides[1])+nb.side_s*($d+$dim*corresp[$beg+$rep_node])]", var_metil[d], reassign )
+
+    def write_vars_loc(cw,rep_node)
+        write_vars_loc_0(Wchap0,"side_Wchap",cw,rep_node)
+        write_vars_loc_0(Fchap0,"side_Fchap",cw,rep_node)
+        write_vars_loc_1(Wchap1,"side_Wchap",cw,rep_node)
+        write_vars_loc_1(Fchap1,"side_Fchap",cw,rep_node)
+        
+#fonction pour comportement parfait
+    def local_step_perfect()
+        Wpchap[1]=( -(F[1]+F[0])/dir + (Wp[0]+Wp[1]) )/2
+        Wpchap[0]=Wpchap[1]
+        Fchap[0]=F[0]+dir*(Wpchap[0]-Wp[0])
+        Fchap[1]=-Fchap[0]
+
+    def initialize_imposed_gap()
+        Wchap[1]=gap/2
+        Wchap[0]=-1*gap/2
+        
+#fonction pour comportement avec jeu imposé
+    def local_step_imposed_gap(dt)
+        Wpchap[0]=( -(F[1]+F[0])/dir + (Wp[0]+Wp[1]) - gap/dt )/2
+        Wpchap[1]=Wpchap[0]+gap/dt
+        Fchap[0]=F[0]+dir*(Wpchap[0]-Wp[0])
+        Fchap[1]=-Fchap[0]
+
+#definition du produit scalaire sur une interface entre deux quantités définies par noeud équivalent (vec(vec)) : renvoit un vecteur de la taille du nombre de noeuds
+
+    def prod(n,v) #produit scalaire n.v (avec v et n définis en chaque noeud équivalent) : résultat en chaque noeud équivalent
+        res := Vec[Op,nb_nodes_eq]()
+        for num_node in 0 .. nb_nodes_eq
+            res[num_node]=dot(n[num_node],v[num_node])
+        return res
+    
+    def projT(n,v) #renvoit la partie tangentielle de v en un noeud équivalent
+#~        res := Vec[Vec[Op,dim],nb_nodes_eq]()~#
+        res:=v-dot(n,v)*n
+        return res
+
+#fonctions pour evaluer le contact avec ou sans glissement en un noeud équivalent
+    def evaluate_contact(n)
+        kn := dir
+        N := dot(nloc,kn*(W1-W0-(F1+F0)/kn)/2)
+        return N
+
+    def evaluate_slipping(n,f,N)
+        kn := dir
+        kt := f*dir
+        Fd := kt * ( W1-W0-(F1+F0)/kt ) / 2
+        T := projT(n,Fd)
+        return T
+
+
+    def local_step_without_contact(n,f)
+        kn := dir
+        kt := f*dir
+        vec_nul :=  Vec[Op,dim](symbol(0))
+        Fchap0=vec_nul
+        Fchap1=vec_nul
+        Wchap0=W0-dot(n,F0)/kn*n - 1/kt* projT(n,F0)
+        Wchap0=W0-dot(n,F1)/kn*n - 1/kt* projT(n,F1)
+    
+    def local_step_with_contact(n,f,N)
+        kn := dir
+        kt := f*dir
+        Fchap0=N*n
+        Fchap1=-Fchap0
+        Wchap0=dot(n,W0)*n+1/kn*(Fchap0-dot(n,F0)*n)
+        Wchap1=dot(n,W1)*n+1/kn*(Fchap1-dot(n,F1)*n)
+    
+    def local_step_with_contact_without_slipping(n,f,N,T)
+        kn := dir
+        kt := f*dir
+        Fchap0=T+N*n
+        Fchap1=-Fchap0
+        Wn0 := dot(n,W0)*n+1/kn*(N*n-dot(n,F0)*n)
+        Wt0 := (W0-dot(n,W0)*n)+1/kt*(T-projT(n,F0))
+        Wchap0=Wn0 + Wt0
+        Wn1 := dot(n,W1)*n+1/kn*(-N*n-dot(n,F1)*n)
+        Wt1 := (W1-dot(n,W1)*n)+1/kt*(-T-projT(n,F1))
+        Wchap1=Wn1+Wt1
+   
+    def local_step_with_contact_and_slipping(n,f,N,T)
+        kn := dir
+        kt := f*dir
+        Ft := f*abs(N)*T/norm_2(T)
+        Fn := N*n
+        Wn0 := dot(n,W0)*n+1/kn*(N*n-dot(n,F0)*n)
+        Wn1 := dot(n,W1)*n+1/kn*(-N*n-dot(n,F1)*n)
+        Fchap0= Ft + Fn
+        Fchap1 = -Fchap0
+        Wt0 := projT(n,W0)+1/kt*(Ft-projT(n,F0))
+        Wt1 := projT(n,W1)+1/kt*(-Ft-projT(n,F1))
+        Wchap0 = Wn0 + Wt0
+        Wchap1 = Wn1 + Wt1
+    
+        
+    def calcul_BPI(cw)
+         GM := Vec[Vec[Op,dim],nb_nodes_eq]()
+         for num_node_eq in 0 .. nb_nodes_eq
+            GM[num_node_eq] = nodeseq[num_node_eq]-G
+         I1:=Mat[Op,Gen[dim,dim]]()
+         for i in 0 ..dim
+               for j in 0 .. dim
+                  I1[i,j]=0
+                  for num_node_eq in 0 .. nb_nodes_eq
+                     I1[i,j]+=GM[num_node_eq][i]*GM[num_node_eq][j]*Mloc[num_node_eq]
+                  cw.add("I1[$i][$j]", I1[i,j], reassign )
+
+
+
+      

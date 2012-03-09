@@ -1,0 +1,174 @@
+import "pattern.met"
+import "interface.met"
+
+def write_FieldStructureCompactGen_h( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include <iostream>
+        #include <fstream>
+        #include <cassert> 
+        #include <Metil/BasicVec.h>
+        #include <Metil/StructCompactor.h>
+        #include <Metil/CudaMetil.h>
+        #include "GeometryCompactClass.h"
+        #include "FieldStructureCompactClass.h"
+        #include "FieldStructureCompactGen_center.h"
+        #include "FieldStructureCompactGen_elements_mat_elem.h"
+        using namespace Metil;
+        // fonction permettant de calculer les centre des elements sur GPU
+        void launch_calculate_elements_center_GPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<GeometryCompactClass> geometry_compact_GPU, Ps<FieldStructureCompactClass> field_structure_compact_GPU);
+        void launch_calculate_elements_center_CPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<FieldStructureCompactClass> field_structure_compact_CPU);
+        // fonction permettant de calculer les matrices elementaires sur GPU
+        void launch_calculate_elements_mat_elem_GPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<GeometryCompactClass> geometry_compact_GPU, Ps<FieldStructureCompactClass> field_structure_compact_GPU);
+        void launch_calculate_elements_mat_elem_CPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<FieldStructureCompactClass> field_structure_compact_CPU);
+          
+    
+def write_head_FieldStructureCompactGen_cu( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include "FieldStructureCompactGen.h"
+
+   
+def write_launch_calculate_elements_center_GPU( type_patterns, fout )
+    fout <<<<
+        void launch_calculate_elements_center_GPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<GeometryCompactClass> geometry_compact_GPU, Ps<FieldStructureCompactClass> field_structure_compact_GPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_elements.size(); i_group++){
+                int threadsPerBlock = THREADSPERBLOCK;
+                int sizeGrid = SIZEGRID;
+                int nGrids = std::floor( geometry_compact_CPU->group_elements[i_group].connectivities[0].size()  / (sizeGrid*threadsPerBlock) ) + 1 ;  // obtenir l'entier superieur
+                int lastGridSize = (geometry_compact_CPU->group_elements[i_group].connectivities[0].size() - (sizeGrid*threadsPerBlock)*(nGrids-1))/threadsPerBlock;
+                switch (geometry_compact_CPU->group_elements[i_group].pattern_id){
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            for(int i_grid=0; i_grid < nGrids; i_grid++){
+                                int blocksPerGrid;
+                                if(i_grid == nGrids-1){
+                                    blocksPerGrid = lastGridSize;
+                                }else{
+                                    blocksPerGrid = sizeGrid;
+                                }
+                                global_calculate_elements_center_$(pattern.id )<<<blocksPerGrid,threadsPerBlock>>>(geometry_compact_GPU.ptr(), field_structure_compact_GPU.ptr(), i_group, i_grid, sizeGrid, geometry_compact_CPU->group_elements[i_group].nb_elements);
+                            }
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);                    
+                    }
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+    
+def write_launch_calculate_elements_center_CPU( type_patterns, fout )
+    fout <<<<
+        void launch_calculate_elements_center_CPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<FieldStructureCompactClass> field_structure_compact_CPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_elements.size(); i_group++){
+                switch (geometry_compact_CPU->group_elements[i_group].pattern_id){
+    num_type := 0
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            global_calculate_elements_center_$(pattern.id )_CPU(geometry_compact_CPU.ptr(), field_structure_compact_CPU.ptr(), i_group);
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);
+                    }
+                    
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+    
+def write_launch_calculate_elements_mat_elem_GPU( type_patterns, fout )
+    fout <<<<
+        void launch_calculate_elements_mat_elem_GPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<GeometryCompactClass> geometry_compact_GPU, Ps<FieldStructureCompactClass> field_structure_compact_GPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_elements.size(); i_group++){
+                int threadsPerBlock = THREADSPERBLOCK;
+                int sizeGrid = SIZEGRID;
+                int nGrids = std::floor( geometry_compact_CPU->group_elements[i_group].connectivities[0].size()  / (sizeGrid*threadsPerBlock) ) + 1 ;  // obtenir l'entier superieur
+                int lastGridSize = (geometry_compact_CPU->group_elements[i_group].connectivities[0].size() - (sizeGrid*threadsPerBlock)*(nGrids-1))/threadsPerBlock;
+                switch (geometry_compact_CPU->group_elements[i_group].pattern_id){
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            for(int i_grid=0; i_grid < nGrids; i_grid++){
+                                int blocksPerGrid;
+                                if(i_grid == nGrids-1){
+                                    blocksPerGrid = lastGridSize;
+                                }else{
+                                    blocksPerGrid = sizeGrid;
+                                }
+                                global_calculate_elements_mat_elem_$(pattern.id )<<<blocksPerGrid,threadsPerBlock>>>(geometry_compact_GPU.ptr(), field_structure_compact_GPU.ptr(), i_group, i_grid, sizeGrid, geometry_compact_CPU->group_elements[i_group].nb_elements);
+                            }
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);                    
+                    }
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+    
+def write_launch_calculate_elements_mat_elem_CPU( type_patterns, fout )
+    fout <<<<
+        void launch_calculate_elements_mat_elem_CPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<FieldStructureCompactClass> field_structure_compact_CPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_elements.size(); i_group++){
+                switch (geometry_compact_CPU->group_elements[i_group].pattern_id){
+    num_type := 0
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            global_calculate_elements_mat_elem_$(pattern.id )_CPU(geometry_compact_CPU.ptr(), field_structure_compact_CPU.ptr(), i_group);
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);
+                    }
+                    
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+
+# ----------------------------------------------
+# appel des fonction pour la génération du code
+# ----------------------------------------------
+file_generate_h := File( "../src/COMPUTE/FieldStructureCompactGen.h", "w" )
+file_generate_cu := File( "../src/COMPUTE/FieldStructureCompactGen.cu", "w" )
+write_FieldStructureCompactGen_h( file_generate_h )
+write_head_FieldStructureCompactGen_cu( file_generate_cu )
+
+write_launch_calculate_elements_center_GPU( type_patterns, file_generate_cu )
+write_launch_calculate_elements_center_CPU( type_patterns, file_generate_cu )
+
+write_launch_calculate_elements_mat_elem_GPU( type_patterns, file_generate_cu )
+write_launch_calculate_elements_mat_elem_CPU( type_patterns, file_generate_cu )

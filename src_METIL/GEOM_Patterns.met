@@ -1,0 +1,132 @@
+import "pattern.met"
+
+# définition des class fictives pour les paramètre template
+# ----------------------------------------------------------------------------------------------------------
+def generate_class_pattern( type_patterns, fout )
+    fout <<<< 
+        //
+        // Description: fichier généré par GEOM_Patterns.met 
+        //
+        //
+        // Author: Jeremie Bellec <j.bellec@structure-computation.com>, (C) 2011
+        //
+        // Copyright: See COPYING file that comes with this distribution
+        //
+        //
+        
+        #ifndef PATTERNS_H
+        #define PATTERNS_H
+        
+        #include <Metil/BasicVec.h>
+        
+        using namespace Metil;
+        
+        struct Patterns{
+            //atributs **********************************************************************************************
+            struct Types{
+                std::string name, base_xdmf, base_skin_xdmf ;
+                int id ;
+                int dim ;
+                int nb_nodes ;
+                int interface_id ;
+                int nb_sides ;
+                int nb_nodes_by_sides ; 
+                int nb_nodes_eq_by_sides ; 
+                BasicVec< int > permutation;
+                BasicVec< BasicVec< int > > sides;
+                
+                template<class TB,class TP>
+                void apply_bs( TB &res, TP ) const {
+                    res.set_type( "Types" );
+                    APPLY_WN( res, id );
+                    APPLY_WN( res, dim );
+                    APPLY_WN( res, nb_nodes );
+                    APPLY_WN( res, interface_id );
+                    APPLY_WN( res, nb_sides );
+                    APPLY_WN( res, nb_nodes_by_sides );
+                    APPLY_WN( res, nb_nodes_eq_by_sides );
+                    APPLY_WN( res, permutation );
+                    APPLY_WN( res, sides );
+                }
+            };
+            BasicVec< Types > types;
+            
+            
+            //méthodes **********************************************************************************************
+            Types find_type(int id_){
+                for(int num_type=0; num_type<$(type_patterns.size); num_type++){
+                    if(types[num_type].id == id_){
+                        return types[num_type];
+                        break;
+                    }
+                }
+            }
+            
+            int find_index_type(int id_){
+                for(int num_type=0; num_type<$(type_patterns.size); num_type++){
+                    if(types[num_type].id == id_){
+                        return num_type ;
+                        break;
+                    }
+                }
+            }
+            
+            template<class TB,class TP>
+            void apply_bs( TB &res, TP ) const {
+                res.set_type( "Patterns" );
+                APPLY_WN( res, types );
+            }
+                  
+            Patterns(){
+                types.resize($(type_patterns.size));
+    
+    num_type := 0
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<< 
+                    //
+                    // type $num_type = $(pattern.name) --------------------------------------
+                    types[$num_type].name = "$(pattern.name)";
+                    types[$num_type].base_xdmf = "$(pattern.base_xdmf)";
+                    types[$num_type].base_skin_xdmf = "$(pattern.base_skin_xdmf)";
+                    types[$num_type].id = $(pattern.id);
+                    types[$num_type].dim = $(pattern.elem.nvi);
+                    types[$num_type].nb_nodes = $(pattern.elem.nb_nodes);
+                    types[$num_type].interface_id = $(pattern.side_interface_id); 
+                    types[$num_type].nb_sides = $(pattern.nb_sides);
+                    types[$num_type].nb_nodes_by_sides = $(pattern.nb_nodes_side);
+                    types[$num_type].nb_nodes_eq_by_sides = $(pattern.nb_nodes_eq);
+                    types[$num_type].permutation.resize(types[$num_type].nb_nodes);
+                    types[$num_type].sides.resize(types[$num_type].nb_sides);
+                    for(int i_side=0; i_side<types[$num_type].nb_sides; i_side++){
+                        types[$num_type].sides[i_side].resize(types[$num_type].nb_nodes_by_sides);
+                    }
+
+        for i_node in 0 .. pattern.elem.nb_nodes
+            fout <<< "        types[$num_type].permutation[$i_node] = $(pattern.permutation[i_node]);"
+        
+        i_side := 0
+        for side in pattern.side_elem
+            nodes := side[1]
+            for i_node in 0 .. pattern.nb_nodes_side
+                fout <<< "        types[$num_type].sides[$i_side][$i_node] = $(nodes[i_node]);"
+            i_side +=1
+        num_type+=1
+
+    fout <<< "    }"
+    fout <<< "};"
+    fout <<< "#endif //PATTERNS_H"
+
+
+
+# apelle des fonction pour la génération du code
+# ----------------------------------------------------------------------------------------------------------
+
+name_file := "../src/GEOMETRY/Patterns.h"
+fout := File( name_file, "w" ) 
+generate_class_pattern(type_patterns, fout )
+    
+
+
+

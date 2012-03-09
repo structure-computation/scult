@@ -1,0 +1,82 @@
+import "pattern.met"
+
+def write_head_GeometryCompactGen_N_h( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include <iostream>
+        #include <fstream>
+        #include <cassert> 
+        #include <Metil/BasicVec.h>
+        #include <Metil/StructCompactor.h>
+        #include <Metil/CudaMetil.h>
+        #include "GeometryCompactClass.h"
+        using namespace Metil;
+        /// Fonctions inline (travaillant sur un motif) et global (travaillant sur une liste de motif sur GPU) permettant de calculer l'opérateur side_N sur chaque côté d'un motif. Cet opérateur permet de faire le lien entre les données sur les côtés et les données sur les interfaces
+   
+def write_GeometryCompactGen_N_h( pattern, fout )
+    fout <<<<
+        //for pattern $(pattern.name )
+        __inline__ void calculate_side_N_$(pattern.id )(GeometryCompactClass *geometry_compact, int i_group, int i_elem);
+        __global__ void global_calculate_side_N_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, int i_group, int i_block, int sizeBlock, int nb_elements);
+        void global_calculate_side_N_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, int i_group);
+    
+    
+def write_head_GeometryCompactGen_N_cu( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include "GeometryCompactGen_N.h"
+
+   
+def write_inline_calculate_side_N( pattern, fout )
+    pattern.define_N()
+    cw := CodeWriterAlt()
+    for num_side in 0 .. pattern.nb_sides
+        for num_node_eq in 0 .. pattern.nb_nodes_eq
+            for num_node in 0 .. pattern.children_type.points.size
+                cw.add( "geometry_compact->group_elements[i_group].side_N[$num_node][$num_node_eq][$num_side][i_elem]", pattern.N[num_side][num_node_eq,num_node], reassign )
+                # cw.add( "geometry_compact->group_elements[i_group].side_N[$num_node][$num_node_eq][$num_side][i_elem]", 2, reassign )
+    
+    fout <<<<
+        __inline__ void calculate_side_N_$(pattern.id )(GeometryCompactClass *geometry_compact, int i_group, int i_elem){             
+            $(cw.to_string())
+        }
+     
+
+def write_global_calculate_side_N_GPU( pattern, fout )
+    fout <<<<
+        __global__ void global_calculate_side_N_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements){
+            int i_elem = i_grid * sizeGrid * blockDim.x + blockIdx.x * blockDim.x + threadIdx.x;
+            if (i_elem < nb_elements) {
+                calculate_side_N_$(pattern.id )(geometry_compact_GPU, i_group, i_elem);
+            }
+        }
+    
+def write_global_calculate_side_N_CPU( pattern, fout )
+    fout <<<<
+        void global_calculate_side_N_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, int i_group){
+            for(int i_elem=0; i_elem<geometry_compact_CPU->group_elements[i_group].nb_elements ; i_elem++)
+                calculate_side_N_$(pattern.id )(geometry_compact_CPU, i_group,i_elem);
+        }
+    
+#------------------------------------------------
+# appel des fonctions pour la génération du code
+# -----------------------------------------------
+file_generate_h := File( "../src/GEOMETRY/GeometryCompactGen_N.h", "w" )
+file_generate_cu := File( "../src/GEOMETRY/GeometryCompactGen_N.cu", "w" )
+write_head_GeometryCompactGen_N_h( file_generate_h )
+write_head_GeometryCompactGen_N_cu( file_generate_cu )
+
+print "génération des codes calculate_side_N"
+for type in type_patterns
+    print "Pattern "+type
+    pattern := Pattern[ type ]()
+    write_GeometryCompactGen_N_h( pattern, file_generate_h )
+    pattern.def_pos_nodes_elem_motif("i_group", "i_elem")   
+    pattern.create_sides()
+    pattern.define_vars("i_group", "i_elem")   
+    write_inline_calculate_side_N( pattern, file_generate_cu )
+    write_global_calculate_side_N_GPU( pattern, file_generate_cu )
+    write_global_calculate_side_N_CPU( pattern, file_generate_cu )
+

@@ -1,0 +1,144 @@
+import "pattern.met"
+import "interface.met"
+
+def write_GeometryCompactGen_h( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include <iostream>
+        #include <fstream>
+        #include <cassert> 
+        #include <Metil/BasicVec.h>
+        #include <Metil/StructCompactor.h>
+        #include <Metil/CudaMetil.h>
+        #include "GeometryCompactClass.h"
+        #include "GeometryCompactGen_N.h"
+        //#include "GeometryCompactGen_M.h"
+        //#include "GeometryCompactGen_NeMe.h"
+        using namespace Metil;
+        // fonction permettant de calculer les opérateurs sur les sides des motifs en réalisant une boucle sur les groupes et en sélectionnant le type de pattern correspondant. Cette fonction appelle les sous-fonctions pour une exécution sous GPU.
+        void launch_calculate_side_N_M_GPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<GeometryCompactClass> geometry_compact_GPU);
+        // fonction permettant de calculer les opérateurs sur les sides des motifs en réalisant une boucle sur les groupes et en sélectionnant le type de pattern correspondant. Cette fonction appelle les sous-fonctions pour une exécution sous CPU.        
+        void launch_calculate_side_N_M_CPU(Ps<GeometryCompactClass> geometry_compact_CPU);
+        // fonction permettant de calculer les opérateurs sur les groupes d'interface en réalisant une boucle sur les groupes et en sélectionnant le type de pattern correspondant. Cette fonction appelle les sous-fonctions pour une exécution sous CPU.        
+        //void launch_calculate_interface_N_M_CPU(Ps<GeometryCompactClass> geometry_compact_CPU);
+          
+    
+def write_head_GeometryCompactGen_cu( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include "GeometryCompactGen.h"
+
+   
+def write_launch_calculate_side_N_M_GPU( type_patterns, fout )
+    fout <<<<
+        void launch_calculate_side_N_M_GPU(Ps<GeometryCompactClass> geometry_compact_CPU, Ps<GeometryCompactClass> geometry_compact_GPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_elements.size(); i_group++){
+                int threadsPerBlock = 48;
+                int sizeGrid = 6;
+                int nGrids = std::floor( geometry_compact_CPU->group_elements[i_group].connectivities[0].size()  / (sizeGrid*threadsPerBlock) ) + 1 ;  // obtenir l'entier superieur
+                int lastGridSize = (geometry_compact_CPU->group_elements[i_group].connectivities[0].size() - (sizeGrid*threadsPerBlock)*(nGrids-1))/threadsPerBlock;
+                //PRINT(nGrids);
+                //PRINT(lastGridSize);
+                switch (geometry_compact_CPU->group_elements[i_group].pattern_id){
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            for(int i_grid=0; i_grid < nGrids; i_grid++){
+                                int blocksPerGrid;
+                                if(i_grid == nGrids-1){
+                                    blocksPerGrid = lastGridSize;
+                                }else{
+                                    blocksPerGrid = sizeGrid;
+                                }
+                                //PRINT(i_grid);
+                                //PRINT(blocksPerGrid);
+                                //global_calculate_side_M_$(pattern.id )<<<blocksPerGrid,threadsPerBlock>>>(geometry_compact_GPU.ptr(), i_group, i_grid, sizeGrid, geometry_compact_CPU->group_elements[i_group].nb_elements);
+                                global_calculate_side_N_$(pattern.id )<<<blocksPerGrid,threadsPerBlock>>>(geometry_compact_GPU.ptr(), i_group, i_grid, sizeGrid, geometry_compact_CPU->group_elements[i_group].nb_elements);
+                            }
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);                    
+                    }
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+    
+def write_launch_calculate_side_N_M_CPU( type_patterns, fout )
+    fout <<<<
+        void launch_calculate_side_N_M_CPU(Ps<GeometryCompactClass> geometry_compact_CPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_elements.size(); i_group++){
+                switch (geometry_compact_CPU->group_elements[i_group].pattern_id){
+    num_type := 0
+    for type_pattern in type_patterns
+        info type_pattern
+        pattern := Pattern[ type_pattern ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            //global_calculate_side_M_$(pattern.id )_CPU(geometry_compact_CPU.ptr(), i_group);
+                            global_calculate_side_N_$(pattern.id )_CPU(geometry_compact_CPU.ptr(), i_group);
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);
+                    }
+                    
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+    
+
+def write_launch_calculate_interface_N_M_CPU( type_interfaces, fout )
+    fout <<<<
+        void launch_calculate_interface_N_M_CPU(Ps<GeometryCompactClass> geometry_compact_CPU){
+            for(int i_group=0; i_group < geometry_compact_CPU->group_interfaces.size(); i_group++){
+                switch (geometry_compact_CPU->group_interfaces[i_group].patterns_id[0]){
+    num_type := 0
+    for type_interface in type_interfaces
+        info type_interface
+        pattern := Interface[ type_interface, 1,"gen" ]()
+        fout <<<<
+                        //for pattern $(pattern.name )
+                        case $(pattern.id ) :{
+                            global_calculate_interface_NeMe_$(pattern.id )_CPU(geometry_compact_CPU.ptr(), i_group);
+                            break;
+                        }
+    fout <<<<
+                    default :{
+                        std::cerr << "type de pattern non implemente" << std::endl; assert(0);
+                    }
+                    
+    fout <<<<
+                }
+    fout <<<<
+            }
+    fout <<<<
+        }
+    
+
+# ----------------------------------------------
+# appel des fonction pour la génération du code
+# ----------------------------------------------
+file_generate_h := File( "../src/GEOMETRY/GeometryCompactGen.h", "w" )
+file_generate_cu := File( "../src/GEOMETRY/GeometryCompactGen.cu", "w" )
+write_GeometryCompactGen_h( file_generate_h )
+write_head_GeometryCompactGen_cu( file_generate_cu )
+
+write_launch_calculate_side_N_M_GPU( type_patterns, file_generate_cu )
+write_launch_calculate_side_N_M_CPU( type_patterns, file_generate_cu )
+write_launch_calculate_interface_N_M_CPU( type_interfaces, file_generate_cu )
+

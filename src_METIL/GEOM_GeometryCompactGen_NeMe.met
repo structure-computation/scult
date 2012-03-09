@@ -1,0 +1,80 @@
+import "interface.met"
+
+
+def write_head_GeometryCompactGen_NeMe_h( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include <iostream>
+        #include <fstream>
+        #include <cassert> 
+        #include <Metil/BasicVec.h>
+        #include <Metil/StructCompactor.h>
+        #include <Metil/CudaMetil.h>
+        #include "GeometryCompactClass.h"
+        using namespace Metil;
+        /// Fonctions inline (travaillant sur un motif) et global (travaillant sur une liste de motif sur GPU) permettant de calculer l'opérateur side_M sur chaque côté d'un motif. Cet opérateur permet de faire le lien entre les données sur les côtés et les données sur les interfaces
+    
+
+def write_GeometryCompactGen_NeMe_h( pattern, fout )
+        fout <<<<
+            //for pattern $(pattern.name )
+            __inline__ void calculate_interface_NeMe_$(pattern.id )(GeometryCompactClass *geometry_compact, int i_group, int i_elem);
+            __global__ void global_calculate_interface_NeMe_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, int i_group, int i_block, int sizeBlock, int nb_elements);
+            void global_calculate_interface_NeMe_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, int i_group);
+    
+
+def write_head_GeometryCompactGen_NeMe_cu( fout )
+    fout <<<<
+        // generated file
+        // 
+        #include "GeometryCompactGen_NeMe.h"
+
+   
+def write_inline_calculate_interface_NeMe( pattern, fout )
+    pattern.define_Me()
+    pattern.define_Ne()
+    cw := CodeWriterAlt()
+    cw.add( "geometry_compact->group_interfaces[i_group].Me[i_elem]", pattern.Me, reassign )
+    for i_node in 0 .. pattern.elem.nb_nodes
+        cw.add( "geometry_compact->group_interfaces[i_group].Ne[$i_node][i_elem]", pattern.Ne[i_node], reassign )
+    fout <<<<
+        __inline__ void calculate_interface_NeMe_$(pattern.id )(GeometryCompactClass *geometry_compact, int i_group, int i_elem){  
+            $(cw.to_string())
+        }
+     
+
+def write_global_calculate_interface_NeMe_GPU( pattern, fout )
+    fout <<<<
+        __global__ void global_calculate_interface_NeMe_$(pattern.id )(GeometryCompactClass *geometry_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements){
+            int i_elem = i_grid * sizeGrid * blockDim.x + blockIdx.x * blockDim.x + threadIdx.x;
+            if(i_elem <nb_elements){
+                calculate_interface_NeMe_$(pattern.id )(geometry_compact_GPU, i_group, i_elem);
+            }
+        }
+    
+def write_global_calculate_interface_NeMe_CPU( pattern, fout )
+    fout <<<<
+        void global_calculate_interface_NeMe_$(pattern.id )_CPU(GeometryCompactClass *geometry_compact_CPU, int i_group){
+            for(int i_elem=0; i_elem<geometry_compact_CPU->group_interfaces[i_group].nb_interfaces ; i_elem++)
+                calculate_interface_NeMe_$(pattern.id )(geometry_compact_CPU, i_group,i_elem);
+        }
+    
+#------------------------------------------------
+# appel des fonctions pour la génération du code
+# -----------------------------------------------
+file_generate_h := File( "../src/GEOMETRY/GeometryCompactGen_NeMe.h", "w" )
+file_generate_cu := File( "../src/GEOMETRY/GeometryCompactGen_NeMe.cu", "w" )
+write_head_GeometryCompactGen_NeMe_h( file_generate_h )
+write_head_GeometryCompactGen_NeMe_cu( file_generate_cu )
+
+print "génération des codes calculate_interface_NeMe"
+for type in type_interfaces
+    print "Interface "+type
+    interface :=Interface[ type , 1, "gen"]()
+    write_GeometryCompactGen_NeMe_h( interface, file_generate_h )
+    interface.def_pos_nodes_elem("i_group","i_elem")
+    write_inline_calculate_interface_NeMe( interface, file_generate_cu )
+    write_global_calculate_interface_NeMe_GPU( interface, file_generate_cu )
+    write_global_calculate_interface_NeMe_CPU( interface, file_generate_cu )
+
