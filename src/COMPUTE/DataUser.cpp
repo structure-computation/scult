@@ -560,59 +560,69 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
                 //behaviour_materials[i].alpha_3=value.get_str();
                 behaviour_materials[i].mat_prop[25]=value.get_str();
             }
-            else if( name == "Yo" )
+            else if( name == "k_p" )
             {
                 //behaviour_materials[i].Yo = value.get_str();
                 behaviour_materials[i].mat_prop[26]=value.get_str();
             }
-            else if( name == "Ysp" )
+            else if( name == "m_p" )
             {
                 //behaviour_materials[i].Ysp = value.get_str();
                 behaviour_materials[i].mat_prop[27]=value.get_str();
             }
-            else if( name == "Yop" )
+            else if( name == "R0" )
             {
                 //behaviour_materials[i].Yop = value.get_str();
                 behaviour_materials[i].mat_prop[28]=value.get_str();
             }
-            else if( name == "Yc" )
+            else if( name == "couplage" )
             {
                 //behaviour_materials[i].Yc = value.get_str();
                 behaviour_materials[i].mat_prop[29]=value.get_str();
             }
-            else if( name == "Ycp" )
+            else if( name == "Yo" )
             {
                 //behaviour_materials[i].Ycp = value.get_str();
                 behaviour_materials[i].mat_prop[30]=value.get_str();
             }
-            else if( name == "b" )
+            else if( name == "Yc" )
             {
                 //behaviour_materials[i].b = value.get_str();
                 behaviour_materials[i].mat_prop[31]=value.get_str();
             }
-            else if( name == "kp" )
+            else if( name == "Ycf" )
             {
                 //behaviour_materials[i].Yop = value.get_str();
                 behaviour_materials[i].mat_prop[32]=value.get_str();
             }
-            else if( name == "mp" )
+            else if( name == "dmax" )
             {
                 //behaviour_materials[i].Yc = value.get_str();
                 behaviour_materials[i].mat_prop[33]=value.get_str();
             }
-            else if( name == "R0" )
+            else if( name == "b_c" )
             {
                 //behaviour_materials[i].Ycp = value.get_str();
                 behaviour_materials[i].mat_prop[34]=value.get_str();
             }
-            else if( name == "c" )
+            else if( name == "effet_retard" )
+            {
+                //behaviour_materials[i].b = value.get_str();
+                behaviour_materials[i].mat_prop[35]=value.get_str();
+            }
+            else if( name == "a" )
+            {
+                //behaviour_materials[i].b = value.get_str();
+                behaviour_materials[i].mat_prop[35]=value.get_str();
+            }
+            else if( name == "tau_c" )
             {
                 //behaviour_materials[i].b = value.get_str();
                 behaviour_materials[i].mat_prop[35]=value.get_str();
             }
             else
             {
-                std::cerr << "Donnee materials non implementee"<< std::endl;
+                std::cerr << "Donnee materials non implementee : " << name << std::endl;
             }
         }
     }

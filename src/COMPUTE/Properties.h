@@ -56,26 +56,28 @@ public:
         mat_prop_name[23] = "alpha_1";
         mat_prop_name[24] = "alpha_2";
         mat_prop_name[25] = "alpha_3";
-        //endomagement
-        mat_prop_name[26] = "Yo"; 
-        mat_prop_name[27] = "Ysp";
-        mat_prop_name[28] = "Yop";
-        mat_prop_name[29] = "Yc";
-        mat_prop_name[30] = "Ycp";
-        mat_prop_name[31] = "b";
-        //plasticite kp, mp, R0 et c
-        mat_prop_name[32] = "kp";
-        mat_prop_name[33] = "mp";
-        mat_prop_name[34] = "R0";
-        mat_prop_name[35] = "c";
+        //plasticite : f(s,p) = seq - R(p) - R0 avec R(p) = k_p * p ^ m_p et seq = sqrt(s12²+s13²+s23²+couplage*(s22²+s33²))
+        mat_prop_name[26] = "k_p";      /// Coefficient multiplicateur de la loi d'ecrouissage
+        mat_prop_name[27] = "m_p";      /// Coefficient multiplicateur de la loi d'ecrouissage
+        mat_prop_name[28] = "R0";       /// Limite d'elasticite
+        mat_prop_name[29] = "couplage"; /// Coefficient de couplage pour le calcul de la contrainte equivalente
+        //endommagement
+        mat_prop_name[30] = "Yo";       /// Seuil d'endommagement du matériau (de la matrice)
+        mat_prop_name[31] = "Yc";       /// Seuil d'endommagement critique du matériau (de la matrice)
+        mat_prop_name[32] = "Ycf";      /// Seuil d'endommagement critique des fibres
+        mat_prop_name[33] = "dmax";     /// Endommagement maximal atteint
+        mat_prop_name[34] = "b_c";      /// Couplage entre micro-fissuration et decohesion fibres/matrice
+        mat_prop_name[35] = "effet_retard";     /// Booleen "effet retard active?"
+        mat_prop_name[36] = "a";                /// Parametre de l'effet retard
+        mat_prop_name[37] = "tau_c";            /// Parametre de l'effet retard
         
         
         link_prop_name.resize(8);
-        link_prop_name[0] = "coef_frottement";      // coefficient de frottement
-        link_prop_name[1] = "Ep";                   // epaisseur
-        link_prop_name[2] = "jeux";                 // jeux
-        link_prop_name[3] = "R";                    // raideur pour les liaisons elastiques  
-        link_prop_name[4] = "Lp";                   // pour la plasticité
+        link_prop_name[0] = "coef_frottement";      /// coefficient de frottement
+        link_prop_name[1] = "Ep";                   /// epaisseur
+        link_prop_name[2] = "jeux";                 /// jeux
+        link_prop_name[3] = "R";                    /// raideur pour les liaisons elastiques  
+        link_prop_name[4] = "Lp";                   /// pour la plasticité
         link_prop_name[5] = "Dp";
         link_prop_name[6] = "p";
         link_prop_name[7] = "Lr";
