@@ -29,7 +29,7 @@ public:
     BasicVec< std::string > BCv_step_prop_name; 
     
     Properties(){
-        mat_prop_name.resize(36);
+        mat_prop_name.resize(38);
         mat_prop_name[0] =  "elastic_modulus";
         mat_prop_name[1] =  "poisson_ratio";
         mat_prop_name[2] =  "alpha";
@@ -58,7 +58,7 @@ public:
         mat_prop_name[25] = "alpha_3";
         //plasticite : f(s,p) = seq - R(p) - R0 avec R(p) = k_p * p ^ m_p et seq = sqrt(s12²+s13²+s23²+couplage*(s22²+s33²))
         mat_prop_name[26] = "k_p";      /// Coefficient multiplicateur de la loi d'ecrouissage
-        mat_prop_name[27] = "m_p";      /// Coefficient multiplicateur de la loi d'ecrouissage
+        mat_prop_name[27] = "m_p";      /// exposant de la loi d'ecrouissage
         mat_prop_name[28] = "R0";       /// Limite d'elasticite
         mat_prop_name[29] = "couplage"; /// Coefficient de couplage pour le calcul de la contrainte equivalente
         //endommagement

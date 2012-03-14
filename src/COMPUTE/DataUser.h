@@ -56,7 +56,7 @@ class DataUser{
     std::string extension; 		        //extention pour le nom du fichier de mesh
     std::string name_directory; 		//nom du repertoire pour sauvegarder le motif
     std::string mesh_directory; 		//nom du repertoire pour sauvegarder les meshs  
-    std::string calcul_path;                    //chemin d'acces au repertoire model
+    std::string calcul_path;                    //chemin d'acces au repertoire calcul
     std::string file_calcul;                    //fichier json pour le calcul
     String id_calcul;                           // id du calcul en cours
     Patterns patterns;
@@ -90,7 +90,7 @@ class DataUser{
         int id;
         std::string name;
         int num_in_mesh_file;
-        BasicVec<GroupInterfaces *,2> adj_group_elements;
+        BasicVec<GroupElements *,2> adj_group_elements;
         BasicVec<int> adj_num_group;
         std::string origine; //origine du groupe d'interface
         std::string type;

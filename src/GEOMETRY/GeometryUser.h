@@ -113,7 +113,7 @@ class GeometryUser{
       void read_infos_group_elements_hdf5(Hdf &hdf, String &name, bool read_micro);      // lecture des autres info sur les group_elements
       void read_tag_group_interfaces_hdf5(Hdf &hdf, String &name, bool read_micro);      // lecture des tag pour les group_interfaces
       void read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool read_micro);    // lecture des autres info sur les group_interfaces  
-      void read_hdf5(bool read_micro, bool read_all, std::string mode);                                   //lecture des données du fichier hdf5 et assignation des champs de la classe GEOMETRY_USER
+      void read_hdf5(bool read_micro, bool read_all, std::string mode);                  //lecture des données du fichier hdf5 et assignation des champs de la classe GEOMETRY_USER
       
       void initialize_GPU();                                                            // initialisation pour calcul sur GPU
       void mpi_repartition();                            // repartition des groups d'elements en fonction de la repartition des sst pour mpi

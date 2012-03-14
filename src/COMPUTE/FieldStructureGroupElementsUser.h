@@ -31,13 +31,13 @@ struct FieldStructureGroupElementsUser{
     int id;
     int pattern_id;
     int material_id;
-    int nb_nodes;               //nombre de noeuds du groupe
-    int nb_nodes_skin;       //nombre de noeuds sur la peau du groupe
-    int nb_nodes_for_GPU;       //nombre de noeuds du groupe multiple de la taille acceptee par le GPU
-    int nb_elements;            //nombre d'elements du groupe (taille des vecteurs definis aux elements)
-    int nb_elements_skin;    //nombre d'elements de peau du groupe 
-    int nb_elements_for_GPU;    //nombre d'elements multiple de la taille acceptee par le GPU
-    int nb_elements_skin_for_GPU;    //nombre d'elements de peau multiple de la taille acceptee par le GPU
+    int nb_nodes;                                       //nombre de noeuds du groupe
+    int nb_nodes_skin;                                  //nombre de noeuds sur la peau du groupe
+    int nb_nodes_for_GPU;                               //nombre de noeuds du groupe multiple de la taille acceptee par le GPU
+    int nb_elements;                                    //nombre d'elements du groupe (taille des vecteurs definis aux elements)
+    int nb_elements_skin;                               //nombre d'elements de peau du groupe 
+    int nb_elements_for_GPU;                            //nombre d'elements multiple de la taille acceptee par le GPU
+    int nb_elements_skin_for_GPU;                       //nombre d'elements de peau multiple de la taille acceptee par le GPU
        
     BasicVec< BasicVec< TYPE > > pt;                    // centre de l'element
     BasicVec< TYPE > size;                              // volume de l'element
@@ -51,20 +51,20 @@ struct FieldStructureGroupElementsUser{
     BasicVec< BasicVec< TYPE > > mat_elem;              // liste des composantes des matrices élémentaires stockés en symétrique : mat_elem[i*(i+1)/2+j][i_elem] permet d'accéder au terme (i,j) de la matrice de rigidité de l'élément i_elem.
     
     //champs issus de calcul
-    BasicVec<BasicVec<TYPE>,DIM > displacement_local_nodes; ///< deplacements aux noeuds
-    BasicVec<BasicVec<TYPE>,DIM > explode_displacement_local_nodes; ///< deplacements pour l'éclaté aux noeuds
-    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > sigma; ///< vecteur contrainte du maillage
-    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > epsilon; ///< vecteur deformation du maillage
-    BasicVec< TYPE > sigma_mises; ///< vecteur contrainte de von mises du maillage    
-    BasicVec< TYPE > material_behaviour; ///< numero du materiau assigné à la pièce
-    BasicVec< TYPE > num_processor; ///< numero du processeur traitant la pièce
-    BasicVec<BasicVec<TYPE>,DIM > displacement_local_nodes_skin; ///< deplacements aux noeuds de peau 
-    BasicVec<BasicVec<TYPE>,DIM > explode_displacement_local_nodes_skin; ///< deplacements pour l'éclaté aux noeuds de peau 
-    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > sigma_skin; ///< vecteur contrainte du maillage de peau 
-    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > epsilon_skin; ///< vecteur deformation du maillage de peau 
-    BasicVec< TYPE > sigma_mises_skin; ///< vecteur contrainte de von mises du maillage de peau 
-    BasicVec< TYPE > material_behaviour_skin; ///< numero du materiau assigné à la pièce (peau)
-    BasicVec< TYPE > num_processor_skin; ///<  numero du processuer traitant la pièce (peau)
+    BasicVec<BasicVec<TYPE>,DIM > displacement_local_nodes;                     ///< deplacements aux noeuds
+    BasicVec<BasicVec<TYPE>,DIM > explode_displacement_local_nodes;             ///< deplacements pour l'éclaté aux noeuds
+    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > sigma;                          ///< vecteur contrainte du maillage
+    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > epsilon;                        ///< vecteur deformation du maillage
+    BasicVec< TYPE > sigma_mises;                                               ///< vecteur contrainte de von mises du maillage    
+    BasicVec< TYPE > material_behaviour;                                        ///< numero du materiau assigné à la pièce
+    BasicVec< TYPE > num_processor;                                             ///< numero du processeur traitant la pièce
+    BasicVec<BasicVec<TYPE>,DIM > displacement_local_nodes_skin;                ///< deplacements aux noeuds de peau 
+    BasicVec<BasicVec<TYPE>,DIM > explode_displacement_local_nodes_skin;        ///< deplacements pour l'éclaté aux noeuds de peau 
+    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > sigma_skin;                     ///< vecteur contrainte du maillage de peau 
+    BasicVec<BasicVec< TYPE > , DIM*(DIM+1)/2 > epsilon_skin;                   ///< vecteur deformation du maillage de peau 
+    BasicVec< TYPE > sigma_mises_skin;                                          ///< vecteur contrainte de von mises du maillage de peau 
+    BasicVec< TYPE > material_behaviour_skin;                                   ///< numero du materiau assigné à la pièce (peau)
+    BasicVec< TYPE > num_processor_skin;                                        ///<  numero du processuer traitant la pièce (peau)
     
     // méthodes du groupe------------------------------------------
     
