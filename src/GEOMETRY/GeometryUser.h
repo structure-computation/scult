@@ -99,16 +99,16 @@ class GeometryUser{
       void initialize_group_interfaces_from_MeshUser(MeshUser &mesh_);                  // initialisation à partir des interfaces du maillage
       
       void write_json(MeshUser &mesh_user);                                             // ecriture du fichier json pour l'interface
-      void write_nodes_hdf5(Hdf &hdf, String name);             //ecriture des noeuds globaux dans un fichier hdf5
-      void write_group_elements_hdf5(Hdf &hdf, String name, int i_group);             //ecriture des donnees d'un groupe d'elements dans un fichier hdf5
+      void write_nodes_hdf5(Hdf &hdf, String name);                                     //ecriture des noeuds globaux dans un fichier hdf5
+      void write_group_elements_hdf5(Hdf &hdf, String name, int i_group);               //ecriture des donnees d'un groupe d'elements dans un fichier hdf5
       void write_group_elements_skin_hdf5(Hdf &hdf, String name, int i_group);             //ecriture des donnees d'un groupe d'elements dans un fichier hdf5
       void write_group_interfaces_hdf5(Hdf &hdf, String name, int i_group);             //ecriture des donnees d'un groupe d'interfaces dans un fichier hdf5
       void write_side_group_interfaces_hdf5(Hdf &hdf, String name, int i_group, int i_side);             //ecriture des donnees d'un coté d'un groupe d'interfaces dans un fichier hdf5
-      void write_hdf5(String file_output_hdf5);                                        // ecriture de le geometrie complete dans un fichier hdf5 par processeur
+      void write_hdf5(String file_output_hdf5);                                         // ecriture de le geometrie complete dans un fichier hdf5 par processeur
       void write_hdf5_in_parallel(String file_output_hdf5, int rank);                                        // ecriture de le geometrie complete dans un fichier hdf5 par processeur
       void write_xdmf(String output_xdmf, String input_hdf5, String name_geometry, int skin); //Ecriture du fichier xdmf "output_xdmf" avec références aux données du fichier hdf5 "input_hdf5" 
                                                                                                                                                                                    
-      void read_node_hdf5(Hdf &hdf, String name, bool read_micro);                      // lecture des noeuds dans le hdf                                                                                                                                                                          
+      void read_node_hdf5(Hdf &hdf, String name, bool read_micro);                       // lecture des noeuds dans le hdf                                                                                                                                                                          
       void read_tag_group_elements_hdf5(Hdf &hdf, String &name, bool read_micro);        // lecture des tag pour les group_elements
       void read_infos_group_elements_hdf5(Hdf &hdf, String &name, bool read_micro);      // lecture des autres info sur les group_elements
       void read_tag_group_interfaces_hdf5(Hdf &hdf, String &name, bool read_micro);      // lecture des tag pour les group_interfaces
@@ -116,7 +116,7 @@ class GeometryUser{
       void read_hdf5(bool read_micro, bool read_all, std::string mode);                  //lecture des données du fichier hdf5 et assignation des champs de la classe GEOMETRY_USER
       
       void initialize_GPU();                                                            // initialisation pour calcul sur GPU
-      void mpi_repartition();                            // repartition des groups d'elements en fonction de la repartition des sst pour mpi
+      void mpi_repartition();                                                           // repartition des groups d'elements en fonction de la repartition des sst pour mpi
       
       void affiche();                                                                    // affichage des group pour verification
 

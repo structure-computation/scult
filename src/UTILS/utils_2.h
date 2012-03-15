@@ -95,7 +95,6 @@ template<class T> bool pt_in_box(const BasicVec<T,3> &pt, BasicVec<BasicVec<T,3>
 template<class T> bool pt_in_cylinder(BasicVec<T,2> &pt, BasicVec<BasicVec<T,2> > &box, T radius, const double eps=1e-3){
     bool flag=false;
     T dot_pt_box =  dot(pt-box[0],box[1]-box[0]) / norm_2_p2(box[1]-box[0]);
-    BasicVec<T,2> vec1 =  dot_pt_box * (box[1]-box[0]);
     T r = norm_2_p2((pt-box[0]) - dot_pt_box * (box[1]-box[0]) / norm_2_p2(box[1]-box[0]));
     if( r <= abs(radius+eps) && dot_pt_box >=0 && dot_pt_box <= norm_2_p2(box[1]-box[0]) )
         flag=true;

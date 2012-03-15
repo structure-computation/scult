@@ -623,19 +623,19 @@ void GeometryUser::write_nodes_hdf5(Hdf &hdf, String name_geometry){
 #if DIM==3
     mesh_nodes[2].write_to( hdf, name_geometry + "/nodes/z" );
 #endif
-/*    //ecriture des noeuds du maillage
-    mesh_nodes[0].write_to( hdf, name + "/mesh_nodes/x" );
-    mesh_nodes[1].write_to( hdf, name + "/mesh_nodes/y" );
-#if DIM==3
-    mesh_nodes[2].write_to( hdf, name + "/mesh_nodes/z" );
-#endif
+//     //ecriture des noeuds du maillage
+//     mesh_nodes[0].write_to( hdf, name + "/mesh_nodes/x" );
+//     mesh_nodes[1].write_to( hdf, name + "/mesh_nodes/y" );
+// #if DIM==3
+//     mesh_nodes[2].write_to( hdf, name + "/mesh_nodes/z" );
+// #endif
     
     //ecriture des noeuds vision micro
-    nodes[0].write_to( hdf, name + "/micro_nodes/x" );
-    nodes[1].write_to( hdf, name + "/micro_nodes/y" );
-#if DIM==3
-    nodes[2].write_to( hdf, name + "/micro_nodes/z" );
-#endif */
+//     nodes[0].write_to( hdf, name_geometry + "/micro_nodes/x" );
+//     nodes[1].write_to( hdf, name_geometry + "/micro_nodes/y" );
+// #if DIM==3
+//     nodes[2].write_to( hdf, name_geometry + "/micro_nodes/z" );
+// #endif 
     
 }
 
@@ -667,11 +667,11 @@ void GeometryUser::write_group_elements_hdf5(Hdf &hdf, String name_geometry, int
         name_connect << name_list << "/global_connectivities_"<<nb_connect;
         group_elements[ng].global_connectivities[nb_connect].write_to( hdf, name_connect );
     }
-//         for (unsigned nb_connect=0;nb_connect<group_elements[ng].connectivities.size();nb_connect++) {
-//             String name_connect;
-//             name_connect << name_list << "/c"<<nb_connect;
-//             group_elements[ng].connectivities[nb_connect].write_to( hdf, name_connect );
-//         }
+//     for (unsigned nb_connect=0;nb_connect<group_elements[ng].connectivities.size();nb_connect++) {
+//         String name_connect;
+//         name_connect << name_list << "/micro_connectivities_"<<nb_connect;
+//         group_elements[ng].connectivities[nb_connect].write_to( hdf, name_connect );
+//     }
 
     hdf.add_tag(name_list,"piece",name_list.c_str());
     std::string type_elements="null";       
@@ -781,7 +781,7 @@ void GeometryUser::write_group_interfaces_hdf5(Hdf &hdf, String name_geometry, i
         }
 //         for (unsigned nb_connect=0;nb_connect<group_interfaces[ng].connectivities.size();nb_connect++) {
 //             String name_connect;
-//             name_connect << name_list << "/c"<<nb_connect;
+//             name_connect << name_list << "/micro_connectivities_"<<nb_connect;
 //             group_interfaces[ng].connectivities[nb_connect].write_to( hdf, name_connect );
 //         }
         if (group_interfaces[ng].type==0) {//bord
@@ -940,13 +940,13 @@ void GeometryUser::read_node_hdf5(Hdf &hdf, String name, bool read_micro) {
 #endif*/
     
     if(read_micro){
-        //lecture des noeuds micro
-        nodes.resize(DIM);
-        nodes[0].read_from( hdf, name + "/micro_nodes/x" );
-        nodes[1].read_from( hdf, name + "/micro_nodes/y" );
-#if DIM==3
-        nodes[2].read_from( hdf, name + "/micro_nodes/z" );
-#endif
+//         //lecture des noeuds micro
+//         nodes.resize(DIM);
+//         nodes[0].read_from( hdf, name + "/micro_nodes/x" );
+//         nodes[1].read_from( hdf, name + "/micro_nodes/y" );
+// #if DIM==3
+//         nodes[2].read_from( hdf, name + "/micro_nodes/z" );
+// #endif
     }else{
         nodes.resize(DIM);
         nodes[0].resize(0);
@@ -1017,11 +1017,11 @@ void GeometryUser::read_infos_group_elements_hdf5(Hdf &hdf, String &name, bool r
             group_elements[id].global_connectivities[i_connect].read_from( hdf, name_connect );
         }
         if(read_micro){
-            for (unsigned i_connect=0;i_connect<group_elements[id].connectivities.size();i_connect++) {
-                String name_connect;
-                name_connect << name_list << "/micro_connectivities_"<<i_connect;
-                group_elements[id].connectivities[i_connect].read_from( hdf, name_connect );
-            }
+//             for (unsigned i_connect=0;i_connect<group_elements[id].connectivities.size();i_connect++) {
+//                 String name_connect;
+//                 name_connect << name_list << "/micro_connectivities_"<<i_connect;
+//                 group_elements[id].connectivities[i_connect].read_from( hdf, name_connect );
+//             }
         }else{
             for (unsigned i_connect=0;i_connect<group_elements[id].connectivities.size();i_connect++) {
                 group_elements[id].connectivities[i_connect].resize(0);
@@ -1142,13 +1142,12 @@ void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool
                 group_interfaces[id].global_connectivities[nb_connect].read_from( hdf, name_connect );
             }
             if(read_micro){
-            group_interfaces[id].connectivities.resize(nb_nodes);
-                
-                for (unsigned i_connect=0;i_connect<group_interfaces[id].connectivities.size();i_connect++) {
-                    String name_connect;
-                    name_connect << name_list << "/micro_connectivities_"<<i_connect;;
-                    group_interfaces[id].connectivities[i_connect].read_from( hdf, name_connect );
-                }
+//                 group_interfaces[id].connectivities.resize(nb_nodes);
+//                 for (unsigned i_connect=0;i_connect<group_interfaces[id].connectivities.size();i_connect++) {
+//                     String name_connect;
+//                     name_connect << name_list << "/micro_connectivities_"<<i_connect;;
+//                     group_interfaces[id].connectivities[i_connect].read_from( hdf, name_connect );
+//                 }
             }else{
                 for (unsigned i_connect=0;i_connect<group_interfaces[id].connectivities.size();i_connect++) {
                     group_interfaces[id].connectivities[i_connect].resize(0);
