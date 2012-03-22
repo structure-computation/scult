@@ -12,10 +12,6 @@
 #ifndef DATA_USER_H
 #define DATA_USER_H
 
-
-#include <iostream>
-#include <fstream>
-
 #include <Metil/Level1/CompilationEnvironment.h>
 #include <Metil/DynamicLibrary.h>
 #include <Metil/BasicVec.h>
@@ -24,9 +20,12 @@
 #include "Patterns.h"
 #include "Properties.h"
 #include "json_spirit.h"
+#include "../UTILS/Sc2String.h"
+
+#include "../UTILS/Sc2String.h"
 
 using namespace json_spirit;  
-// using namespace Metil;
+using namespace Metil;
 BEG_METIL_NAMESPACE;
 
 class DataUser{
@@ -34,31 +33,31 @@ class DataUser{
     //Attributs
     //******************************************************************************************
     public :
-    DataUser(std::string model_path_, std::string calcul_path_, const char *id_calcul_){
+    DataUser(Sc2String model_path_, Sc2String calcul_path_, Sc2String id_calcul_){
         id_calcul << id_calcul_;
         model_path = model_path_;
         calcul_path = calcul_path_;
 //         PRINT(id_calcul);
     }
-    DataUser(std::string id_model_, std::string id_calcul_){
+    DataUser(Sc2String id_model_, Sc2String id_calcul_){
         model_path = "/share/sc2/Developpement/MODEL/";
         calcul_path = model_path + "model_" + id_model_ + "/calcul_" + id_calcul_ ;
         file_calcul = calcul_path + "/calcul.json" ;    
-        id_calcul << id_calcul_.c_str();
+        id_calcul << id_calcul_;
 //         PRINT(id_calcul);
     }
     DataUser(){
     }
     //nom et chemins de fichier--------------------------------
-    std::string metil_comp_path;                //chemin vers metil_comp pour la compilation à la volée
-    std::string model_path; 		        //chemin d'acces au repertoire model
-    std::string name_mesh_user; 		//nom du fichier mesh utilisateur
-    std::string extension; 		        //extention pour le nom du fichier de mesh
-    std::string name_directory; 		//nom du repertoire pour sauvegarder le motif
-    std::string mesh_directory; 		//nom du repertoire pour sauvegarder les meshs  
-    std::string calcul_path;                    //chemin d'acces au repertoire model
-    std::string file_calcul;                    //fichier json pour le calcul
-    String id_calcul;                           // id du calcul en cours
+    Sc2String metil_comp_path;        //chemin vers metil_comp pour la compilation à la volée
+    Sc2String model_path;             //chemin d'acces au repertoire model
+    Sc2String name_mesh_user;         //nom du fichier mesh utilisateur
+    Sc2String extension;              //extention pour le nom du fichier de mesh
+    Sc2String name_directory;         //nom du repertoire pour sauvegarder le motif
+    Sc2String mesh_directory;         //nom du repertoire pour sauvegarder les meshs  
+    Sc2String calcul_path;            //chemin d'acces au repertoire model
+    Sc2String file_calcul;            //fichier json pour le calcul
+    Sc2String id_calcul;                   // id du calcul en cours
     Patterns patterns;
     Properties properties;  
     static const int dim = DIM;
@@ -67,9 +66,9 @@ class DataUser{
     // DATA pour les groupes d'elements--------------------
     struct GroupElements{
         int id;
-        std::string name;
+        Sc2String name;
         int num_in_mesh_file;
-        std::string origine; //origine du groupe d'element
+        Sc2String origine; //origine du groupe d'element
         int id_material;
         
         template<class TB,class TP>
@@ -88,12 +87,12 @@ class DataUser{
     // DATA pour les groupes d'interfaces------------------
     struct GroupInterfaces{
         int id;
-        std::string name;
+        Sc2String name;
         int num_in_mesh_file;
         BasicVec<GroupInterfaces *,2> adj_group_elements;
         BasicVec<int> adj_num_group;
-        std::string origine; //origine du groupe d'interface
-        std::string type;
+        Sc2String origine; //origine du groupe d'interface
+        Sc2String type;
         int id_link;
         float assigned;
         
@@ -117,13 +116,13 @@ class DataUser{
     
     // DATA pour les groupes de bords --------------------
     struct Geometry{
-        std::string origine;
-        std::string type;
-        std::string nature;
+        Sc2String origine;
+        Sc2String type;
+        Sc2String nature;
         double radius;
         BasicVec<BasicVec<double, DIM> > points;
         BasicVec<double, DIM> pdirection;
-        std::string equation;
+        Sc2String equation;
         
         Geometry(){
             points.resize(DIM);
@@ -147,7 +146,7 @@ class DataUser{
     };
     struct GroupEdges{
         int id;
-        std::string name;
+        Sc2String name;
         int num_in_mesh_file;
         BasicVec<GroupElements *> adj_group_elements;
         BasicVec<int> adj_num_group;
@@ -183,19 +182,19 @@ class DataUser{
             mat_prop.resize(properties.mat_prop_name.size(),"0");
             mat_prop_name = properties.mat_prop_name;
         }
-	std::string name;
-	std::string familly;
-	std::string name_select;
-	std::string description;
-	std::string type;
-	std::string comp;
-        std::string resolution;
-	int    type_num;
-	int    id;
+        Sc2String name;
+        Sc2String familly;
+        Sc2String name_select;
+        Sc2String description;
+        Sc2String type;
+        Sc2String comp;
+        Sc2String resolution;
+        int    type_num;
+        int    id;
     
         Properties properties;
-        BasicVec< std::string > mat_prop;
-        BasicVec< std::string > mat_prop_name;
+        BasicVec< Sc2String > mat_prop;
+        BasicVec< Sc2String > mat_prop_name;
         
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
@@ -223,19 +222,19 @@ class DataUser{
             link_prop_name = properties.link_prop_name;
         }
         int id;
-        std::string  name;
-        std::string  familly;
+        Sc2String  name;
+        Sc2String  familly;
         int  company_id;
         int  reference;
         int  id_select;
-        std::string  name_select;
-        std::string  type;
-        std::string  comp_complexe;
+        Sc2String  name_select;
+        Sc2String  type;
+        Sc2String  comp_complexe;
         int  type_num;
 
         Properties properties;
-        BasicVec< std::string > link_prop;
-        BasicVec< std::string > link_prop_name;
+        BasicVec< Sc2String > link_prop;
+        BasicVec< Sc2String > link_prop_name;
         
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
@@ -264,12 +263,12 @@ class DataUser{
         }
         
         Properties properties;
-        BasicVec< std::string > CL_step_prop;
-        BasicVec< std::string > CL_step_prop_name;   
+        BasicVec< Sc2String > CL_step_prop;
+        BasicVec< Sc2String > CL_step_prop_name;   
     };
     struct BehavBc {
         int id;
-        std::string type;
+        Sc2String type;
         BasicVec<StepBc> step;
         
         template<class TB,class TP>
@@ -292,14 +291,14 @@ class DataUser{
         }
         
         Properties properties;
-        BasicVec< std::string > CLv_step_prop;
-        BasicVec< std::string > CLv_step_prop_name;   
+        BasicVec< Sc2String > CLv_step_prop;
+        BasicVec< Sc2String > CLv_step_prop_name;   
         
     };
     struct BehavBcVolume{
-        std::string name;
+        Sc2String name;
         BasicVec<StepBcVolume> step;
-        std::string type;
+        Sc2String type;
         bool select;
         int ref;
         
@@ -321,7 +320,7 @@ class DataUser{
     
     struct TimeStep{
         TYPE dt; //pas de temps
-        std::string name ; //nom du step
+        Sc2String name ; //nom du step
         int nb_time_step; // nombre de pas de temps dans le step
         TYPE tf; //temps final du step
         TYPE ti; //temps initial du step
@@ -330,7 +329,7 @@ class DataUser{
     
     struct MultiresolutionParameters{
         TYPE min_value,max_value,nominal_value, current_value; //données concernant les variations d'un paramètre
-        std::string name ; //nom du paramètre donné par l'utilisateur et utilisé dans les expressions
+        Sc2String name ; //nom du paramètre donné par l'utilisateur et utilisé dans les expressions
         int nb_values; // nombre de valeurs du paramètre (uniquement en plan d'exp) sinon utilisation de Multiresolution_nb_cycle
         BasicVec<int> materials, links, CL, CLvolume; //liste des numeros des données utilisées pour la multirésolution
     };
@@ -367,10 +366,10 @@ class DataUser{
 	    trac_ener_diss=0;
 	    trac_ener_imp=0;
         }
-        std::string mode;
-        std::string resolution_2D;
+        Sc2String mode;
+        Sc2String resolution_2D;
         int nb_option;
-        std::string Temp_statique;
+        Sc2String Temp_statique;
         int LATIN_nb_iter_max;
         TYPE LATIN_crit_error;
         TYPE LATIN_crit_error_auto_stop;
@@ -379,7 +378,7 @@ class DataUser{
         int multiechelle;
         int save_depl;        
         int Multiresolution_on;
-        std::string Multiresolution_type;
+        Sc2String Multiresolution_type;
         int Multiresolution_nb_cycle;
         int Multiresolution_current_resolution;
         int Multiresolution_nb_calcul;
@@ -428,7 +427,7 @@ class DataUser{
     int find_index_behaviour_bc(int id_);                               // recherche de l'indexe d'un behaviour_bc particulier avec son id
     
     //initialisation des données------------------------------------------------------------------------------------------
-    void initialisation(std::string id_model_, std::string id_calcul_);         // même fonction que le constructeur ayant les mêmes arguments
+    void initialisation(Sc2String id_model_, Sc2String id_calcul_);         // même fonction que le constructeur ayant les mêmes arguments
     
     //lecture du json pour les differente structure de données------------------------------------------------------------
     void read_json_groups_elements(const Object& gr);	                        //lecture des groupes d'elements
@@ -470,7 +469,7 @@ class DataUser{
     void write_global_read_data_bc_volume_acceleration_group_elements( int i_CLv, int i_step, StringWithSepInCppLineMaker &file);   // ecriture de la fonction globale qui calcul l'effort d'acceleration sur un element
     void write_launch_read_data_bc_volume_group_elements( StringWithSepInCppLineMaker &file );          // boucle sur les groupes d'elements pour l'appel de la fonction globale sur les effort volumiques
     
-    void write_read_prop_cpp(String &file_cu, String &file_h);
+    void write_read_prop_cpp(Sc2String &file_cu, Sc2String &file_h);
     DataReader *NEW_DataReader( );
     
 };

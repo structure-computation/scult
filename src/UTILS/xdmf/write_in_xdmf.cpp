@@ -23,10 +23,10 @@ using namespace Metil;
 
 //gpu
 //ecriture de la geometrie
-void LEVEL::write_geometry_xdmf(DATA_USER &data_user, String type){
+void LEVEL::write_geometry_xdmf(DATA_USER &data_user, Sc2String type){
     
     string name_hdf =data_user.name_directory + "/MESH/geometry.h5";
-    if(FileExists(name_hdf.c_str())==0){ std::cerr << "Le fichier hdf5 n'est pas crée : impossible de créer le fichier xdmf";}
+    if(FileExists(name_hdf)==0){ std::cerr << "Le fichier hdf5 n'est pas crée : impossible de créer le fichier xdmf";}
 
     //ecriture du fichier xdmf pour visualisation par paraview
     string name_xdmf=data_user.name_directory+"/MESH/geometry.xdmf";
@@ -39,15 +39,15 @@ void LEVEL::write_geometry_xdmf(DATA_USER &data_user, String type){
 #endif
 }
 
-void LEVEL::write_geometry_behaviour_xdmf(DATA_USER &data_user, String type){
+void LEVEL::write_geometry_behaviour_xdmf(DATA_USER &data_user, Sc2String type){
     
-    String name_hdf;
-    name_hdf << data_user.name_directory.c_str() <<  "/calcul_"<< data_user.id_calcul.c_str() << "/geometry_behaviour.h5";
-    if(FileExists(name_hdf.c_str())==0){ std::cerr << "Le fichier hdf5 n'est pas crée : impossible de créer le fichier xdmf";}
+    Sc2String name_hdf;
+    name_hdf << data_user.name_directory <<  "/calcul_"<< data_user.id_calcul << "/geometry_behaviour.h5";
+    if(FileExists(name_hdf)==0){ std::cerr << "Le fichier hdf5 n'est pas crée : impossible de créer le fichier xdmf";}
 
     //ecriture du fichier xdmf pour visualisation par paraview
-    String name_xdmf;
-    name_xdmf << data_user.name_directory.c_str() <<  "/calcul_"<< data_user.id_calcul.c_str() << "/geometry_behaviour.xdmf";
+    Sc2String name_xdmf;
+    name_xdmf << data_user.name_directory <<  "/calcul_"<< data_user.id_calcul << "/geometry_behaviour.xdmf";
     
     //correspondance entre les noms des comportements et un numéro d'affichage sous xdmf;
     name_behaviour_elements_1["Perfect"]=0;
@@ -94,50 +94,50 @@ void LEVEL::write_geometry_behaviour_xdmf(DATA_USER &data_user, String type){
 
 
 
-void write_xdmf_from_hdf5(String output_xdmf, String input_hdf5, String name_geometry, int skin, String name_fields, BasicVec<String> attributs=("none"))
+void write_xdmf_from_hdf5(Sc2String output_xdmf, Sc2String input_hdf5, Sc2String name_geometry, int skin, Sc2String name_fields, BasicVec<Sc2String> attributs=("none"))
 {
     std::ofstream f(output_xdmf.c_str());
-    String  name_nodes;
+    Sc2String  name_nodes;
     name_nodes << name_geometry << "/nodes" ;
-    Hdf hdf(input_hdf5.c_str());
+    Hdf hdf(input_hdf5);
     int nb_nodes;
-    String data_node_x=name_nodes+"/x";
+    Sc2String data_node_x=name_nodes+"/x";
     hdf.read_size(data_node_x,nb_nodes);
     f << "<Xdmf Version=\"2.0\">" << endl; 
     f << "  <Domain>" << endl;
     //ecriture des donnees de noeuds
-    f <<"           <DataItem Name=\"X\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_geometry.c_str() << "/nodes/x </DataItem>" << endl;
-    f <<"           <DataItem Name=\"Y\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_geometry.c_str() << "/nodes/y </DataItem>" << endl;
+    f <<"           <DataItem Name=\"X\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_geometry << "/nodes/x </DataItem>" << endl;
+    f <<"           <DataItem Name=\"Y\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_geometry << "/nodes/y </DataItem>" << endl;
 #if DIM==3
-    f <<"           <DataItem Name=\"Z\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_geometry.c_str() << "/nodes/z </DataItem>" << endl;
+    f <<"           <DataItem Name=\"Z\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_geometry << "/nodes/z </DataItem>" << endl;
 #endif
     
 
     //ecriture des donnees de connectivites des elements_0 et elements_1 : necessite les tags nb_list pour les groupes elements_0 et _1, ainsi que nb_elements, base pour les listes de connectivites
     for(unsigned el=skin;el<2;el++){
         int nb_list;
-        String name_elements_el;
+        Sc2String name_elements_el;
         name_elements_el<<name_geometry<<"/elements_"<<el;
         hdf.read_group_size(name_elements_el,nb_list);
         for(unsigned i=0; i< nb_list; i++){
-            String name_list;
+            Sc2String name_list;
             name_list << name_elements_el <<"/list_" <<  i;
-            String name_list_c0=name_list+"/c0";
+            Sc2String name_list_c0=name_list+"/c0";
             int nb_elems;
             hdf.read_size(name_list_c0,nb_elems);
             int nb_nodes_elem;
-            String name_element;
+            Sc2String name_element;
             hdf.read_tag(name_list,"base",name_element,1);
             if(name_element=="Bar"){nb_nodes_elem=2;}
             else if(name_element=="Triangle"){nb_nodes_elem=3;}
             else if(name_element=="Tetra"){nb_nodes_elem=4;}
             else {std::cerr << "Type d'element enfant non implementé" ; assert(0);}
             for(unsigned j=0;j<nb_nodes_elem ; j++){
-                String name_data_item;
+                Sc2String name_data_item;
                 name_data_item << "elements_"<<el<<"_list_" << i << "_c" << j;
-                String data_item;
+                Sc2String data_item;
                 data_item << name_list << "/c" <<j ;
-                f <<"           <DataItem Name=\"" << name_data_item.c_str() << "\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_elems << " 1\">" <<  input_hdf5.c_str() <<":"<< data_item.c_str() <<" </DataItem>" << endl;
+                f <<"           <DataItem Name=\"" << name_data_item << "\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_elems << " 1\">" <<  input_hdf5 <<":"<< data_item <<" </DataItem>" << endl;
             }
         }
     }
@@ -145,10 +145,10 @@ void write_xdmf_from_hdf5(String output_xdmf, String input_hdf5, String name_geo
  //Attributs
  for(unsigned attr=0;attr<attributs.size();attr++){
      if(attributs[attr]=="all"){
-f <<"           <DataItem Name=\"dx\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_fields.c_str() <<"/displacements/x </DataItem>" << endl;
-f <<"           <DataItem Name=\"dy\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<<  name_fields.c_str() <<"/displacements/y </DataItem>" << endl;
+f <<"           <DataItem Name=\"dx\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_fields <<"/displacements/x </DataItem>" << endl;
+f <<"           <DataItem Name=\"dy\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<<  name_fields <<"/displacements/y </DataItem>" << endl;
 #if DIM==3
-f <<"           <DataItem Name=\"dz\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<<  name_fields.c_str() <<"/displacements/z </DataItem>" << endl;
+f <<"           <DataItem Name=\"dz\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<<  name_fields <<"/displacements/z </DataItem>" << endl;
 #endif
 /*f <<"           <DataItem Name=\"sxx\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_elements << " \">" << input_hdf5 << ":/Level_" <<num_level <<"/Fields/sigma/xx </DataItem>" << endl;
 f <<"           <DataItem Name=\"syy\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_elements << " \">" << input_hdf5 << ":/Level_" <<num_level <<"/Fields/sigma/yy </DataItem>" << endl;
@@ -171,30 +171,30 @@ f <<"           <DataItem Name=\"eyz\" Format=\"HDF\" NumberType=\"Float\" Preci
     for(unsigned el=skin;el<2;el++){
         f<< "           <Grid Name=\"Geometry_"<<el<<"\" GridType=\"Tree\">" << endl;
         int nb_list;
-        String name_elements_el;
+        Sc2String name_elements_el;
         name_elements_el<<name_geometry<<"/elements_"<<el;
         hdf.read_group_size(name_elements_el,nb_list);   
         for(unsigned i=0; i< nb_list; i++){
-            String name_list;
+            Sc2String name_list;
             name_list << name_elements_el <<  "/list_" <<  i;        
-            String name_list_c0=name_list+"/c0";
+            Sc2String name_list_c0=name_list+"/c0";
             int nb_elems;
             hdf.read_size(name_list_c0,nb_elems);
             int nb_nodes_elem;
-            String name_element;
+            Sc2String name_element;
             hdf.read_tag(name_list,"base",name_element);
-            String JOIN, name_element_xdmf;
+            Sc2String JOIN, name_element_xdmf;
             if(name_element=="Bar"){nb_nodes_elem=2; JOIN="JOIN($0 , $1 )"; name_element_xdmf="Bar"; }
             else if(name_element=="Triangle"){nb_nodes_elem=3;JOIN="JOIN($0 , $1 , $2  )";name_element_xdmf="Triangle";}
             else if(name_element=="Tetra"){nb_nodes_elem=4;JOIN="JOIN($0 , $1 , $2  , $3)";name_element_xdmf="Tetrahedron";}
             else {std::cerr << "Type d'element enfant non implementé" ; assert(0);}        
             f<<"                    <Grid Name=\"list_"<< i <<"\">" << endl;
-            f<<"                            <Topology Type=\""<<name_element_xdmf.c_str()<<"\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
-            f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  " << nb_nodes_elem <<" \" ItemType=\"Function\" Function=\""<<JOIN.c_str()<<"\"> " <<endl;
+            f<<"                            <Topology Type=\""<<name_element_xdmf<<"\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
+            f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  " << nb_nodes_elem <<" \" ItemType=\"Function\" Function=\""<<JOIN<<"\"> " <<endl;
             for(unsigned j=0;j<nb_nodes_elem ; j++){
-                String name_data_item;
+                Sc2String name_data_item;
                 name_data_item << "elements_"<<el<<"_list_" << i << "_c" << j;
-                f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item.c_str() <<"\"] </DataItem> " << endl;
+                f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item <<"\"] </DataItem> " << endl;
             }
             f<<"                                     </DataItem> " <<endl;
             f<<"                            </Topology>" <<endl;
@@ -212,7 +212,7 @@ f <<"           <DataItem Name=\"eyz\" Format=\"HDF\" NumberType=\"Float\" Preci
         for(unsigned attr=0;attr<attributs.size();attr++){
             if(attributs[attr]=="all"){            
                     f<<"                            <Attribute Name=\"displacements\"  AttributeType=\"Vector\" Center=\"Node\">" << endl;
-                    f<<"                                    <DataItem Dimensions=\" "<< nb_nodes << " "<< DIM <<" \" ItemType=\"Function\" Function=\""<<JOIN.c_str()<<"\"> " <<endl;
+                    f<<"                                    <DataItem Dimensions=\" "<< nb_nodes << " "<< DIM <<" \" ItemType=\"Function\" Function=\""<<JOIN<<"\"> " <<endl;
                     f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"dx\"] </DataItem> " << endl;
                     f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"dy\"] </DataItem> " << endl;
         #if DIM==3            
@@ -232,50 +232,50 @@ f <<"           <DataItem Name=\"eyz\" Format=\"HDF\" NumberType=\"Float\" Preci
 f.close();
 }
 /*
-void write_xdmf_from_hdf5_time(String output_xdmf, String input_hdf5, String name_geometry, int skin, String name_fields, BasicVec<String> attributs=("none"), BasicVec<TYPE> time)
+void write_xdmf_from_hdf5_time(Sc2String output_xdmf, Sc2String input_hdf5, Sc2String name_geometry, int skin, Sc2String name_fields, BasicVec<Sc2String> attributs=("none"), BasicVec<TYPE> time)
 {
     std::ofstream f(output_xdmf.c_str());
-    String  name_nodes;
+    Sc2String  name_nodes;
     name_nodes << name_geometry << "/nodes" ;
-    Hdf hdf(input_hdf5.c_str());
+    Hdf hdf(input_hdf5);
     int nb_nodes;
-    String data_node_x=name_nodes+"/x";
+    Sc2String data_node_x=name_nodes+"/x";
     hdf.read_size(data_node_x,nb_nodes);
     f << "<Xdmf Version=\"2.0\">" << endl; 
     f << "  <Domain>" << endl;
     //ecriture des donnees de noeuds
-    f <<"           <DataItem Name=\"X\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_geometry.c_str() << "/nodes/x </DataItem>" << endl;
-    f <<"           <DataItem Name=\"Y\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_geometry.c_str() << "/nodes/y </DataItem>" << endl;
+    f <<"           <DataItem Name=\"X\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_geometry << "/nodes/x </DataItem>" << endl;
+    f <<"           <DataItem Name=\"Y\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_geometry << "/nodes/y </DataItem>" << endl;
 #if DIM==3
-    f <<"           <DataItem Name=\"Z\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_geometry.c_str() << "/nodes/z </DataItem>" << endl;
+    f <<"           <DataItem Name=\"Z\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_geometry << "/nodes/z </DataItem>" << endl;
 #endif
     
 
     //ecriture des donnees de connectivites des elements_0 et elements_1 : necessite les tags nb_list pour les groupes elements_0 et _1, ainsi que nb_elements, base pour les listes de connectivites
     for(unsigned el=skin;el<2;el++){
         int nb_list;
-        String name_elements_el;
+        Sc2String name_elements_el;
         name_elements_el<<name_geometry<<"/elements_"<<el;
         hdf.read_group_size(name_elements_el,nb_list);
         for(unsigned i=0; i< nb_list; i++){
-            String name_list;
+            Sc2String name_list;
             name_list << name_elements_el <<"/list_" <<  i;
-            String name_list_c0=name_list+"/c0";
+            Sc2String name_list_c0=name_list+"/c0";
             int nb_elems;
             hdf.read_size(name_list_c0,nb_elems);
             int nb_nodes_elem;
-            String name_element;
+            Sc2String name_element;
             hdf.read_tag(name_list,"base",name_element,1);
             if(name_element=="Bar"){nb_nodes_elem=2;}
             else if(name_element=="Triangle"){nb_nodes_elem=3;}
             else if(name_element=="Tetra"){nb_nodes_elem=4;}
             else {std::cerr << "Type d'element enfant non implementé" ; assert(0);}
             for(unsigned j=0;j<nb_nodes_elem ; j++){
-                String name_data_item;
+                Sc2String name_data_item;
                 name_data_item << "elements_"<<el<<"_list_" << i << "_c" << j;
-                String data_item;
+                Sc2String data_item;
                 data_item << name_list << "/c" <<j ;
-                f <<"           <DataItem Name=\"" << name_data_item.c_str() << "\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_elems << " 1\">" <<  input_hdf5.c_str() <<":"<< data_item.c_str() <<" </DataItem>" << endl;
+                f <<"           <DataItem Name=\"" << name_data_item << "\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_elems << " 1\">" <<  input_hdf5 <<":"<< data_item <<" </DataItem>" << endl;
             }
         }
     }
@@ -284,10 +284,10 @@ void write_xdmf_from_hdf5_time(String output_xdmf, String input_hdf5, String nam
  for(unsigned attr=0;attr<attributs.size();attr++){
      if(attributs[attr]=="all"){
          for(unsigned t=0;t<time.size();t++){
-f <<"           <DataItem Name=\"dx_"<<t<<"\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<< name_fields.c_str() <<"/displacements_"<<t<<"/x </DataItem>" << endl;
-f <<"           <DataItem Name=\"dy_"<<t<<"\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<<  name_fields.c_str() <<"/displacements_"<<t<<"/y </DataItem>" << endl;
+f <<"           <DataItem Name=\"dx_"<<t<<"\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<< name_fields <<"/displacements_"<<t<<"/x </DataItem>" << endl;
+f <<"           <DataItem Name=\"dy_"<<t<<"\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<<  name_fields <<"/displacements_"<<t<<"/y </DataItem>" << endl;
 #if DIM==3
-f <<"           <DataItem Name=\"dz_"<<t<<"\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5.c_str() <<":"<<  name_fields.c_str() <<"/displacements_"<<t<<"/z </DataItem>" << endl;
+f <<"           <DataItem Name=\"dz_"<<t<<"\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " 1 \">" << input_hdf5 <<":"<<  name_fields <<"/displacements_"<<t<<"/z </DataItem>" << endl;
 #endif
 /*f <<"           <DataItem Name=\"sxx\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_elements << " \">" << input_hdf5 << ":/Level_" <<num_level <<"/Fields/sigma/xx </DataItem>" << endl;
 f <<"           <DataItem Name=\"syy\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_elements << " \">" << input_hdf5 << ":/Level_" <<num_level <<"/Fields/sigma/yy </DataItem>" << endl;
@@ -312,30 +312,30 @@ f <<"           <DataItem Name=\"eyz\" Format=\"HDF\" NumberType=\"Float\" Preci
     for(unsigned el=skin;el<2;el++){
         f<< "           <Grid Name=\"Geometry_"<<el<<"\" GridType=\"Tree\">" << endl;
         int nb_list;
-        String name_elements_el;
+        Sc2String name_elements_el;
         name_elements_el<<name_geometry<<"/elements_"<<el;
         hdf.read_group_size(name_elements_el,nb_list);   
         for(unsigned i=0; i< nb_list; i++){
-            String name_list;
+            Sc2String name_list;
             name_list << name_elements_el <<  "/list_" <<  i;        
-            String name_list_c0=name_list+"/c0";
+            Sc2String name_list_c0=name_list+"/c0";
             int nb_elems;
             hdf.read_size(name_list_c0,nb_elems);
             int nb_nodes_elem;
-            String name_element;
+            Sc2String name_element;
             hdf.read_tag(name_list,"base",name_element);
-            String JOIN, name_element_xdmf;
+            Sc2String JOIN, name_element_xdmf;
             if(name_element=="Bar"){nb_nodes_elem=2; JOIN="JOIN($0 , $1 )"; name_element_xdmf="Bar"; }
             else if(name_element=="Triangle"){nb_nodes_elem=3;JOIN="JOIN($0 , $1 , $2  )";name_element_xdmf="Triangle";}
             else if(name_element=="Tetra"){nb_nodes_elem=4;JOIN="JOIN($0 , $1 , $2  , $3)";name_element_xdmf="Tetrahedron";}
             else {std::cerr << "Type d'element enfant non implementé" ; assert(0);}        
             f<<"                    <Grid Name=\"list_"<< i <<" t="<< time[t] <<"\">" << endl;
-            f<<"                            <Topology Type=\""<<name_element_xdmf.c_str()<<"\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
-            f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  " << nb_nodes_elem <<" \" ItemType=\"Function\" Function=\""<<JOIN.c_str()<<"\"> " <<endl;
+            f<<"                            <Topology Type=\""<<name_element_xdmf<<"\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
+            f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  " << nb_nodes_elem <<" \" ItemType=\"Function\" Function=\""<<JOIN<<"\"> " <<endl;
             for(unsigned j=0;j<nb_nodes_elem ; j++){
-                String name_data_item;
+                Sc2String name_data_item;
                 name_data_item << "elements_"<<el<<"_list_" << i << "_c" << j;
-                f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item.c_str() <<"\"] </DataItem> " << endl;
+                f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item <<"\"] </DataItem> " << endl;
             }
             f<<"                                     </DataItem> " <<endl;
             f<<"                            </Topology>" <<endl;
@@ -353,7 +353,7 @@ f <<"           <DataItem Name=\"eyz\" Format=\"HDF\" NumberType=\"Float\" Preci
         for(unsigned attr=0;attr<attributs.size();attr++){
             if(attributs[attr]=="all"){            
                     f<<"                            <Attribute Name=\"displacements\"  AttributeType=\"Vector\" Center=\"Node\">" << endl;
-                    f<<"                                    <DataItem Dimensions=\" "<< nb_nodes << " "<< DIM <<" \" ItemType=\"Function\" Function=\""<<JOIN.c_str()<<"\"> " <<endl;
+                    f<<"                                    <DataItem Dimensions=\" "<< nb_nodes << " "<< DIM <<" \" ItemType=\"Function\" Function=\""<<JOIN<<"\"> " <<endl;
                     f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"dx\"] </DataItem> " << endl;
                     f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"dy\"] </DataItem> " << endl;
         #if DIM==3            
@@ -374,28 +374,28 @@ f.close();
 }
 */
 
-void LEVEL::write_geometry_fields_xdmf(DATA_USER &data_user, String type){
+void LEVEL::write_geometry_fields_xdmf(DATA_USER &data_user, Sc2String type){
     
     if(type=="fields"){ 
-        String name_hdf;
-        name_hdf << data_user.name_directory.c_str() <<  "/calcul_"<< data_user.id_calcul.c_str() << "/geometry_fields.h5";
-        if(FileExists(name_hdf.c_str())==0){ std::cerr << "Le fichier hdf5 n'est pas crée : impossible de créer le fichier xdmf";}
+        Sc2String name_hdf;
+        name_hdf << data_user.name_directory <<  "/calcul_"<< data_user.id_calcul << "/geometry_fields.h5";
+        if(FileExists(name_hdf)==0){ std::cerr << "Le fichier hdf5 n'est pas crée : impossible de créer le fichier xdmf";}
 
         //ecriture du fichier xdmf pour visualisation par paraview
-        String name_xdmf;
-        name_xdmf << data_user.name_directory.c_str() <<  "/calcul_"<< data_user.id_calcul.c_str() << "/geometry_fields.xdmf";
-        String name_geometry_hdf5 = "/Level_0/Geometry"; 
-        String name_fields_hdf5 = "/Level_0/Fields";
+        Sc2String name_xdmf;
+        name_xdmf << data_user.name_directory <<  "/calcul_"<< data_user.id_calcul << "/geometry_fields.xdmf";
+        Sc2String name_geometry_hdf5 = "/Level_0/Geometry"; 
+        Sc2String name_fields_hdf5 = "/Level_0/Fields";
 
-        write_xdmf_from_hdf5(name_xdmf, name_hdf, name_geometry_hdf5,1,name_fields_hdf5,BasicVec<String>("all"));
+        write_xdmf_from_hdf5(name_xdmf, name_hdf, name_geometry_hdf5,1,name_fields_hdf5,BasicVec<Sc2String>("all"));
     }
     else if(type=="pattern"){
-        String input_hdf5, output_xdmf;
-        input_hdf5 << data_user.name_directory.c_str() << "/calcul_" << data_user.id_calcul.c_str()<< "/geometry_pattern.h5";
-        output_xdmf << data_user.name_directory.c_str() << "/calcul_" << data_user.id_calcul.c_str()<< "/geometry_pattern.xdmf";
-        String name_geometry_hdf5 = "/Level_0/Geometry";
-        String name_fields_hdf5 = "/Level_0/Fields";
-        write_xdmf_from_hdf5(output_xdmf, input_hdf5, name_geometry_hdf5,0,name_fields_hdf5, BasicVec<String>("none"));
+        Sc2String input_hdf5, output_xdmf;
+        input_hdf5 << data_user.name_directory << "/calcul_" << data_user.id_calcul<< "/geometry_pattern.h5";
+        output_xdmf << data_user.name_directory << "/calcul_" << data_user.id_calcul<< "/geometry_pattern.xdmf";
+        Sc2String name_geometry_hdf5 = "/Level_0/Geometry";
+        Sc2String name_fields_hdf5 = "/Level_0/Fields";
+        write_xdmf_from_hdf5(output_xdmf, input_hdf5, name_geometry_hdf5,0,name_fields_hdf5, BasicVec<Sc2String>("none"));
     }
 
 }
@@ -405,7 +405,7 @@ void LEVEL::write_geometry_fields_xdmf(DATA_USER &data_user, String type){
 //Ecriture du comportement associe aux patterns et aux interfaces
 // void LEVEL::write_behaviours_hdf(DATA_USER &data_user, string type){
 //     string name_hdf=data_user.name_directory+"/MESH/mesh.h5";
-//     Hdf hdf( name_hdf.c_str() );
+//     Hdf hdf( name_hdf );
 //     
 //     //copie des numeros de groupe des patterns (pieces)
 //     for(unsigned i=0;i<nb.sst; i++){
@@ -417,7 +417,7 @@ void LEVEL::write_geometry_fields_xdmf(DATA_USER &data_user, String type){
 //          Behaviours.interfaces << I_comp[i];
 //     }
 //     
-//     String name;
+//     Sc2String name;
 //     name << "/Level_" << num_level << "/Behaviours";
 //     Behaviours.write_to(hdf,name);
 //     string name_xdmf=data_user.name_directory+"/MESH/geometry_behaviours.xdmf";
@@ -436,7 +436,7 @@ void LEVEL::write_geometry_fields_xdmf(DATA_USER &data_user, String type){
 // //Ecriture du comportement associe aux patterns et aux interfaces
 // void LEVEL::write_fields_hdf(DATA_USER &data_user, string type){
 //     string name_hdf=data_user.name_directory+"/MESH/mesh.h5";
-//     Hdf hdf( name_hdf.c_str() );
+//     Hdf hdf( name_hdf );
 //     
 //     //gpu
 //     int nb_nodes_tot=0;
@@ -508,7 +508,7 @@ void LEVEL::write_geometry_fields_xdmf(DATA_USER &data_user, String type){
 //     }
 // 
 //     
-//     String name;
+//     Sc2String name;
 //     name << "/Level_" << num_level << "/Fields";
 //     Fields.write_to(hdf,name);
 //     string name_xdmf=data_user.name_directory+"/calcul_"+data_user.id_calcul+"/fields.xdmf";

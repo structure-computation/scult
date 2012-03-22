@@ -21,14 +21,14 @@
 
 using namespace Metil;
 
-inline void rm_commas_loc( std::string &str ) {
+inline void rm_commas_loc( Sc2String &str ) {
     for(unsigned i=0;i<str.size();++i)
         if ( str[i] == ',' )
             str[i] = ' ';
 }
 /// lire un fichier bdf (bulkdata) genere par gmsh (option freefield ou longfield) dans un mesh LMT note m 
 
-void MeshUser::read_bdf(const std::string fic_name) {
+void MeshUser::read_bdf(const Sc2String fic_name) {
     std::ifstream is( fic_name.c_str() );
     if ( ! is.is_open() ){
         throw std::runtime_error( "opening of "+fic_name+" has failed.");
@@ -41,7 +41,7 @@ void MeshUser::read_bdf(const std::string fic_name) {
         if (! is )
             throw std::runtime_error("bdf file is corrupted ");
 
-        std::string str2;
+        Sc2String str2;
         getline(is,str2);
 
         // Evaluation du contexte
@@ -59,13 +59,13 @@ void MeshUser::read_bdf(const std::string fic_name) {
             //modification de la ligne si option LONGFIELDS
             size_t found=str2.find("*N");;
             if(found<str2.size()){
-                std::string rep=str2.substr(found);//extration de *Ni et effacement
+                Sc2String rep=str2.substr(found);//extration de *Ni et effacement
                 str2.replace(found,str2.length()," ");
-                std::string str3;//recherche dans la ligne suivante
+                Sc2String str3;//recherche dans la ligne suivante
                 getline(is,str3);
                 //verification si *Ni est bien dans la ligne suivante
                 if(str3.find(rep)<str3.size()){
-                    std::string extract=str3.substr (rep.size(),str3.size());//extraction de ce qu'il y a apres *Ni
+                    Sc2String extract=str3.substr (rep.size(),str3.size());//extraction de ce qu'il y a apres *Ni
                     str2.append(extract);
                 }
             }
@@ -86,7 +86,7 @@ void MeshUser::read_bdf(const std::string fic_name) {
         //Separation des cas en fonction du contexte
         if (ctxte==1 or ctxte==3) {
             std::istringstream s(str2);
-            std::string name;
+            Sc2String name;
             s >>name;
             int number;
             s >> number;
@@ -107,7 +107,7 @@ void MeshUser::read_bdf(const std::string fic_name) {
         if(ctxte==2){
             std::istringstream s(str2);
             //lecture du type d'element, de son numero, de sa caracteristique materiau, de ses noeuds
-            std::string type;
+            Sc2String type;
             int pattern_base_id;
             int num_type_pattern;
             int num;

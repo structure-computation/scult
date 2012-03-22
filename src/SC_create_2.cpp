@@ -17,9 +17,9 @@ int main( int argc, char **argv ) {
         return 1;
     }
     static const int dim = DIM;
-    std::string id_model = argv[ 1 ];
-    std::string model_path = "/share/sc2/Developpement/MODEL/";
-    std::string file = model_path + "model_" + id_model + "/MESH/model_id.json";
+    Sc2String id_model = argv[ 1 ];
+    Sc2String model_path = "/share/sc2/Developpement/MODEL/";
+    Sc2String file = model_path + "model_" + id_model + "/MESH/model_id.json";
 
     
     

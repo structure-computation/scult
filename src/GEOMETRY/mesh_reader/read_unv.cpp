@@ -158,7 +158,7 @@ void read_unv_groups(BasicVec< EntityElementUser > &list_elements, std::istream 
 }
 
 /// lire un fichier .unv généré par Salomé contenant ou non des groupes d'éléments
-void MeshUser::read_unv(const std::string fic_name) {
+void MeshUser::read_unv(const Sc2String fic_name) {
     std::ifstream is( fic_name.c_str() );
     if ( ! is.is_open() ) {
         throw std::runtime_error( "opening of "+fic_name+" has failed.");
@@ -166,7 +166,7 @@ void MeshUser::read_unv(const std::string fic_name) {
     map<int,int> map_num_element;
     /*  int old,news=0;*/
     while (true) {
-        std::string str;
+        Sc2String str;
         int news=0;
         getline(is,str);
         if ( not is )

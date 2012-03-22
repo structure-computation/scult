@@ -177,8 +177,8 @@ struct FieldStructureGroupElementsUser{
         PRINT(nb_elements);
     }
     
-    void write_hdf5(Hdf &hdf_file, String name_fields, int pt_cur, TYPE val_time);      //ecriture des champs specifies sur les groupes d'elements dans un fichier hdf5
-    void write_skin_hdf5(Hdf &hdf_file, String name_fields, int pt_cur, TYPE val_time);      //ecriture des champs specifies sur la peau (skin) des groupes d'elements dans un fichier hdf5
+    void write_hdf5(Hdf &hdf_file, Sc2String name_fields, int pt_cur, TYPE val_time);      //ecriture des champs specifies sur les groupes d'elements dans un fichier hdf5
+    void write_skin_hdf5(Hdf &hdf_file, Sc2String name_fields, int pt_cur, TYPE val_time);      //ecriture des champs specifies sur la peau (skin) des groupes d'elements dans un fichier hdf5
     
     
 };

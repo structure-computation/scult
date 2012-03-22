@@ -90,13 +90,13 @@ GeometryUser::GeometryUser() {
     dim = DIM;
 }
 
-GeometryUser::GeometryUser(std::string id_model, std::string id_calcul) {
+GeometryUser::GeometryUser(Sc2String id_model, Sc2String id_calcul) {
     dim = DIM;
     model_path = "/share/sc2/Developpement/MODEL/";
     mesh_path = model_path + "model_" + id_model + "/MESH";
     calcul_path = model_path + "model_" + id_model + "/calcul_" + id_calcul ;
     calcul_file = calcul_path + "/calcul.json" ;
-    name_file_hdf5 << mesh_path.c_str() << "/visu_geometry.h5";
+    name_file_hdf5 << mesh_path << "/visu_geometry.h5";
 }
 
 GeometryUser::GeometryUser(MeshUser &mesh_) {
@@ -122,27 +122,27 @@ GeometryUser::GeometryUser(MeshUser &mesh_) {
     write_json( mesh_ );
 
     std::cout << "** écriture du hdf5       ********************************************************************************************" << std::endl;
-    String file_output_hdf5=mesh_.name_visu_hdf;
+    Sc2String file_output_hdf5=mesh_.name_visu_hdf;
     write_hdf5( file_output_hdf5 );
 /*
     std::cout << "** écriture du xdmf       ********************************************************************************************" << std::endl;
-    String name_geometry_hdf5 = "/Level_0/Geometry";
-    String name_fields_hdf5 = "/Level_0/Structure_Fields";
-    write_xdmf(mesh_.name_visu_xdmf, mesh_.name_visu_hdf, name_geometry_hdf5,0, name_fields_hdf5, BasicVec<String>("none"));*/
+    Sc2String name_geometry_hdf5 = "/Level_0/Geometry";
+    Sc2String name_fields_hdf5 = "/Level_0/Structure_Fields";
+    write_xdmf(mesh_.name_visu_xdmf, mesh_.name_visu_hdf, name_geometry_hdf5,0, name_fields_hdf5, BasicVec<Sc2String>("none"));*/
 
     std::cout << "** écriture du xdmf       ********************************************************************************************" << std::endl;
-    String name_geometry_hdf5 = "/Level_0/Geometry";
+    Sc2String name_geometry_hdf5 = "/Level_0/Geometry";
     //write_xdmf(mesh_.name_visu_xdmf, mesh_.name_visu_hdf, name_geometry_hdf5,0);
 
 }
 
-void GeometryUser::initialisation(std::string id_model, std::string id_calcul) {
+void GeometryUser::initialisation(Sc2String id_model, Sc2String id_calcul) {
     dim = DIM;
     model_path = "/share/sc2/Developpement/MODEL/";
     mesh_path = model_path + "model_" + id_model + "/MESH";
     calcul_path = model_path + "model_" + id_model + "/calcul_" + id_calcul ;
     calcul_file = calcul_path + "/calcul.json" ;
-    name_file_hdf5 << mesh_path.c_str() << "/visu_geometry.h5";
+    name_file_hdf5 << mesh_path << "/visu_geometry.h5";
 }
 
 void GeometryUser::affiche() {
@@ -419,13 +419,13 @@ bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Geom
 
 void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {
     PRINT("Visualisation des bords respectant un critère donné -------");
-    String name_visu_hdf; 
-    name_visu_hdf << data_user.mesh_directory.c_str() << "/visu_geometry.h5";
-    Hdf hdf( name_visu_hdf.c_str() );
-    String name;
+    Sc2String name_visu_hdf; 
+    name_visu_hdf << data_user.mesh_directory << "/visu_geometry.h5";
+    Hdf hdf( name_visu_hdf );
+    Sc2String name;
     int num_level=0;
     name << "/Level_" << num_level << "/Geometry";
-    String name_group_1;
+    Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
     
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
@@ -440,7 +440,7 @@ void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {
                     }
                     if(sum(group_interfaces[i_group].to_visualize)!=0)
                         std::cout << sum(group_interfaces[i_group].to_visualize) << std::endl;
-                    String name_field ;
+                    Sc2String name_field ;
                     name_field << name_group_1 << "/list_" << group_interfaces[i_group].id << "/to_visualize";
                     group_interfaces[i_group].to_visualize.write_to( hdf, name_field );
                 }
@@ -502,7 +502,7 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
 //ecriture du fichier json pour l'interface utilisateur javascript---------------
 void GeometryUser::write_json(MeshUser &mesh_user) {
     //ecriture du nom du fichier json
-    std::string path=mesh_user.name_directory+"/MESH/mesh.txt";
+    Sc2String path=mesh_user.name_directory+"/MESH/mesh.txt";
     std::ofstream os( path.c_str() );
     //ecriture du debut du fichier------------------
     Object mesh;
@@ -529,7 +529,7 @@ void GeometryUser::write_json(MeshUser &mesh_user) {
         group.push_back(Pair( "identificateur", group_elements[i_group].id ));
         std::ostringstream name_group;
         name_group << "piece " << group_elements[i_group].id;
-        group.push_back(Pair( "name", name_group.str() ));
+        group.push_back(Pair( "name", Sc2String(name_group.str()) ));
         group.push_back(Pair( "assigned", -1 ));
         group.push_back(Pair( "group", -1 ));
 
@@ -552,12 +552,12 @@ void GeometryUser::write_json(MeshUser &mesh_user) {
             group.push_back(Pair( "type", "between_group_elem" ));
             std::ostringstream name_group;
             name_group << "interface " << group_interfaces[i_group].id;
-            group.push_back(Pair( "name", name_group.str() ));
+            group.push_back(Pair( "name", Sc2String(name_group.str()) ));
             group.push_back(Pair( "assigned", -1 ));
             group.push_back(Pair( "group", -1 ));
             std::ostringstream adj;
             adj << group_interfaces[i_group].group_elements_id[0] << " " << group_interfaces[i_group].group_elements_id[1];
-            group.push_back(Pair( "adj_num_group", adj.str() ));
+            group.push_back(Pair( "adj_num_group", Sc2String(adj.str()) ));
             std::ostringstream num;
             num << i_group;
             //group_inter_a.push_back(Pair(num.str(),group));
@@ -616,7 +616,7 @@ void GeometryUser::write_json(MeshUser &mesh_user) {
 }
 
 
-void GeometryUser::write_nodes_hdf5(Hdf &hdf, String name_geometry){
+void GeometryUser::write_nodes_hdf5(Hdf &hdf, Sc2String name_geometry){
     //ecriture des noeuds du maillage
     mesh_nodes[0].write_to( hdf, name_geometry + "/nodes/x" );
     mesh_nodes[1].write_to( hdf, name_geometry + "/nodes/y" );
@@ -639,45 +639,45 @@ void GeometryUser::write_nodes_hdf5(Hdf &hdf, String name_geometry){
     
 }
 
-void GeometryUser::write_group_elements_hdf5(Hdf &hdf, String name_geometry, int ng){
-    String name_group_0;
+void GeometryUser::write_group_elements_hdf5(Hdf &hdf, Sc2String name_geometry, int ng){
+    Sc2String name_group_0;
     name_group_0 << name_geometry << "/elements_0";
     
-    String name_list ;
+    Sc2String name_list ;
     name_list<< name_group_0 << "/list_" << group_elements[ng].id ;
 
     //enregistrement des noeuds locaux
-    BasicVec < String , 3 > name_direction("x","y","z");
+    BasicVec < Sc2String , 3 > name_direction("x","y","z");
     for(int d=0; d<DIM; d++){
-        String name_dim;
+        Sc2String name_dim;
         name_dim << name_list << "/local_nodes/" << name_direction[d];
         group_elements[ng].local_nodes[d].write_to( hdf, name_dim );
     }
-    String name_map;
+    Sc2String name_map;
     name_map << name_list << "/map_global_nodes" ;
     group_elements[ng].map_global_nodes.write_to( hdf, name_map );
     //enregistrement des connectivités
     for (unsigned nb_connect=0;nb_connect<group_elements[ng].local_connectivities.size();nb_connect++) {
-        String name_connect;
+        Sc2String name_connect;
         name_connect << name_list << "/local_connectivities_"<<nb_connect;
         group_elements[ng].local_connectivities[nb_connect].write_to( hdf, name_connect );
     }
     for (unsigned nb_connect=0;nb_connect<group_elements[ng].global_connectivities.size();nb_connect++) {
-        String name_connect;
+        Sc2String name_connect;
         name_connect << name_list << "/global_connectivities_"<<nb_connect;
         group_elements[ng].global_connectivities[nb_connect].write_to( hdf, name_connect );
     }
 //         for (unsigned nb_connect=0;nb_connect<group_elements[ng].connectivities.size();nb_connect++) {
-//             String name_connect;
+//             Sc2String name_connect;
 //             name_connect << name_list << "/c"<<nb_connect;
 //             group_elements[ng].connectivities[nb_connect].write_to( hdf, name_connect );
 //         }
 
-    hdf.add_tag(name_list,"piece",name_list.c_str());
-    std::string type_elements="null";       
-//         String type_elements=(patterns.find_type(group_elements[ng].pattern_id)).name.c_str();       
+    hdf.add_tag(name_list,"piece",name_list);
+    Sc2String type_elements="null";       
+//         Sc2String type_elements=(patterns.find_type(group_elements[ng].pattern_id)).name;       
     type_elements=(patterns.find_type(group_elements[ng].pattern_base_id)).base_xdmf;
-    hdf.add_tag(name_list,"base",type_elements.c_str());
+    hdf.add_tag(name_list,"base",type_elements);
     hdf.write_tag(name_list,"pattern_id",group_elements[ng].pattern_id);
     hdf.write_tag(name_list,"pattern_base_id",group_elements[ng].pattern_base_id);
     hdf.write_tag(name_list,"id",group_elements[ng].id);
@@ -685,33 +685,33 @@ void GeometryUser::write_group_elements_hdf5(Hdf &hdf, String name_geometry, int
 
     //sauvegarde des sides pour chaque element (repere du groupe et du numéro local dans le groupe de l'interface voisine)
     for(unsigned nside=0;nside<group_elements[ng].interface_group_id.size();nside++){
-        String name_side ;
+        Sc2String name_side ;
         name_side<< name_group_0 << "/list_" << group_elements[ng].id << "/sides/side_" << nside ;
-        String name_side_group_id;
+        Sc2String name_side_group_id;
         name_side_group_id << name_side << "/interface_group_id";
         group_elements[ng].interface_group_id[nside].write_to( hdf, name_side_group_id );
-        String name_side_num_in_group;
+        Sc2String name_side_num_in_group;
         name_side_num_in_group << name_side << "/num_in_group" ;
         group_elements[ng].interface_num_in_group[nside].write_to( hdf, name_side_num_in_group );
     }
     //sauvegarde des id des groupes d'interfaces voisins et du groupe interieur
-    BasicVec<String> name_type("/id_group_interfaces_edges","/id_group_interfaces_interiors","/id_group_interfaces_links");
+    BasicVec<Sc2String> name_type("/id_group_interfaces_edges","/id_group_interfaces_interiors","/id_group_interfaces_links");
     for(unsigned nside_g=0;nside_g<group_elements[ng].group_interfaces_id.size();nside_g++){
         if(group_elements[ng].group_interfaces_id[nside_g].size() != 0){
-            String name_side_g ;
+            Sc2String name_side_g ;
             name_side_g<< name_group_0 << "/list_" << group_elements[ng].id << name_type[nside_g] ;
             group_elements[ng].group_interfaces_id[nside_g].write_to( hdf, name_side_g );
         }
     }
     //PRINT(group_elements[ng].id_adjacent_group_interfaces);
-    String name_side_g ;
+    Sc2String name_side_g ;
     name_side_g<< name_group_0 << "/list_" << group_elements[ng].id << "/id_adjacent_groups" ;
     group_elements[ng].id_adjacent_group_interfaces.write_to( hdf, name_side_g );
  
 }
 
-void GeometryUser::write_group_elements_skin_hdf5(Hdf &hdf, String name_geometry, int ng){
-    String id_reformated;
+void GeometryUser::write_group_elements_skin_hdf5(Hdf &hdf, Sc2String name_geometry, int ng){
+    Sc2String id_reformated;
 //     if          (ng<10)                         id_reformated<<"00000"<<ng;
 //     else if     (ng>=10 and ng<100)             id_reformated<<"0000"<<ng;
 //     else if     (ng>=100 and ng<1000)           id_reformated<<"000"<<ng;
@@ -723,22 +723,22 @@ void GeometryUser::write_group_elements_skin_hdf5(Hdf &hdf, String name_geometry
     id_reformated <<ng;
 PRINT(ng);
 PRINT(group_elements[ng].id);
-        String name_elements="elements_0_skin";
-        String name_list=name_geometry; name_list << "/"<< name_elements <<"/list_" << id_reformated ;
-        BasicVec < String , 3 > name_direction("x","y","z");
+        Sc2String name_elements="elements_0_skin";
+        Sc2String name_list=name_geometry; name_list << "/"<< name_elements <<"/list_" << id_reformated ;
+        BasicVec < Sc2String , 3 > name_direction("x","y","z");
         for(int d=0; d<DIM; d++){
-            String name_dim;
+            Sc2String name_dim;
             name_dim << name_list << "/local_nodes/" << name_direction[d];
             group_elements[ng].local_nodes[d].write_to( hdf, name_dim );
         }
         for (unsigned i_connect=0;i_connect<group_elements[ng].local_connectivities_skin.size();i_connect++) {
-            String name_connect;
+            Sc2String name_connect;
             name_connect << name_list << "/local_connectivities_"<<i_connect;
             group_elements[ng].local_connectivities_skin[i_connect].write_to( hdf, name_connect );
         }
-        std::string type_elements;
+        Sc2String type_elements;
         type_elements=(patterns.find_type(group_elements[ng].pattern_base_id)).base_skin_xdmf;
-        hdf.add_tag(name_list,"base",type_elements.c_str());
+        hdf.add_tag(name_list,"base",type_elements);
         hdf.write_tag(name_list,"id",group_elements[ng].id);
         hdf.write_tag(name_list,"pattern_base_id",group_elements[ng].pattern_base_id);
         hdf.write_tag(name_list,"nb_elements",group_elements[ng].nb_elements_skin);
@@ -746,60 +746,60 @@ PRINT(group_elements[ng].id);
 }
 
 
-void GeometryUser::write_group_interfaces_hdf5(Hdf &hdf, String name_geometry, int ng){
-        String name_group_1;
+void GeometryUser::write_group_interfaces_hdf5(Hdf &hdf, Sc2String name_geometry, int ng){
+        Sc2String name_group_1;
         name_group_1 << name_geometry << "/elements_1";
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << group_interfaces[ng].id ;
         //enregistrement des noeuds locaux
-        BasicVec < String , 3 > name_direction("x","y","z");
+        BasicVec < Sc2String , 3 > name_direction("x","y","z");
         for(int d=0; d<DIM; d++){
-            String name_dim;
+            Sc2String name_dim;
             name_dim << name_list << "/local_nodes/" << name_direction[d];
             group_interfaces[ng].local_nodes[d].write_to( hdf, name_dim );
         }
 
-        String name_map;
+        Sc2String name_map;
         name_map << name_list << "/map_global_nodes" ;
         group_interfaces[ng].map_global_nodes.write_to( hdf, name_map );
  
         //enregistrement du champ pour la visualisation des bords via l'interface utilisateur
-//         String name_field;
+//         Sc2String name_field;
 //         name_field << name_list << "/to_visualize";
 //         group_interfaces[ng].to_visualize.write_to( hdf, name_field );
 
         //enregistrement des connectivités
         for (unsigned nb_connect=0;nb_connect<group_interfaces[ng].local_connectivities.size();nb_connect++) {
-            String name_connect;
+            Sc2String name_connect;
             name_connect << name_list << "/local_connectivities_"<<nb_connect;
             group_interfaces[ng].local_connectivities[nb_connect].write_to( hdf, name_connect );
         }
         for (unsigned nb_connect=0;nb_connect<group_interfaces[ng].global_connectivities.size();nb_connect++) {
-            String name_connect;
+            Sc2String name_connect;
             name_connect << name_list << "/global_connectivities_"<<nb_connect;
             group_interfaces[ng].global_connectivities[nb_connect].write_to( hdf, name_connect );
         }
 //         for (unsigned nb_connect=0;nb_connect<group_interfaces[ng].connectivities.size();nb_connect++) {
-//             String name_connect;
+//             Sc2String name_connect;
 //             name_connect << name_list << "/c"<<nb_connect;
 //             group_interfaces[ng].connectivities[nb_connect].write_to( hdf, name_connect );
 //         }
         if (group_interfaces[ng].type==0) {//bord
             //PRINT(name_list);
-            String name_piece;
+            Sc2String name_piece;
             name_piece << name_group_1 << name_geometry << "/elements_0/list_" << group_interfaces[ng].group_elements_id[0];
-            hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());
+            hdf.add_tag(name_list,"edge_of_0",name_piece);
             hdf.add_tag(name_list,"edge_of_1","");
             hdf.write_tag(name_list,"id_edge_of_0",group_interfaces[ng].group_elements_id[0]);
             hdf.write_tag(name_list,"id_pattern_group_elements_0",group_interfaces[ng].patterns_id[0]);
             hdf.write_tag(name_list,"type",group_interfaces[ng].type);
         }
         else if (group_interfaces[ng].type==1 or group_interfaces[ng].type==2) {//interieur
-            String name_piece_0, name_piece_1;
+            Sc2String name_piece_0, name_piece_1;
             name_piece_0 << name_group_1 << name_geometry << "/elements_0/list_" << group_interfaces[ng].group_elements_id[0];
             name_piece_1 << name_group_1 << name_geometry << "/elements_0/list_" << group_interfaces[ng].group_elements_id[1];
-            hdf.add_tag(name_list,"edge_of_0",name_piece_0.c_str());
-            hdf.add_tag(name_list,"edge_of_1",name_piece_1.c_str());
+            hdf.add_tag(name_list,"edge_of_0",name_piece_0);
+            hdf.add_tag(name_list,"edge_of_1",name_piece_1);
             hdf.write_tag(name_list,"id_edge_of_0",group_interfaces[ng].group_elements_id[0]);
             hdf.write_tag(name_list,"id_edge_of_1",group_interfaces[ng].group_elements_id[1]);  
             hdf.write_tag(name_list,"id_pattern_group_elements_0",group_interfaces[ng].patterns_id[0]);
@@ -809,22 +809,22 @@ void GeometryUser::write_group_interfaces_hdf5(Hdf &hdf, String name_geometry, i
 
         //ecriture des id des groupes d'elements voisins ainsi que de l'id du pattern des groupes adjacents
         for(unsigned nside_g=0;nside_g<group_interfaces[ng].group_elements_id.size();nside_g++){
-            String name_side ;
+            Sc2String name_side ;
             name_side<< name_group_1 << "/list_" << group_interfaces[ng].id << "/sides/side_" << nside_g ;
-            String name_side_elements_id;
+            Sc2String name_side_elements_id;
             name_side_elements_id << name_side << "/element_num_in_group";
             group_interfaces[ng].element_num_in_group[nside_g].write_to( hdf, name_side_elements_id );
-            String name_side_num_side;
+            Sc2String name_side_num_side;
             name_side_num_side << name_side << "/element_num_side";
             group_interfaces[ng].element_num_side[nside_g].write_to( hdf, name_side_num_side );
-            String name_id="id_group_elements_";
+            Sc2String name_id="id_group_elements_";
             name_id << nside_g;
-            hdf.add_tag(name_side,name_id.c_str(),group_interfaces[ng].group_elements_id[nside_g]);
+            hdf.add_tag(name_side,name_id,group_interfaces[ng].group_elements_id[nside_g]);
         } 
-        std::string type_elements;
+        Sc2String type_elements;
         type_elements=(patterns.find_type(group_interfaces[ng].patterns_base_id[0])).base_skin_xdmf;
         
-        hdf.add_tag(name_list,"base",type_elements.c_str());
+        hdf.add_tag(name_list,"base",type_elements);
         hdf.write_tag(name_list,"interface_id",group_interfaces[ng].interface_id);
         hdf.write_tag(name_list,"interface_base_id",group_interfaces[ng].interface_base_id);
         hdf.write_tag(name_list,"id",group_interfaces[ng].id);
@@ -832,30 +832,30 @@ void GeometryUser::write_group_interfaces_hdf5(Hdf &hdf, String name_geometry, i
     
 }
 
-void GeometryUser::write_side_group_interfaces_hdf5(Hdf &hdf, String name_geometry, int ng, int nside_g){
-        String name_group_1;
+void GeometryUser::write_side_group_interfaces_hdf5(Hdf &hdf, Sc2String name_geometry, int ng, int nside_g){
+        Sc2String name_group_1;
         name_group_1 << name_geometry << "/elements_1";
-        String name_side ;
+        Sc2String name_side ;
         name_side<< name_group_1 << "/list_" << group_interfaces[ng].id << "/sides/side_" << nside_g ;
-        String name_side_elements_id;
+        Sc2String name_side_elements_id;
         name_side_elements_id << name_side << "/element_num_in_group";
         group_interfaces[ng].element_num_in_group[nside_g].write_to( hdf, name_side_elements_id );
-        String name_side_num_side;
+        Sc2String name_side_num_side;
         name_side_num_side << name_side << "/element_num_side";
         group_interfaces[ng].element_num_side[nside_g].write_to( hdf, name_side_num_side );
-        String name_id="id_group_elements_";
+        Sc2String name_id="id_group_elements_";
         name_id << nside_g;
-        hdf.add_tag(name_side,name_id.c_str(),group_interfaces[ng].group_elements_id[nside_g]);    
+        hdf.add_tag(name_side,name_id,group_interfaces[ng].group_elements_id[nside_g]);    
 }
 
-void GeometryUser::write_hdf5_in_parallel(String file_output_hdf5, int rank) {
+void GeometryUser::write_hdf5_in_parallel(Sc2String file_output_hdf5, int rank) {
     if (FileExists(file_output_hdf5.c_str())) {
-        String command = "rm -rf "; command << file_output_hdf5;
+        Sc2String command = "rm -rf "; command << file_output_hdf5;
         int syst_rm=system(command.c_str());
     }
 
-    Hdf hdf( file_output_hdf5.c_str() );
-    String name_geometry;
+    Hdf hdf( file_output_hdf5 );
+    Sc2String name_geometry;
     int num_level=0;
     name_geometry << "/Level_" << num_level << "/Geometry";
     //ecriture des noeuds (necessaire pour chaque processeur
@@ -894,14 +894,14 @@ void GeometryUser::write_hdf5_in_parallel(String file_output_hdf5, int rank) {
     }
 }
 
-void GeometryUser::write_hdf5(String file_output_hdf5) {
+void GeometryUser::write_hdf5(Sc2String file_output_hdf5) {
     if (FileExists(file_output_hdf5.c_str())) {
-        String command = "rm -rf "; command << file_output_hdf5;
+        Sc2String command = "rm -rf "; command << file_output_hdf5;
         int syst_rm=system(command.c_str());
     }
 
-    Hdf hdf( file_output_hdf5.c_str() );
-    String name_geometry;
+    Hdf hdf( file_output_hdf5 );
+    Sc2String name_geometry;
     int num_level=0;
     name_geometry << "/Level_" << num_level << "/Geometry";
 
@@ -922,13 +922,13 @@ void GeometryUser::write_hdf5(String file_output_hdf5) {
 }
 
 
-void GeometryUser::read_node_hdf5(Hdf &hdf, String name, bool read_micro) {    
+void GeometryUser::read_node_hdf5(Hdf &hdf, Sc2String name, bool read_micro) {    
     //lecture des noeuds du maillage
     mesh_nodes.resize(DIM);
-    mesh_nodes[0].read_from( hdf, name + "/nodes/x" );
-    mesh_nodes[1].read_from( hdf, name + "/nodes/y" );
+    mesh_nodes[0].read_from( hdf, (name + "/nodes/x") );
+    mesh_nodes[1].read_from( hdf, (name + "/nodes/y") );
 #if DIM==3
-    mesh_nodes[2].read_from( hdf, name + "/nodes/z" );
+    mesh_nodes[2].read_from( hdf, (name + "/nodes/z") );
 #endif
     
 /*    //lecture des noeuds du maillage
@@ -942,10 +942,10 @@ void GeometryUser::read_node_hdf5(Hdf &hdf, String name, bool read_micro) {
     if(read_micro){
         //lecture des noeuds micro
         nodes.resize(DIM);
-        nodes[0].read_from( hdf, name + "/micro_nodes/x" );
-        nodes[1].read_from( hdf, name + "/micro_nodes/y" );
+        nodes[0].read_from( hdf, (name + "/micro_nodes/x") );
+        nodes[1].read_from( hdf, (name + "/micro_nodes/y") );
 #if DIM==3
-        nodes[2].read_from( hdf, name + "/micro_nodes/z" );
+        nodes[2].read_from( hdf, (name + "/micro_nodes/z") );
 #endif
     }else{
         nodes.resize(DIM);
@@ -958,12 +958,12 @@ void GeometryUser::read_node_hdf5(Hdf &hdf, String name, bool read_micro) {
 }
 
 
-void GeometryUser::read_tag_group_elements_hdf5(Hdf &hdf, String &name, bool read_micro) { 
-    String name_group_0; name_group_0 << name << "/elements_0";
-    BasicVec<String> list_groups;
+void GeometryUser::read_tag_group_elements_hdf5(Hdf &hdf, Sc2String &name, bool read_micro) { 
+    Sc2String name_group_0; name_group_0 << name << "/elements_0";
+    BasicVec<Sc2String> list_groups;
     list_groups=hdf.list_dir( name_group_0 );
     for (unsigned ng=0;ng<group_elements.size();ng++) { 
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_0 << "/"<< list_groups[ng];
         int id;
         hdf.read_tag(name_list,"id",id,1);
@@ -975,24 +975,24 @@ void GeometryUser::read_tag_group_elements_hdf5(Hdf &hdf, String &name, bool rea
 }
 
 
-void GeometryUser::read_infos_group_elements_hdf5(Hdf &hdf, String &name, bool read_micro) { 
-    String name_group_0; name_group_0 << name << "/elements_0";
-    BasicVec<String> list_groups;
+void GeometryUser::read_infos_group_elements_hdf5(Hdf &hdf, Sc2String &name, bool read_micro) { 
+    Sc2String name_group_0; name_group_0 << name << "/elements_0";
+    BasicVec<Sc2String> list_groups;
     list_groups=hdf.list_dir( name_group_0 );
     for (unsigned ng=0;ng<group_elements.size();ng++) { 
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_0 << "/"<< list_groups[ng];
         int id;
         hdf.read_tag(name_list,"id",id,1);
         //lecture des noeuds locaux
-        String name_map;
+        Sc2String name_map;
         name_map << name_list << "/map_global_nodes" ;
         group_elements[id].map_global_nodes.read_from( hdf, name_map );
         
         group_elements[id].local_nodes.resize(DIM);
-        BasicVec < String , 3 > name_direction("x","y","z");
+        BasicVec < Sc2String , 3 > name_direction("x","y","z");
         for(int d=0; d<DIM; d++){
-            String name_dim;
+            Sc2String name_dim;
             name_dim << name_list << "/local_nodes/" << name_direction[d];
             group_elements[id].local_nodes[d].read_from( hdf, name_dim );
         }
@@ -1007,18 +1007,18 @@ void GeometryUser::read_infos_group_elements_hdf5(Hdf &hdf, String &name, bool r
         group_elements[id].connectivities.resize(nb_nodes);
         
         for (unsigned i_connect=0;i_connect<group_elements[id].local_connectivities.size();i_connect++) {
-            String name_connect;
+            Sc2String name_connect;
             name_connect << name_list << "/local_connectivities_"<<i_connect;
             group_elements[id].local_connectivities[i_connect].read_from( hdf, name_connect );
         }
         for (unsigned i_connect=0;i_connect<group_elements[id].global_connectivities.size();i_connect++) {
-            String name_connect;
+            Sc2String name_connect;
             name_connect << name_list << "/global_connectivities_"<<i_connect;
             group_elements[id].global_connectivities[i_connect].read_from( hdf, name_connect );
         }
         if(read_micro){
             for (unsigned i_connect=0;i_connect<group_elements[id].connectivities.size();i_connect++) {
-                String name_connect;
+                Sc2String name_connect;
                 name_connect << name_list << "/micro_connectivities_"<<i_connect;
                 group_elements[id].connectivities[i_connect].read_from( hdf, name_connect );
             }
@@ -1029,40 +1029,40 @@ void GeometryUser::read_infos_group_elements_hdf5(Hdf &hdf, String &name, bool r
         }
 
         //lecture des sides pour chaque element (repere du groupe et du numéro local dans le groupe de l'interface voisine)
-        BasicVec<String> list_side;
-        list_side=hdf.list_dir( name_list + "/sides");
+        BasicVec<Sc2String> list_side;
+        list_side=hdf.list_dir( name_list << "/sides");
         group_elements[id].interface_group_id.resize(list_side.size());
         group_elements[id].interface_num_in_group.resize(list_side.size());
         for(unsigned nside=0;nside<group_elements[id].interface_group_id.size();nside++){
-            String name_side_group_id;
+            Sc2String name_side_group_id;
             name_side_group_id << name_list << "/sides/" <<list_side[nside] << "/interface_group_id";
             group_elements[id].interface_group_id[nside].read_from( hdf, name_side_group_id );
-            String name_side_num_in_group;
+            Sc2String name_side_num_in_group;
             name_side_num_in_group << name_list << "/sides/" <<list_side[nside] << "/num_in_group" ;
             group_elements[id].interface_num_in_group[nside].read_from( hdf, name_side_num_in_group );
         }
         //lecture des id des groupes d'interfaces voisins
-        BasicVec<String> name_type("/id_group_interfaces_edges","/id_group_interfaces_interiors","/id_group_interfaces_links");
+        BasicVec<Sc2String> name_type("/id_group_interfaces_edges","/id_group_interfaces_interiors","/id_group_interfaces_links");
         group_elements[id].group_interfaces_id.resize(3);
         for(unsigned nside_g=0;nside_g<group_elements[id].group_interfaces_id.size();nside_g++){
-            String name_side_g ;
+            Metil::String name_side_g ;
             name_side_g<< name_group_0 << "/list_" << group_elements[id].id << name_type[nside_g] ;
-           if ( hdf.dataset_exist(name_side_g) ){
+            if ( hdf.dataset_exist(name_side_g) ){
                 group_elements[id].group_interfaces_id[nside_g].read_from( hdf, name_side_g );
-           }
+            }
         }
     }
 }
 
 
-void GeometryUser::read_tag_group_interfaces_hdf5(Hdf &hdf, String &name, bool read_micro) { 
-    String name_group_1;
+void GeometryUser::read_tag_group_interfaces_hdf5(Hdf &hdf, Sc2String &name, bool read_micro) { 
+    Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
-    BasicVec<String> list_groups;
+    BasicVec<Sc2String> list_groups;
     list_groups=hdf.list_dir( name_group_1 );
     for (unsigned ng=0;ng<group_interfaces.size();ng++) {
         group_interfaces[ng].micro_loaded = read_micro;
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/"<< list_groups[ng];
         int id;
         hdf.read_tag(name_list,"id",id,1);
@@ -1094,31 +1094,31 @@ void GeometryUser::read_tag_group_interfaces_hdf5(Hdf &hdf, String &name, bool r
 }
 
 
-void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool read_micro) { 
-    String name_group_1;
+void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, Sc2String &name, bool read_micro) { 
+    Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
-    BasicVec<String> list_groups;
+    BasicVec<Sc2String> list_groups;
     list_groups=hdf.list_dir( name_group_1 );
     for (unsigned ng=0;ng<group_interfaces.size();ng++) {
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/"<< list_groups[ng];
         int id;
         hdf.read_tag(name_list,"id",id,1);
         if(!read_micro and group_interfaces[id].type==1){
             
         }else{
-/*            String name_list ;
+/*            Sc2String name_list ;
             name_list<< name_group_1 << "/"<< list_groups[ng];*/
             
             //lecture des noeuds locaux
-            String name_map;
+            Sc2String name_map;
             name_map << name_list << "/map_global_nodes" ;
             group_interfaces[id].map_global_nodes.read_from( hdf, name_map );
             
             group_interfaces[id].local_nodes.resize(DIM);
-            BasicVec < String , 3 > name_direction("x","y","z");
+            BasicVec < Sc2String , 3 > name_direction("x","y","z");
             for(int d=0; d<DIM; d++){
-                String name_dim;
+                Sc2String name_dim;
                 name_dim << name_list << "/local_nodes/" << name_direction[d];
                 group_interfaces[id].local_nodes[d].read_from( hdf, name_dim );
             }
@@ -1132,12 +1132,12 @@ void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool
             group_interfaces[id].local_connectivities.resize(nb_nodes_mesh);
             
             for(unsigned nb_connect=0;nb_connect<group_interfaces[id].global_connectivities.size();nb_connect++) {
-                String name_connect;
+                Sc2String name_connect;
                 name_connect << name_list << "/local_connectivities_" << nb_connect;
                 group_interfaces[id].local_connectivities[nb_connect].read_from( hdf, name_connect );
             }
             for(unsigned nb_connect=0;nb_connect<group_interfaces[id].global_connectivities.size();nb_connect++) {
-                String name_connect;
+                Sc2String name_connect;
                 name_connect << name_list << "/global_connectivities_" << nb_connect;
                 group_interfaces[id].global_connectivities[nb_connect].read_from( hdf, name_connect );
             }
@@ -1145,7 +1145,7 @@ void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool
             group_interfaces[id].connectivities.resize(nb_nodes);
                 
                 for (unsigned i_connect=0;i_connect<group_interfaces[id].connectivities.size();i_connect++) {
-                    String name_connect;
+                    Sc2String name_connect;
                     name_connect << name_list << "/micro_connectivities_"<<i_connect;;
                     group_interfaces[id].connectivities[i_connect].read_from( hdf, name_connect );
                 }
@@ -1156,7 +1156,7 @@ void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool
             }
 
         //lecture du champ pour la visualisation des bords via l'interface utilisateur
-//         String name_field;
+//         Sc2String name_field;
 //         name_field << name_list << "/to_visualize";
 //         
 //         group_interfaces[ng].to_visualize.read_from( hdf, name_field );
@@ -1169,12 +1169,12 @@ void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool
             group_interfaces[id].patterns_id.resize(group_interfaces[id].group_elements_id.size());
             group_interfaces[id].nb_group_elements = group_interfaces[id].group_elements_id.size();
             for(unsigned nside_g=0;nside_g<group_interfaces[id].group_elements_id.size();nside_g++){
-                String name_side ;
+                Sc2String name_side ;
                 name_side<< name_group_1 << "/list_" << group_interfaces[id].id << "/sides/side_" << nside_g ;
-                String name_side_elements_id;
+                Sc2String name_side_elements_id;
                 name_side_elements_id << name_side << "/element_num_in_group";
                 group_interfaces[id].element_num_in_group[nside_g].read_from( hdf, name_side_elements_id );
-                String name_side_num_side;
+                Sc2String name_side_num_side;
                 name_side_num_side << name_side << "/element_num_side";            
                 group_interfaces[id].element_num_side[nside_g].read_from( hdf, name_side_num_side );
             }
@@ -1185,27 +1185,27 @@ void GeometryUser::read_infos_group_interfaces_hdf5(Hdf &hdf, String &name, bool
 
 
 
-void GeometryUser::read_hdf5(bool read_micro, bool read_all, std::string mode) {
+void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
     if (FileExists(name_file_hdf5.c_str())==0) {
-        std::cerr << "Le fichier hdf5 "<< name_file_hdf5.c_str() << " n'existe pas " << std::endl;
+        std::cerr << "Le fichier hdf5 "<< name_file_hdf5 << " n'existe pas " << std::endl;
         assert(0);
     }
-    Hdf hdf( name_file_hdf5.c_str() );
+    Hdf hdf( name_file_hdf5 );
 
     dim=DIM;
     
-    String name;
+    Sc2String name;
     num_level=0;
     name << "/Level_" << num_level << "/Geometry";
     
     read_node_hdf5(hdf, name, read_micro);
     
-    BasicVec<String> list_groups;
+    BasicVec<Sc2String> list_groups;
     if(mode!="visu_CL"){
         //lecture des groupes d'elements
         PRINT("lecture des group_elements");
-        String name_group_0; name_group_0 << name << "/elements_0";
-        BasicVec<String> list_groups;
+        Sc2String name_group_0; name_group_0 << name << "/elements_0";
+        BasicVec<Sc2String> list_groups;
         list_groups=hdf.list_dir( name_group_0 );
         group_elements.resize(list_groups.size());
         nb_group_elements=group_elements.size();
@@ -1218,7 +1218,7 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, std::string mode) {
     }
     //lecture des groupes d'interfaces
     PRINT("lecture des group_interfaces");
-    String name_group_1;
+    Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
     list_groups=hdf.list_dir( name_group_1 );
     group_interfaces.reserve(list_groups.size()+10);
@@ -1239,20 +1239,20 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, std::string mode) {
 * Ecriture des groupes pour les éléemnts parents : Geometrie_0 : pieces_i
 * Ecriture des groupes pour les éléments enfants en séparant les groupes de bord (Edges) et les liaisons entre pièces (Liaisons) : Geometrie_1 : Edges/Liaisons : Edge_i/Interface_i)
 L'entier skin (0 ou 1) permet de sortir les groupes d'élements parents et enfants (skin=0) ou uniquement les éléments enfants (skin=1) **/
-void GeometryUser::write_xdmf(String output_xdmf, String input_hdf5, String name_geometry, int skin){
+void GeometryUser::write_xdmf(Sc2String output_xdmf, Sc2String input_hdf5, Sc2String name_geometry, int skin){
     //ecriture de 3 fichiers séparés car trop long à lire sinon
-    String output_xdmf_pieces=output_xdmf+"_pieces.xdmf";
+    Sc2String output_xdmf_pieces=output_xdmf+"_pieces.xdmf";
     std::ofstream f_pieces(output_xdmf_pieces.c_str());
-    String output_xdmf_pieces_skin=output_xdmf+"_pieces_skin.xdmf";
+    Sc2String output_xdmf_pieces_skin=output_xdmf+"_pieces_skin.xdmf";
     std::ofstream f_pieces_skin(output_xdmf_pieces_skin.c_str());
-    String output_xdmf_interfaces=output_xdmf+"_interfaces.xdmf";
+    Sc2String output_xdmf_interfaces=output_xdmf+"_interfaces.xdmf";
     std::ofstream f_interfaces(output_xdmf_interfaces.c_str());
 
     //lecture des noeuds (commun à tous les fichiers)
-    String  name_nodes = name_geometry + "/mesh_nodes";
-    Hdf hdf(input_hdf5.c_str());
+    Sc2String  name_nodes = name_geometry + "/mesh_nodes";
+    Hdf hdf(input_hdf5);
     int nb_nodes;
-    String data_node_x = name_nodes + "/x";
+    Sc2String data_node_x; data_node_x << name_nodes << "/x";
     hdf.read_size(data_node_x,nb_nodes);
     
     //**********************************
@@ -1263,15 +1263,15 @@ void GeometryUser::write_xdmf(String output_xdmf, String input_hdf5, String name
     //ecriture des dataitems noeuds + attributs
     write_nodes_datasets(f_pieces,input_hdf5, name_nodes,nb_nodes,0);
     int nb_list;
-    String name_group_elements; name_group_elements=name_geometry+"/elements_0";
+    Sc2String name_group_elements; name_group_elements=name_geometry+"/elements_0";
     hdf.read_group_size(name_group_elements,nb_list);
     write_groups_datasets_2(f_pieces,input_hdf5, name_group_elements);
     
     //ecriture de la geometrie_0 (elements parents)
-    BasicVec<String> attributs=("none");
-    String name_fields="none";
+    BasicVec<Sc2String> attributs=("none");
+    Sc2String name_fields="none";
     f_pieces<< "           <Grid Name=\"Geometry_0\" GridType=\"Tree\">" << std::endl;
-    String generic_grid_name="piece";
+    Sc2String generic_grid_name="piece";
     BasicVec<int> list;
     list.resize(nb_list);
      
@@ -1286,7 +1286,7 @@ void GeometryUser::write_xdmf(String output_xdmf, String input_hdf5, String name
 //     //ecriture des dataitems list d'elements connectivites + champs par element
 //     for (unsigned el=skin;el<2;el++) {
 //         int nb_list;
-//         String name_group_elements; name_group_elements<<name_geometry<<"/elements_"<<el;
+//         Sc2String name_group_elements; name_group_elements<<name_geometry<<"/elements_"<<el;
 //         hdf.read_group_size(name_group_elements,nb_list);
 // /*        write_groups_datasets(f,input_hdf5, name_group_elements,nb_list,el);*/
 //         write_groups_datasets_2(f,input_hdf5, name_group_elements);
@@ -1306,14 +1306,14 @@ void GeometryUser::write_xdmf(String output_xdmf, String input_hdf5, String name
        
     //ecriture de la geometrie_1 (elements enfants)
     f_interfaces<< "           <Grid Name=\"Geometry_1\" GridType=\"Tree\">" << std::endl;
-    String name_elements_1;
+    Sc2String name_elements_1;
     name_elements_1<<name_geometry<<"/elements_1";
     hdf.read_group_size(name_elements_1,nb_list);
 
     int nb_links=0, nb_edges=0;
     BasicVec<BasicVec<int>,3 > lists ;
     for (unsigned i=0; i< nb_list; i++) {
-        String name_list;
+        Sc2String name_list;
         name_list << name_elements_1<<  "/list_" <<  i;
         int type=-1;
         hdf.read_tag(name_list,"type",type);
@@ -1326,7 +1326,7 @@ void GeometryUser::write_xdmf(String output_xdmf, String input_hdf5, String name
     }
  
     for (unsigned tl=0;tl<lists.size();tl++) {
-        String generic_grid_name;
+        Sc2String generic_grid_name;
         if (tl==0) {//bord
             f_interfaces<<"                    <Grid Name=\" Edges \" GridType=\"Tree\">" << std::endl;
             generic_grid_name="Edge";

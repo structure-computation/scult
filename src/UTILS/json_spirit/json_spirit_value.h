@@ -10,6 +10,8 @@
 # pragma once
 #endif
 
+#include "../Sc2String.h"
+
 #include <vector>
 #include <map>
 #include <string>
@@ -25,7 +27,7 @@ namespace json_spirit
 {
     enum Value_type{ obj_type, array_type, str_type, bool_type, int_type, real_type, null_type };
 
-    template< class Config >    // Config determines whether the value uses std::string or std::wstring and
+    template< class Config >    // Config determines whether the value uses Sc2String or std::wstring and
                                 // whether JSON Objects are represented as vectors or maps
     class Value_impl
     {
@@ -105,10 +107,10 @@ namespace json_spirit
         Value_type value_;
     };
 
-    template< class String >
+    template< class Sc2String >
     struct Config_vector
     {
-        typedef String String_type;
+        typedef Sc2String String_type;
         typedef Value_impl< Config_vector > Value_type;
         typedef Pair_impl < Config_vector > Pair_type;
         typedef std::vector< Value_type > Array_type;
@@ -134,7 +136,7 @@ namespace json_spirit
 
     // typedefs for ASCII
 
-    typedef Config_vector< std::string > Config;
+    typedef Config_vector< Sc2String > Config;
 
     typedef Config::Value_type  Value;
     typedef Config::Pair_type   Pair;
@@ -155,10 +157,10 @@ namespace json_spirit
 
     // map objects
 
-    template< class String >
+    template< class Sc2String >
     struct Config_map
     {
-        typedef String String_type;
+        typedef Sc2String String_type;
         typedef Value_impl< Config_map > Value_type;
         typedef std::vector< Value_type > Array_type;
         typedef std::map< String_type, Value_type > Object_type;

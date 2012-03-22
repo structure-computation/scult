@@ -202,13 +202,13 @@ void FieldStructureUser::initialize_GPU() {
 //     }  
 // };
 
-void FieldStructureUser::write_hdf5_in_parallel(String file_output, GeometryUser &geometry_user, String name_group_fields, int pt_cur, TYPE val_time, int rank){
+void FieldStructureUser::write_hdf5_in_parallel(Sc2String file_output, GeometryUser &geometry_user, Sc2String name_group_fields, int pt_cur, TYPE val_time, int rank){
 
-    Hdf hdf_file( file_output.c_str() );
+    Hdf hdf_file( file_output );
    
     //write_fields_global_nodes_hdf5(hdf_file,name_fields,pt_cur);
 
-    String name_fields; name_fields << name_group_fields <<"/pt_"<< pt_cur;    
+    Sc2String name_fields; name_fields << name_group_fields <<"/pt_"<< pt_cur;    
 //     for(unsigned i_group=0;i_group<geometry_user.group_elements.size();i_group++){
 //         PRINT(geometry_user.find_index_group_elements(i_group));
 //         PRINT(find_index_group_elements(i_group));
@@ -243,18 +243,18 @@ void FieldStructureUser::write_hdf5_in_parallel(String file_output, GeometryUser
     hdf_file.write_tag(name_fields+"/elements_0/explode_displacements","nb_comp",DIM);
     hdf_file.write_tag(name_fields+"/elements_0_skin/explode_displacements","nb_comp",DIM);
     int nb_comp_tensor=DIM*(DIM+1)/2, nb_comp_vector=DIM;
-    BasicVec< BasicVec<String>, 3 > list_name_field_elements;
+    BasicVec< BasicVec<Sc2String>, 3 > list_name_field_elements;
     BasicVec<BasicVec<int>, 3 > list_nb_comp;
     for(int i=0;i<2;i++){
-        list_name_field_elements[i]=BasicVec<String>("sigma","epsilon","sigma_von_mises","material_behaviour","num_processor");
+        list_name_field_elements[i]=BasicVec<Sc2String>("sigma","epsilon","sigma_von_mises","material_behaviour","num_processor");
         list_nb_comp[i]=BasicVec<int>(nb_comp_tensor,nb_comp_tensor,1,1,1);
     }
-    list_name_field_elements[2]=BasicVec<String>("F","W","Fchap","Wchap");
+    list_name_field_elements[2]=BasicVec<Sc2String>("F","W","Fchap","Wchap");
     list_nb_comp[2]=BasicVec<int>(nb_comp_vector,nb_comp_vector,nb_comp_vector);
-    BasicVec<String,3> group_type("elements_0","elements_0_skin");
+    BasicVec<Sc2String,3> group_type("elements_0","elements_0_skin");
     for(int i=0;i<2;i++){
         for(int j=0;j<list_name_field_elements[i].size();j++){
-            String name_field=name_fields+"/"+group_type[i]+"/"+list_name_field_elements[i][j];
+            Sc2String name_field=name_fields+"/"+group_type[i]+"/"+list_name_field_elements[i][j];
             //PRINT(name_field);
             hdf_file.add_tag(name_field,"type","Elem");
             hdf_file.write_tag(name_field,"nb_comp",list_nb_comp[i][j]);

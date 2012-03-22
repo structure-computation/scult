@@ -18,7 +18,7 @@ using namespace Metil;
 struct Interfaces{
     //atributs **********************************************************************************************
     struct Types{
-        std::string name ;
+        Sc2String name ;
         int id ;
         int dim ;
         int nb_nodes ;

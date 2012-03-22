@@ -169,9 +169,9 @@ namespace json_spirit
         return substitute_esc_chars< String_type >( str_without_quotes, end_without_quotes );
     }
 
-    inline std::string get_str( std::string::const_iterator begin, std::string::const_iterator end )
+    inline Sc2String get_str( Sc2String::const_iterator begin, Sc2String::const_iterator end )
     {
-        return get_str_< std::string >( begin, end );
+        return get_str_< Sc2String >( begin, end );
     }
 
     inline std::wstring get_str( std::wstring::const_iterator begin, std::wstring::const_iterator end )
@@ -190,7 +190,7 @@ namespace json_spirit
     // this class's methods get called by the spirit parse resulting
     // in the creation of a JSON object or array
     //
-    // NB Iter_type could be a std::string iterator, wstring iterator, a position iterator or a multipass iterator
+    // NB Iter_type could be a Sc2String iterator, wstring iterator, a position iterator or a multipass iterator
     //
     template< class Value_type, class Iter_type >
     class Semantic_actions 
@@ -353,13 +353,13 @@ namespace json_spirit
     };
 
     template< typename Iter_type >
-    void throw_error( spirit_namespace::position_iterator< Iter_type > i, const std::string& reason )
+    void throw_error( spirit_namespace::position_iterator< Iter_type > i, const Sc2String& reason )
     {
         throw Error_position( i.get_position().line, i.get_position().column, reason );
     }
 
     template< typename Iter_type >
-    void throw_error( Iter_type i, const std::string& reason )
+    void throw_error( Iter_type i, const Sc2String& reason )
     {
        throw reason;
     }

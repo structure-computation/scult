@@ -28,7 +28,7 @@ using namespace Metil;
 struct GroupElementsUser{
     //flag du group
     BasicVec< int > flags;
-    BasicVec< String > flags_names;
+    BasicVec< Sc2String > flags_names;
   
     // attributs du groupe------------------------------------------
     int id;

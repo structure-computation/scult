@@ -132,57 +132,57 @@ void LEVEL::write_geometry_hdf(DATA_USER &data_user){
     //ecriture des champs dans le fichier hdf5
     string name_hdf =data_user.name_directory + "/MESH/geometry.h5";
 
-    if(FileExists(name_hdf.c_str())){ string command = "rm -rf "+name_hdf; int syst_rm=system(command.c_str());}
+    if(FileExists(name_hdf)){ string command = "rm -rf "+name_hdf; int syst_rm=system(command.c_str());}
     
-    Hdf hdf( name_hdf.c_str() );   
-    String name;
+    Hdf hdf( name_hdf );   
+    Sc2String name;
     name << "/Level_" << num_level << "/Geometry";
     Geometry.write_to(hdf,name);
     
     //Ecriture des tags pour les elements_0 et les elements_1 regroupant les informations sur les voisins de chaque list d'elements
     //pour les elements_0
-    String name_group_0;
+    Sc2String name_group_0;
     name_group_0 << name << "/elements_0";
     for(unsigned i=0;i<Geometry.nb_list_elements_0; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_0 << "/list_" << i ; 
-        hdf.add_tag(name_list,"piece",name_list.c_str());
+        hdf.add_tag(name_list,"piece",name_list);
     }
     
     //pour les elements_1
-    String name_group_1;
+    Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
     for(unsigned i=0;i<Geometry.nb_list_elements_1_edge; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << i ;
-        String name_piece;
+        Sc2String name_piece;
         name_piece << name_group_1 << "/list_" << piece_on_edge[i];
         //PRINT(name_piece);
         //PRINT(name_list);
-        hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());
+        hdf.add_tag(name_list,"edge_of_0",name_piece);
         hdf.add_tag(name_list,"edge_of_1","");    
     }   
     for(unsigned i=0;i<Geometry.nb_list_elements_1_interior; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << i+Geometry.nb_list_elements_1_edge ;
-        String name_piece;
+        Sc2String name_piece;
         name_piece << name_group_1 << "/list_" << i;    
         //PRINT(name_piece);
         //PRINT(name_list);
-        hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());       
-        hdf.add_tag(name_list,"edge_of_1",name_piece.c_str());       
+        hdf.add_tag(name_list,"edge_of_0",name_piece);       
+        hdf.add_tag(name_list,"edge_of_1",name_piece);       
     }
     for(unsigned i=0;i<Geometry.nb_list_elements_1_link; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << i+Geometry.nb_list_elements_1_edge+Geometry.nb_list_elements_1_interior;
-        String name_piece0, name_piece1;
+        Sc2String name_piece0, name_piece1;
         name_piece0 << name_group_1 << "/list_" << data_user.group_inter[i].adj_num_group_elem[0];    
         name_piece1 << name_group_1 << "/list_" << data_user.group_inter[i].adj_num_group_elem[1];    
         //PRINT(name_piece0);
         //PRINT(name_piece1);
         //PRINT(name_list);
-        hdf.add_tag(name_list,"edge_of_0",name_piece0.c_str());       
-        hdf.add_tag(name_list,"edge_of_1",name_piece1.c_str());       
+        hdf.add_tag(name_list,"edge_of_0",name_piece0);       
+        hdf.add_tag(name_list,"edge_of_1",name_piece1);       
     }
 }
 
@@ -201,7 +201,7 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
     }
 
 //copie des connectivites en les classant par type d'element (triangle ou tetra pour l'instant) et par piece
-    BasicVec<String> behaviour_pattern;
+    BasicVec<Sc2String> behaviour_pattern;
     behaviour_pattern.resize(data_user.group_elem.size());
     Geometry.elements_0.num_behaviour.resize(data_user.group_elem.size());
 #if DIM == 2
@@ -212,7 +212,7 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
         Geometry.elements_0.list_triangle[S_num_group[i]].c2  << S_apex[2*nb.sst_s+i];
         int rep=data_user.group_elem[S_num_group[i]].id_material;
         Geometry.elements_0.num_behaviour[i]=rep;
-        String name_behaviour;
+        Sc2String name_behaviour;
         name_behaviour << data_user.Behaviour_pattern[rep].type << " " << data_user.Behaviour_pattern[rep].comp;
         behaviour_pattern[S_num_group[i]]=name_behaviour;
     }
@@ -225,8 +225,8 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
         Geometry.elements_0.list_tetra[S_num_group[i]].c3  << S_apex[3*nb.sst_s+i];
         int rep=data_user.group_elem[S_num_group[i]].id_material;
         Geometry.elements_0.num_behaviour[S_num_group[i]]=rep;
-        String name_behaviour;
-        name_behaviour << data_user.Behaviour_pattern[rep].type.c_str() << " " << data_user.Behaviour_pattern[rep].comp.c_str();
+        Sc2String name_behaviour;
+        name_behaviour << data_user.Behaviour_pattern[rep].type << " " << data_user.Behaviour_pattern[rep].comp;
         behaviour_pattern[S_num_group[i]]=name_behaviour;
     }
 #endif
@@ -236,7 +236,7 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
     Geometry.elements_1_interior.list_bar.resize(data_user.group_elem.size());
     Geometry.elements_1_link.list_bar.resize(data_user.group_inter.size());
     BasicVec<int> piece_on_edge, num_CL;
-    BasicVec<String> behaviour_edge, behaviour_interior, behaviour_link;
+    BasicVec<Sc2String> behaviour_edge, behaviour_interior, behaviour_link;
     behaviour_interior.resize(data_user.group_elem.size());
     behaviour_link.resize(data_user.group_inter.size());
     
@@ -278,7 +278,7 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
     Geometry.elements_1_interior.list_triangle.resize(data_user.group_elem.size());
     Geometry.elements_1_link.list_triangle.resize(data_user.group_inter.size());
     BasicVec<int> piece_on_edge, num_CL;
-    BasicVec<String> behaviour_edge, behaviour_interior, behaviour_link;
+    BasicVec<Sc2String> behaviour_edge, behaviour_interior, behaviour_link;
     behaviour_interior.resize(data_user.group_elem.size());
     behaviour_link.resize(data_user.group_inter.size());
     for(unsigned i=0;i< nb.inter  ;i++){
@@ -321,44 +321,44 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
 #endif           
 
     //ecriture des champs dans le fichier hdf5
-    String name_hdf;
-    name_hdf << data_user.name_directory.c_str() << "/calcul_" << data_user.id_calcul.c_str()<< "/geometry_behaviour.h5";
-    if(FileExists(name_hdf.c_str())){ String command = "rm -rf "+name_hdf; int syst_rm=system(command.c_str());}
+    Sc2String name_hdf;
+    name_hdf << data_user.name_directory << "/calcul_" << data_user.id_calcul<< "/geometry_behaviour.h5";
+    if(FileExists(name_hdf)){ Sc2String command = "rm -rf "+name_hdf; int syst_rm=system(command.c_str());}
     
-    Hdf hdf( name_hdf.c_str() );   
-    String name;
+    Hdf hdf( name_hdf );   
+    Sc2String name;
     name << "/Level_" << num_level << "/Geometry";
     Geometry.write_to(hdf,name);
     
     //Ecriture des tags pour les elements_0 et les elements_1 regroupant les informations sur les voisins de chaque list d'elements
     //pour les elements_0
-    String name_group_0;
+    Sc2String name_group_0;
     name_group_0 << name << "/elements_0";
     Geometry.elements_0.behaviour.resize(Geometry.nb_list_elements_0); 
     int size;
     hdf.read_group_size(name_group_0, size ) ;
 
     for(unsigned i=0;i<Geometry.nb_list_elements_0; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_0 << "/list_" << i ;
-        hdf.add_tag(name_list,"piece",name_list.c_str());
-        hdf.add_tag(name_list,"behaviour",behaviour_pattern[i].c_str());
+        hdf.add_tag(name_list,"piece",name_list);
+        hdf.add_tag(name_list,"behaviour",behaviour_pattern[i]);
         hdf.add_tag(name_list,"behaviour_reference", Geometry.elements_0.num_behaviour[i]);
         Geometry.elements_0.behaviour[i]=behaviour_pattern[i];
     }
 
     //pour les elements_1
-    String name_group_1;
+    Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
     Geometry.elements_1_edge.behaviour.resize(Geometry.nb_list_elements_1_edge); 
     for(unsigned i=0;i<Geometry.nb_list_elements_1_edge; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << i ;
-        String name_piece;
+        Sc2String name_piece;
         name_piece << name_group_1 << name << "/elements_0/list_" << piece_on_edge[i];
-        hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());
+        hdf.add_tag(name_list,"edge_of_0",name_piece);
         hdf.add_tag(name_list,"edge_of_1",""); 
-        hdf.add_tag(name_list,"behaviour",behaviour_edge[i].c_str());
+        hdf.add_tag(name_list,"behaviour",behaviour_edge[i]);
 /*        hdf.add_tag(name_list,"behaviour_reference",Geometry.elements_1_edge.num_behaviour[i]);*/
         Geometry.elements_1_edge.behaviour[i]=behaviour_edge[i];
     }
@@ -366,13 +366,13 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
 
     Geometry.elements_1_interior.behaviour.resize(Geometry.nb_list_elements_1_interior); 
     for(unsigned i=0;i<Geometry.nb_list_elements_1_interior; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << i+Geometry.nb_list_elements_1_edge ;
-        String name_piece;
+        Sc2String name_piece;
         name_piece << name_group_1 << name << "/elements_0/list_" << i;    
-        hdf.add_tag(name_list,"edge_of_0",name_piece.c_str());       
-        hdf.add_tag(name_list,"edge_of_1",name_piece.c_str());       
-        hdf.add_tag(name_list,"behaviour",behaviour_interior[i].c_str());
+        hdf.add_tag(name_list,"edge_of_0",name_piece);       
+        hdf.add_tag(name_list,"edge_of_1",name_piece);       
+        hdf.add_tag(name_list,"behaviour",behaviour_interior[i]);
 /*        hdf.add_tag(name_list,"behaviour_reference",Geometry.elements_1_interior.num_behaviour[i]);*/
         Geometry.elements_1_interior.behaviour[i]=behaviour_interior[i];
     }
@@ -380,14 +380,14 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
     Geometry.elements_1_link.behaviour.resize(Geometry.nb_list_elements_1_link); 
 
     for(unsigned i=0;i<Geometry.nb_list_elements_1_link; i++){
-        String name_list ;
+        Sc2String name_list ;
         name_list<< name_group_1 << "/list_" << i+Geometry.nb_list_elements_1_edge+Geometry.nb_list_elements_1_interior;  
-        String name_piece0, name_piece1;
+        Sc2String name_piece0, name_piece1;
         name_piece0 << name_group_1 << name << "/elements_0/list_" << data_user.group_inter[i].adj_num_group_elem[0];    
         name_piece1 << name_group_1 << name << "/elements_0/list_" << data_user.group_inter[i].adj_num_group_elem[1];   
-        hdf.add_tag(name_list,"edge_of_0",name_piece0.c_str());       
-        hdf.add_tag(name_list,"edge_of_1",name_piece1.c_str());    
-        hdf.add_tag(name_list,"behaviour",behaviour_link[i].c_str());
+        hdf.add_tag(name_list,"edge_of_0",name_piece0);       
+        hdf.add_tag(name_list,"edge_of_1",name_piece1);    
+        hdf.add_tag(name_list,"behaviour",behaviour_link[i]);
 //         hdf.add_tag(name_list,"behaviour_reference",Geometry.elements_1_link.num_behaviour[i]);
         Geometry.elements_1_link.behaviour[i]=behaviour_link[i];
     }
@@ -399,7 +399,7 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
 //Ecriture du comportement associe aux patterns et aux interfaces
 // void LEVEL::write_behaviours_hdf(DATA_USER &data_user, string type){
 //     string name_hdf=data_user.name_directory+"/MESH/mesh.h5";
-//     Hdf hdf( name_hdf.c_str() );
+//     Hdf hdf( name_hdf );
 //     
 //     //copie des numeros de groupe des patterns (pieces)
 //     for(unsigned i=0;i<nb.sst; i++){
@@ -411,7 +411,7 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
 //          Behaviours.interfaces << I_comp[i];
 //     }
 //     
-//     String name;
+//     Sc2String name;
 //     name << "/Level_" << num_level << "/Behaviours";
 //     Behaviours.write_to(hdf,name);
 //     string name_xdmf=data_user.name_directory+"/MESH/geometry_behaviours.xdmf";
@@ -432,10 +432,10 @@ void LEVEL::write_geometry_behaviour_hdf(DATA_USER &data_user){
 // 
 
 void LEVEL::write_geometry_for_fields(DATA_USER &data_user){
-    String name_hdf;
-    name_hdf << data_user.name_directory.c_str() <<  "/calcul_"<< data_user.id_calcul.c_str() << "/geometry_fields.h5";
-    if(FileExists(name_hdf.c_str())){ String command = "rm -rf "+name_hdf; int syst_rm=system(command.c_str()); std::cout << syst_rm << endl;}
-    Hdf hdf( name_hdf.c_str() );
+    Sc2String name_hdf;
+    name_hdf << data_user.name_directory <<  "/calcul_"<< data_user.id_calcul << "/geometry_fields.h5";
+    if(FileExists(name_hdf)){ Sc2String command = "rm -rf "+name_hdf; int syst_rm=system(command.c_str()); std::cout << syst_rm << endl;}
+    Hdf hdf( name_hdf );
     BasicVec<BasicVec<TYPE>, DIM> nodes_hdf;
 #if DIM==2
     BasicVec<BasicVec<int>, 2> elements_side_hdf;    
@@ -493,7 +493,7 @@ void LEVEL::write_geometry_for_fields(DATA_USER &data_user){
     nodes_hdf[1].write_to(hdf,"/Level_0/Geometry/nodes/y");
     elements_side_hdf[0].write_to(hdf,"/Level_0/Geometry/elements_1/list_0/c0");
     elements_side_hdf[1].write_to(hdf,"/Level_0/Geometry/elements_1/list_0/c1");
-    String name_el="/Level_0/Geometry/elements_1/list_0";
+    Sc2String name_el="/Level_0/Geometry/elements_1/list_0";
     hdf.add_tag(name_el,"base","Bar");
 #else    
     nodes_hdf[0].write_to(hdf,"/Level_0/Geometry/nodes/x");
@@ -502,16 +502,16 @@ void LEVEL::write_geometry_for_fields(DATA_USER &data_user){
     elements_side_hdf[0].write_to(hdf,"/Level_0/Geometry/elements_1/list_0/c0");
     elements_side_hdf[1].write_to(hdf,"/Level_0/Geometry/elements_1/list_0/c1");
     elements_side_hdf[2].write_to(hdf,"/Level_0/Geometry/elements_1/list_0/c2");
-    String name_el="/Level_0/Geometry/elements_1/list_0";
+    Sc2String name_el="/Level_0/Geometry/elements_1/list_0";
     hdf.add_tag(name_el,"base","Triangle");
     hdf.add_tag(name_el,"type","none");
 #endif
 }
 
 void LEVEL::write_fields(DATA_USER &data_user, Vec<TYPE> &q, int nt_total, TYPE val_time){
-    String name_hdf;
-    name_hdf << data_user.name_directory.c_str() <<  "/calcul_"<< data_user.id_calcul.c_str() << "/geometry_fields.h5";
-    Hdf hdf( name_hdf.c_str() );
+    Sc2String name_hdf;
+    name_hdf << data_user.name_directory <<  "/calcul_"<< data_user.id_calcul << "/geometry_fields.h5";
+    Hdf hdf( name_hdf );
     BasicVec<BasicVec<TYPE>, DIM> displacements_hdf;
 #if DIM==2
     BasicVec<BasicVec<TYPE>, 3> sigma_hdf;
@@ -574,38 +574,38 @@ void LEVEL::write_fields(DATA_USER &data_user, Vec<TYPE> &q, int nt_total, TYPE 
 #if DIM==2
       
 #else    
-        String name_fields ="/Level_0/Fields";
+        Sc2String name_fields ="/Level_0/Fields";
         //sauvegarde des champs par noeuds
-        String name_displacements;
+        Sc2String name_displacements;
         name_displacements<<name_fields<<"/displacements/pt_"<<nt_total;
-        BasicVec<String> displacements_coor= BasicVec<String>("/x","/y","/z");
+        BasicVec<Sc2String> displacements_coor= BasicVec<Sc2String>("/x","/y","/z");
         for(unsigned d=0;d<DIM;d++){
-            String name_displacement_coor;
+            Sc2String name_displacement_coor;
             name_displacement_coor=name_displacements+displacements_coor[d];
-            displacements_hdf[d].write_to(hdf,name_displacement_coor.c_str());
+            displacements_hdf[d].write_to(hdf,name_displacement_coor);
         } 
         hdf.write_tag(name_displacements,"time",val_time);
         
         //sauvegarde des champs par elements
-        String name_sigma, name_epsilon;
+        Sc2String name_sigma, name_epsilon;
         name_sigma<<name_fields<<"/sigma/pt_"<<nt_total;
         name_epsilon<<name_fields<<"/epsilon/pt_"<<nt_total; 
 #if DIM==2
-        BasicVec<String> tensor_fields= BasicVec<String>("/xx","/yy","/xy");
+        BasicVec<Sc2String> tensor_fields= BasicVec<Sc2String>("/xx","/yy","/xy");
 #else
-        BasicVec<String> tensor_fields= BasicVec<String>("/xx","/yy","/zz","/xy","/xz","/yz");        
+        BasicVec<Sc2String> tensor_fields= BasicVec<Sc2String>("/xx","/yy","/zz","/xy","/xz","/yz");        
 #endif
         for(unsigned nf=0;nf<tensor_fields.size();nf++){
-            String name_sigma_field, name_epsilon_field;
+            Sc2String name_sigma_field, name_epsilon_field;
             name_sigma_field=name_sigma+tensor_fields[nf];
             name_epsilon_field=name_epsilon+tensor_fields[nf];
-            sigma_hdf[nf].write_to(hdf,name_sigma_field.c_str());
-            epsilon_hdf[nf].write_to(hdf,name_epsilon_field.c_str());
+            sigma_hdf[nf].write_to(hdf,name_sigma_field);
+            epsilon_hdf[nf].write_to(hdf,name_epsilon_field);
         }
-        String name_smises;
+        Sc2String name_smises;
         name_smises <<name_fields<<"/sigma_von_mises/pt_"<<nt_total;
         //PRINT(sigma_von_mises_hdf);
-        sigma_von_mises_hdf.write_to(hdf,name_smises.c_str());
+        sigma_von_mises_hdf.write_to(hdf,name_smises);
         hdf.write_tag(name_sigma,"time",val_time);
         hdf.write_tag(name_epsilon,"time",val_time);
 #endif

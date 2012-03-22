@@ -90,7 +90,7 @@ class FieldStructureUser{
 
       void initialize_GPU();                                                           // initialisation pour calcul sur GPU
       
-      void write_hdf5_in_parallel(String file_output, GeometryUser &geometry_user, String name_fields, int pt_cur, TYPE val_time, int rank); //ecriture des champs de structure dans un fichier hdf5 specifie sur un processeur
+      void write_hdf5_in_parallel(Sc2String file_output, GeometryUser &geometry_user, Sc2String name_fields, int pt_cur, TYPE val_time, int rank); //ecriture des champs de structure dans un fichier hdf5 specifie sur un processeur
       
       //Methode de niveau sup-------------------------------------------------------------------------------------------------------------------------
 //       void  calculate_ddr(GeometryUser &geometry_);              //calcul des directions de recherche pour la strategie de type multi (sur les groupes d'interfaces)

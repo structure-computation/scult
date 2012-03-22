@@ -20,8 +20,8 @@ namespace json_spirit
 
     void         write          ( const Value& value, std::ostream&  os );
     void         write_formatted( const Value& value, std::ostream&  os );
-    std::string  write          ( const Value& value );
-    std::string  write_formatted( const Value& value );
+    Sc2String     write          ( const Value& value );
+    Sc2String     write_formatted( const Value& value );
 
 #ifndef BOOST_NO_STD_WSTRING
 
@@ -34,8 +34,8 @@ namespace json_spirit
 
     void         write          ( const mValue& value, std::ostream&  os );
     void         write_formatted( const mValue& value, std::ostream&  os );
-    std::string  write          ( const mValue& value );
-    std::string  write_formatted( const mValue& value );
+    Sc2String     write          ( const mValue& value );
+    Sc2String     write_formatted( const mValue& value );
 
 #ifndef BOOST_NO_STD_WSTRING
 

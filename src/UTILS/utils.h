@@ -270,7 +270,7 @@ template<class T> bool pt_on_disc(Vec<T,3> &pt, Vec<T,3> &box, Vec<T,3> &normal,
 
 /**V?rificication si un pt verifie une equation
 **/
-template<class T> bool pt_match_equation(Vec<T,2> &pt, std::string equation, const double eps=1e-3){
+template<class T> bool pt_match_equation(Vec<T,2> &pt, Sc2String equation, const double eps=1e-3){
     bool flag=false;
     std::vector<Ex> symbols;
     symbols.push_back("x");
@@ -278,7 +278,7 @@ template<class T> bool pt_match_equation(Vec<T,2> &pt, std::string equation, con
 
     TYPE data=0.;
     Ex expr;
-    expr = read_ex(equation.c_str(),symbols);
+    expr = read_ex(equation,symbols);
     
     Ex::MapExNum var;
     for(unsigned d2=0;d2<2;++d2)//boucle sur les inconnues possibles (dimension des vecteurs)
@@ -290,7 +290,7 @@ template<class T> bool pt_match_equation(Vec<T,2> &pt, std::string equation, con
     return flag;
 }
 
-template<class T> bool pt_match_equation(Vec<T,3> &pt, std::string equation, const double eps=1e-3){
+template<class T> bool pt_match_equation(Vec<T,3> &pt, Sc2String equation, const double eps=1e-3){
     bool flag=false;
     std::vector<Ex> symbols;
     symbols.push_back("x");
@@ -299,7 +299,7 @@ template<class T> bool pt_match_equation(Vec<T,3> &pt, std::string equation, con
 
     TYPE data=0.;
     Ex expr;
-    expr = read_ex(equation.c_str(),symbols);
+    expr = read_ex(equation,symbols);
     
     Ex::MapExNum var;
     for(unsigned d2=0;d2<3;++d2)//boucle sur les inconnues possibles (dimension des vecteurs)
@@ -559,7 +559,7 @@ template<class T> bool pt_on_disc(BasicVec<T,3> &pt, BasicVec<T,3> &box, BasicVe
 
 /**Vérificication si un pt verifie une equation
 **/
-template<class T> bool pt_match_equation(BasicVec<T,2> &pt, std::string equation, const double eps=1e-3){
+template<class T> bool pt_match_equation(BasicVec<T,2> &pt, Sc2String equation, const double eps=1e-3){
     bool flag=false;
     std::vector<Ex> symbols;
     symbols.push_back("x");
@@ -567,7 +567,7 @@ template<class T> bool pt_match_equation(BasicVec<T,2> &pt, std::string equation
 
     TYPE data=0.;
     Ex expr;
-    expr = read_ex(equation.c_str(),symbols);
+    expr = read_ex(equation,symbols);
     
     Ex::MapExNum var;
     for(unsigned d2=0;d2<2;++d2)//boucle sur les inconnues possibles (dimension des vecteurs)
@@ -579,7 +579,7 @@ template<class T> bool pt_match_equation(BasicVec<T,2> &pt, std::string equation
     return flag;
 }
 
-template<class T> bool pt_match_equation(BasicVec<T,3> &pt, std::string equation, const double eps=1e-3){
+template<class T> bool pt_match_equation(BasicVec<T,3> &pt, Sc2String equation, const double eps=1e-3){
     bool flag=false;
     std::vector<Ex> symbols;
     symbols.push_back("x");
@@ -588,7 +588,7 @@ template<class T> bool pt_match_equation(BasicVec<T,3> &pt, std::string equation
 
     TYPE data=0.;
     Ex expr;
-    expr = read_ex(equation.c_str(),symbols);
+    expr = read_ex(equation,symbols);
     
     Ex::MapExNum var;
     for(unsigned d2=0;d2<3;++d2)//boucle sur les inconnues possibles (dimension des vecteurs)

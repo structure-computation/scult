@@ -153,7 +153,7 @@ struct FieldStructureGroupInterfacesUser{
         
     }
     
-    void write_hdf5(Hdf &hdf_file, String name_fields, int side, int pt_cur, TYPE val_time); //ecriture des champs sur les groupes d'interfaces dans un fichier hdf5
+    void write_hdf5(Hdf &hdf_file, Sc2String name_fields, int side, int pt_cur, TYPE val_time); //ecriture des champs sur les groupes d'interfaces dans un fichier hdf5
 };
 
 #endif //FIELD_STRUCTURE_GROUP_INTERFACES_USER_H

@@ -1,6 +1,9 @@
 #include "DataUser.h"
-#include <string>
+#include "../UTILS/Sc2String.h"
 #include <Metil/BasicVec.h>
+
+#include <iostream>
+#include <fstream>
 
 #include <Metil/Level1/CompilationEnvironment.h>
 #include <Metil/DynamicLibrary.h>
@@ -135,11 +138,11 @@ int DataUser::find_index_behaviour_bc(int id_) {
 // fonction d'initialisation
 //*************************************************************************************************************
 
-void DataUser::initialisation(std::string id_model_, std::string id_calcul_){
+void DataUser::initialisation(Sc2String id_model_, Sc2String id_calcul_){
         model_path = "/share/sc2/Developpement/MODEL/";
         calcul_path = model_path + "model_" + id_model_ + "/calcul_" + id_calcul_ ;
         file_calcul = calcul_path + "/calcul.json" ;    
-        id_calcul << id_calcul_.c_str();
+        id_calcul << id_calcul_;
     }
 
 //*************************************************************************************************************
@@ -154,7 +157,7 @@ void DataUser::read_json_groups_elements(const Object& gr){
         for( Object::size_type j = 0; j != obj.size(); ++j )
         {
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
 
             if( name == "id" )
@@ -204,7 +207,7 @@ void DataUser::read_json_groups_interfaces( const Object& gr ){
         for( Object::size_type j = 0; j != obj.size(); ++j )
         {
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
 
             if( name == "id" )
@@ -225,7 +228,7 @@ void DataUser::read_json_groups_interfaces( const Object& gr ){
             }
             else if( name == "adj_num_group" )
             {
-                std::string adj=value.get_str();
+                Sc2String adj=value.get_str();
                 std::istringstream s(adj);
                 BasicVec<int,2> adjnum;
                 for(unsigned k=0;k< 2 ;k++){
@@ -267,7 +270,7 @@ void DataUser::read_json_groups_edges( const Object& gr){
         {
 
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "id" )
             {
@@ -299,20 +302,20 @@ void DataUser::read_json_groups_edges( const Object& gr){
             }
             else if(name == "pdirection_x" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.pdirection[0];
             }
             else if(name == "pdirection_y" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.pdirection[1];
             }
 #if DIM==3
             else if(name == "pdirection_z" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.pdirection[2];
             }
@@ -327,7 +330,7 @@ void DataUser::read_json_groups_edges( const Object& gr){
             }
             else if(name == "radius" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream is(temp);
                 is >>group_edges[i].geom.radius;
 //                 group_edges[i].geom.radius=value.get_real();
@@ -338,40 +341,40 @@ void DataUser::read_json_groups_edges( const Object& gr){
             }
             else if(name == "point_1_x" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.points[0][0];
             }
             else if(name == "point_1_y" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.points[0][1];
             }
 #if DIM==3
             else if(name == "point_1_z" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.points[0][2];                
             }
 #endif
             else if(name == "point_2_x" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.points[1][0];
             }
             else if(name == "point_2_y" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.points[1][1];
             }
 #if DIM==3
             else if(name == "point_2_z" )
             {
-                std::string temp=value.get_str();
+                Sc2String temp=value.get_str();
                 std::istringstream s(temp);
                 s >> group_edges[i].geom.points[1][2];
             }
@@ -402,7 +405,7 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
                 
         for( Object::size_type j = 0; j != obj.size(); ++j ){
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "id" )
             {
@@ -613,12 +616,12 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
             else if( name == "a" )
             {
                 //behaviour_materials[i].b = value.get_str();
-                behaviour_materials[i].mat_prop[35]=value.get_str();
+                behaviour_materials[i].mat_prop[36]=value.get_str();
             }
             else if( name == "tau_c" )
             {
                 //behaviour_materials[i].b = value.get_str();
-                behaviour_materials[i].mat_prop[35]=value.get_str();
+                behaviour_materials[i].mat_prop[37]=value.get_str();
             }
             else
             {
@@ -639,7 +642,7 @@ void DataUser::read_json_behaviour_interfaces(const Object& gr){
         for( Object::size_type j = 0; j != obj.size(); ++j )
         {
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
 
             if( name == "id" )
@@ -721,13 +724,13 @@ void DataUser::read_step_bc_volume(const Object& gr, BasicVec<StepBcVolume> &ste
     for( Object::size_type k = 0; k != gr.size(); ++k )
     {
         const Pair& pair1 = gr[k];
-        //const std::string& name1  = pair1.name_;
+        //const Sc2String& name1  = pair1.name_;
         const Value&  value1 = pair1.value_;
         Object obj=value1.get_obj();
         for( Object::size_type l = 0; l != obj.size(); ++l )
         {
             const Pair& pair = obj[l];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             
             if( name == "pdirection_x" )
@@ -775,7 +778,7 @@ void DataUser::read_json_behaviour_bc_volume(const Object& gr){
         for( Object::size_type j = 0; j != obj.size(); ++j )
         {
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
 
             if( name == "name" )
@@ -788,7 +791,7 @@ void DataUser::read_json_behaviour_bc_volume(const Object& gr){
             }
             else if( name == "select" )
             {
-                std::string temp=value.get_str() ;             
+                Sc2String temp=value.get_str() ;             
 		if(temp == "true"){behaviour_bc_volume[i].select = true;}
 		//std::istringstream s(temp);
                 //s >> behaviour_bc_volume[i].select;
@@ -817,13 +820,13 @@ void DataUser::read_step_bc(const Object& gr, BasicVec<StepBc> &step){
     for( Object::size_type k = 0; k != gr.size(); ++k )
     {
         const Pair& pair1 = gr[k];
-        //const std::string& name1  = pair1.name_;
+        //const Sc2String& name1  = pair1.name_;
         const Value&  value1 = pair1.value_;
         Object obj=value1.get_obj();
         for( Object::size_type l = 0; l != obj.size(); ++l )
         {
             const Pair& pair = obj[l];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "fct_spatiale_x" )
             {
@@ -863,7 +866,7 @@ void DataUser::read_json_behaviour_bc(const Object& gr){
         for( Object::size_type j = 0; j != obj.size(); ++j )
         {
             const Pair& pair = obj[j];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
 
             if( name == "id" )
@@ -908,17 +911,17 @@ void DataUser::read_step_calcul(const Object& gr){
     for( Object::size_type k = 0; k != gr.size(); ++k )
     {
         const Pair& pair1 = gr[k];
-        const std::string& name1  = pair1.name_;
+        const Sc2String& name1  = pair1.name_;
         const Value&  value1 = pair1.value_;
         Object obj=value1.get_obj();
         for( Object::size_type l = 0; l != obj.size(); ++l )
         {
             const Pair& pair = obj[l];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "PdT" )
             {
-                std::string temp=value.get_str() ;
+                Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
                 s >> time_step[k].dt;
             }
@@ -928,7 +931,7 @@ void DataUser::read_step_calcul(const Object& gr){
             }
             else if( name == "nb_PdT" )
             {
-                std::string temp=value.get_str() ;
+                Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
                 s >> time_step[k].nb_time_step;
             }
@@ -948,13 +951,13 @@ void DataUser::read_multiresolution(const Object& gr){
     for( Object::size_type k = 0; k != gr.size(); ++k )
     {
         const Pair& pair1 = gr[k];
-        const std::string& name1  = pair1.name_;
+        const Sc2String& name1  = pair1.name_;
         const Value&  value1 = pair1.value_;
         Object obj=value1.get_obj();
         for( Object::size_type l = 0; l != obj.size(); ++l )
         {
             const Pair& pair = obj[l];
-            const std::string& name  = pair.name_;
+            const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "name" )
             {
@@ -962,25 +965,25 @@ void DataUser::read_multiresolution(const Object& gr){
             }
             else if( name == "nb_values" )
             {
-                std::string temp=value.get_str() ;
+                Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
                 s >> Multiresolution_parameters[k].nb_values;
             }
             else if( name == "min_value" )
             {
-                std::string temp=value.get_str() ;
+                Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
                 s >> Multiresolution_parameters[k].min_value;
             }
             else if( name == "max_value" )
             {
-                std::string temp=value.get_str() ;
+                Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
                 s >> Multiresolution_parameters[k].max_value;
             }
             else if( name == "nominal_value" )
             {
-                std::string temp=value.get_str() ;
+                Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
                 s >> Multiresolution_parameters[k].nominal_value;
                 Multiresolution_parameters[k].current_value=Multiresolution_parameters[k].nominal_value;
@@ -999,14 +1002,14 @@ void DataUser::read_json_calcul(){
     for( Object::size_type i = 0; i != input.size(); ++i )
     {
         const Pair& pair_groups = input[i];
-        const std::string& name_groups  = pair_groups.name_;
+        const Sc2String& name_groups  = pair_groups.name_;
         const Value& value_groups= pair_groups.value_;
         
         if(name_groups=="mesh"){//lecture des donnees de maillage
             const Object obj=value_groups.get_obj();
             for( Object::size_type j = 0; j != obj.size(); ++j ){
                 const Pair& pair = obj[j];
-                const std::string& name  = pair.name_;
+                const Sc2String& name  = pair.name_;
                 const Value&  value = pair.value_;
                 if( name == "model_directory" ){name_directory=value.get_str();}
                 else if( name == "mesh_directory" ){mesh_directory=value.get_str();}
@@ -1084,22 +1087,22 @@ void DataUser::read_json_calcul(){
             const Object obj=value_groups.get_obj();
             for( Object::size_type j = 0; j != obj.size(); ++j ){
                 const Pair& pair = obj[j];
-                const std::string& name  = pair.name_;
+                const Sc2String& name  = pair.name_;
                 std::cout << name << std::endl;
                 const Value&  value = pair.value_;
-                if( name == "dissipation" ){std::string temp=value.get_str();std::istringstream s(temp); s>> options.dissipation;}
+                if( name == "dissipation" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>> options.dissipation;}
                 else if( name == "nb_options" ){options.nb_option=value.get_int();}
-                else if( name == "PREC_nb_niveaux" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.nb_level;}
+                else if( name == "PREC_nb_niveaux" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.nb_level;}
                 else if( name == "Temp_statique" ){options.Temp_statique=value.get_str();}
-                else if( name == "LATIN_nb_iter" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_nb_iter_max;}
-                else if( name == "LATIN_conv" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error;}
-                else if( name == "LATIN_auto_stop" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error_auto_stop;}
-                else if( name == "LATIN_multiechelle" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.multiechelle;}
-                else if( name == "trac_ener_imp" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_imp;}
-                else if( name == "trac_ener_diss" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_diss;}
-                else if( name == "2D_resolution" ){std::string temp=value.get_str();std::istringstream s(temp); s>>options.resolution_2D;}
+                else if( name == "LATIN_nb_iter" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_nb_iter_max;}
+                else if( name == "LATIN_conv" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error;}
+                else if( name == "LATIN_auto_stop" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error_auto_stop;}
+                else if( name == "LATIN_multiechelle" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.multiechelle;}
+                else if( name == "trac_ener_imp" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_imp;}
+                else if( name == "trac_ener_diss" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_diss;}
+                else if( name == "2D_resolution" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.resolution_2D;}
                 else if( name == "Multiresolution_on" ){
-                    std::string temp=value.get_str();
+                    Sc2String temp=value.get_str();
                     if(temp=="off") {options.Multiresolution_on=0;options.Multiresolution_type="none";}
                     else if(temp=="fatigue") {options.Multiresolution_on=1;options.Multiresolution_type="fatigue";}
                     else { std::cout << "type de multiresolution non reconnu, revoir les noms" << std::endl; assert( false );}
@@ -1115,11 +1118,11 @@ void DataUser::read_json_calcul(){
 
 void DataUser::find_Multiresolution_parameters(){
     for(unsigned i_par=0;i_par< Multiresolution_parameters.size() ;i_par++){
-        String var="V"; var<<i_par; //nom de la variable de multiresolution
+        Sc2String var="V"; var<<i_par; //nom de la variable de multiresolution
         //recherche de cette variable dans les materiaux
         for(unsigned j=0;j< behaviour_materials.size() ;j++){
             for(unsigned i_prop=0;i_prop<behaviour_materials[j].mat_prop.size();i_prop++){
-                if(behaviour_materials[j].mat_prop[i_prop].find(var.c_str()) < behaviour_materials[j].mat_prop[i_prop].size()){
+                if(behaviour_materials[j].mat_prop[i_prop].find(var) < behaviour_materials[j].mat_prop[i_prop].size()){
                     Multiresolution_parameters[i_par].materials.push_back(j);
                     options.Multiresolution_material_link_CL_CLvolume[0]=1;
                 }
@@ -1128,7 +1131,7 @@ void DataUser::find_Multiresolution_parameters(){
         //recherche de cette variable dans les liaisons
         for(unsigned j=0;j< behaviour_links.size() ;j++){
             for(unsigned i_prop=0;i_prop<behaviour_links[j].link_prop.size();i_prop++){
-                if(behaviour_links[j].link_prop[i_prop].find(var.c_str()) < behaviour_links[j].link_prop[i_prop].size()){
+                if(behaviour_links[j].link_prop[i_prop].find(var) < behaviour_links[j].link_prop[i_prop].size()){
                     Multiresolution_parameters[i_par].links.push_back(j);
                     options.Multiresolution_material_link_CL_CLvolume[1]=1;
                 }
@@ -1138,7 +1141,7 @@ void DataUser::find_Multiresolution_parameters(){
         for(unsigned j=0;j< behaviour_bc.size() ;j++){
             for(unsigned i_step=0;i_step<behaviour_bc[j].step.size();i_step++){
                 for(unsigned i_prop=0;i_prop<behaviour_bc[j].step[i_step].CL_step_prop.size();i_prop++){
-                    if(behaviour_bc[j].step[i_step].CL_step_prop[i_prop].find(var.c_str()) < behaviour_bc[j].step[i_step].CL_step_prop[i_prop].size()){
+                    if(behaviour_bc[j].step[i_step].CL_step_prop[i_prop].find(var) < behaviour_bc[j].step[i_step].CL_step_prop[i_prop].size()){
                         Multiresolution_parameters[i_par].CL.push_back(j);
                         options.Multiresolution_material_link_CL_CLvolume[2]=1;
                     }
@@ -1149,7 +1152,7 @@ void DataUser::find_Multiresolution_parameters(){
         for(unsigned j=0;j< behaviour_bc_volume.size() ;j++){
             for(unsigned i_step=0;i_step<behaviour_bc_volume[j].step.size();i_step++){
                 for(unsigned i_prop=0;i_prop<behaviour_bc_volume[j].step[i_step].CLv_step_prop.size();i_prop++){
-                    if(behaviour_bc_volume[j].step[i_step].CLv_step_prop[i_prop].find(var.c_str()) < behaviour_bc_volume[j].step[i_step].CLv_step_prop[i_prop].size()){
+                    if(behaviour_bc_volume[j].step[i_step].CLv_step_prop[i_prop].find(var) < behaviour_bc_volume[j].step[i_step].CLv_step_prop[i_prop].size()){
                         Multiresolution_parameters[i_par].CLvolume.push_back(j);
                         options.Multiresolution_material_link_CL_CLvolume[3]=1;
                     }
@@ -1262,34 +1265,34 @@ void write_entete_cpp( StringWithSepInCppLineMaker &file ){
 
 
 
-// void write_read_mat_prop_h(const char *prop_name, StringWithSepInCppLineMaker &file){
+// void write_read_mat_prop_h(Sc2String prop_name, StringWithSepInCppLineMaker &file){
 //     file << "template< int num_mat > __inline__ TYPE read_mat_" << prop_name << "(FieldStructureCompactClass *field_structure_compact_GPU, Number<num_mat>, int i_group, int i_elem, int i_res, TYPE t);" ;
 // }
 // 
-// void write_read_link_prop_h(const char *prop_name, StringWithSepInCppLineMaker &file){
+// void write_read_link_prop_h(Sc2String prop_name, StringWithSepInCppLineMaker &file){
 //     file << "template< int num_link > __inline__ TYPE read_link_" << prop_name << "(FieldStructureCompactClass *field_structure_compact_GPU, Number<num_link>,int i_group, int i_link, int i_res,TYPE t);" ;
 // }
 // 
-// void write_read_behaviour_bc_prop_h(const char *prop_name, StringWithSepInCppLineMaker &file){
+// void write_read_behaviour_bc_prop_h(Sc2String prop_name, StringWithSepInCppLineMaker &file){
 //     file << "template< int num_CL, int num_step > __inline__ TYPE read_CL_" << prop_name << "(FieldStructureCompactClass *field_structure_compact_GPU, Number<num_CL>, Number<num_step>, int i_group, int i_edge, int i_res,TYPE t);" ;
 // }
 // 
-// void write_read_behaviour_bc_volume_prop_h(const char *prop_name, StringWithSepInCppLineMaker &file){
+// void write_read_behaviour_bc_volume_prop_h(Sc2String prop_name, StringWithSepInCppLineMaker &file){
 //     file << "template< int num_CLv, int num_step > __inline__ TYPE read_behaviour_bc_volume_" << prop_name << "(FieldStructureCompactClass *field_structure_compact_GPU, Number<num_CLv>, Number<num_step>, int i_group, int i_elem, int i_res,TYPE t);" ;
 // }
 
 
 
 
-void write_read_mat_prop_cpp(const char *prop, const char *prop_name, int i_prop, StringWithSepInCppLineMaker &file){
-    String prop_temp;
+void write_read_mat_prop_cpp(Sc2String prop, Sc2String prop_name, int i_prop, StringWithSepInCppLineMaker &file){
+    Sc2String prop_temp;
     prop_temp << prop;
     if(prop_temp=="" or prop_temp==" "){prop="0";}
     file << "        field_structure_compact_GPU->group_elements[i_group].mat_prop["<< i_prop <<"][i_elem] = " << prop << ";" ;
 }
 
-void write_read_link_prop_cpp(const char *prop, const char *prop_name, int i_prop, StringWithSepInCppLineMaker &file){
-    String prop_temp;
+void write_read_link_prop_cpp(Sc2String prop, Sc2String prop_name, int i_prop, StringWithSepInCppLineMaker &file){
+    Sc2String prop_temp;
     prop_temp << prop;
     if(prop_temp=="" or prop_temp==" "){prop="0";}
     file << "        field_structure_compact_GPU->group_interfaces[i_group].link_prop["<< i_prop <<"][i_inter] = " << prop << ";" ;
@@ -1305,7 +1308,7 @@ void DataUser::write_global_read_data_materials_group_elements( int i_mat,  Stri
     file << "        TYPE y = field_structure_compact_GPU->group_elements[i_group].pt[1][i_elem];" ;
     file << "        TYPE z = field_structure_compact_GPU->group_elements[i_group].pt[2][i_elem];" ;
     for(int i_prop=0; i_prop<behaviour_materials[i_mat].mat_prop.size(); i_prop++){
-        write_read_mat_prop_cpp(behaviour_materials[i_mat].mat_prop[i_prop].c_str(), behaviour_materials[i_mat].mat_prop_name[i_prop].c_str(), i_prop, file);
+        write_read_mat_prop_cpp(behaviour_materials[i_mat].mat_prop[i_prop], behaviour_materials[i_mat].mat_prop_name[i_prop], i_prop, file);
     }
     file << "    }";
     file << "};";
@@ -1343,26 +1346,26 @@ void DataUser::write_launch_read_data_materials_group_elements( StringWithSepInC
 
 // ecriture des fonction de lecture de propriété des efforts volumiques sur les elements-----------------------------------------------
 void DataUser::write_global_read_data_bc_volume_poids_group_elements( int i_CLv, int i_step, StringWithSepInCppLineMaker &file){
-    file << "// calcul de " << behaviour_bc_volume[i_CLv].name.c_str();
+    file << "// calcul de " << behaviour_bc_volume[i_CLv].name;
     file << "__global__ void global_read_data_bc_volume_group_elements_poids_" << i_step << "(FieldStructureCompactClass *field_structure_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements, int i_res, TYPE t){";
     file << "    int i_elem = i_grid * sizeGrid * blockDim.x + blockIdx.x * blockDim.x + threadIdx.x;";
     file << "    if(i_elem <nb_elements){";
     file << "        TYPE size = field_structure_compact_GPU->group_elements[i_group].size[i_elem];" ;
     file << "        TYPE rho  = field_structure_compact_GPU->group_elements[i_group].mat_prop[3][i_elem];" ;
-    String norme_pdirection;
+    Sc2String norme_pdirection;
     norme_pdirection << "sqrt( float(";
     for(int d=0; d<DIM; d++){
-        String plus;
+        Sc2String plus;
         if(d==DIM-1)
             plus << ")^2";
         else
             plus << ")^2 + ";
-        norme_pdirection << "(" << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d].c_str() << plus ;
+        norme_pdirection << "(" << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d] << plus ;
     }
     norme_pdirection << "));";
     file << "        TYPE norme_pdirection  = " <<  norme_pdirection ;
     for(int d=0; d<DIM; d++){
-        file << "        field_structure_compact_GPU->group_elements[i_group].volumic_force[" << d << "][i_elem] += rho * size / norme_pdirection * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d].c_str() << " * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[6].c_str() <<";";
+        file << "        field_structure_compact_GPU->group_elements[i_group].volumic_force[" << d << "][i_elem] += rho * size / norme_pdirection * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d] << " * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[6] <<";";
     }
     file << "    }";
     file << "};";
@@ -1370,26 +1373,26 @@ void DataUser::write_global_read_data_bc_volume_poids_group_elements( int i_CLv,
 }
 
 void DataUser::write_global_read_data_bc_volume_acceleration_group_elements( int i_CLv, int i_step, StringWithSepInCppLineMaker &file){
-    file << "// calcul de " << behaviour_bc_volume[i_CLv].name.c_str();
+    file << "// calcul de " << behaviour_bc_volume[i_CLv].name;
     file << "__global__ void global_read_data_bc_volume_group_elements_acceleration_" << i_step << "(FieldStructureCompactClass *field_structure_compact_GPU, int i_group, int i_grid, int sizeGrid, int nb_elements, int i_res, TYPE t){";
     file << "    int i_elem = i_grid * sizeGrid * blockDim.x + blockIdx.x * blockDim.x + threadIdx.x;";
     file << "    if(i_elem <nb_elements){";
     file << "        TYPE size = field_structure_compact_GPU->group_elements[i_group].size[i_elem];" ;
     file << "        TYPE rho  = field_structure_compact_GPU->group_elements[i_group].mat_prop[3][i_elem];" ;
-    String norme_pdirection;
+    Sc2String norme_pdirection;
     norme_pdirection << "sqrt( float(";
     for(int d=0; d<DIM; d++){
-        String plus;
+        Sc2String plus;
         if(d==DIM-1)
             plus << ")^2";
         else
             plus << ")^2 + ";
-        norme_pdirection << "(" << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d].c_str() << plus ;
+        norme_pdirection << "(" << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d] << plus ;
     }
     norme_pdirection << "));";
     file << "        TYPE norme_pdirection  = " <<  norme_pdirection ;
     for(int d=0; d<DIM; d++){
-        file << "        field_structure_compact_GPU->group_elements[i_group].volumic_force[" << d << "][i_elem] += rho * size / norme_pdirection * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d].c_str() << " * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[6].c_str() <<";";
+        file << "        field_structure_compact_GPU->group_elements[i_group].volumic_force[" << d << "][i_elem] += rho * size / norme_pdirection * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[d] << " * " << behaviour_bc_volume[i_CLv].step[i_step].CLv_step_prop[6] <<";";
     }
     file << "    }";
     file << "};";
@@ -1445,7 +1448,7 @@ void DataUser::write_global_read_data_links_group_interfaces( int i_link, String
     file << "        TYPE y = field_structure_compact_GPU->group_interfaces[i_group].pt[1][i_inter];" ;
     file << "        TYPE z = field_structure_compact_GPU->group_interfaces[i_group].pt[2][i_inter];" ;
     for(int i_prop=0; i_prop<behaviour_links[i_link].link_prop.size(); i_prop++){
-        write_read_link_prop_cpp(behaviour_links[i_link].link_prop[i_prop].c_str(), behaviour_links[i_link].link_prop_name[i_prop].c_str(), i_prop, file);
+        write_read_link_prop_cpp(behaviour_links[i_link].link_prop[i_prop], behaviour_links[i_link].link_prop_name[i_prop], i_prop, file);
     }
     file << "    }";
     file << "};";
@@ -1493,7 +1496,7 @@ void DataUser::write_global_read_data_bc_group_interfaces( int i_bc, int i_step,
     file << "        TYPE y = field_structure_compact_GPU->group_interfaces[i_group].pt[1][i_inter];" ;
     file << "        TYPE z = field_structure_compact_GPU->group_interfaces[i_group].pt[2][i_inter];" ;
     for(int d=0; d<DIM; d++){
-        file << "        field_structure_compact_GPU->group_interfaces[i_group].bc[" << d << "][i_inter] = " << behaviour_bc[i_bc].step[i_step].CL_step_prop[d].c_str() << " * " << behaviour_bc[i_bc].step[i_step].CL_step_prop[3+d].c_str() <<";";
+        file << "        field_structure_compact_GPU->group_interfaces[i_group].bc[" << d << "][i_inter] = " << behaviour_bc[i_bc].step[i_step].CL_step_prop[d] << " * " << behaviour_bc[i_bc].step[i_step].CL_step_prop[3+d] <<";";
     }
     file << "    }";
     file << "};";
@@ -1543,7 +1546,7 @@ void DataUser::write_launch_read_data_bc_group_interfaces( StringWithSepInCppLin
 
 
 
-void DataUser::write_read_prop_cpp( String &file_cu, String &file_h ){   
+void DataUser::write_read_prop_cpp( Sc2String &file_cu, Sc2String &file_h ){   
     std::cout << "ecriture de données" << std::endl;
     
     // write
@@ -1605,38 +1608,38 @@ void DataUser::write_read_prop_cpp( String &file_cu, String &file_h ){
 DataReader *DataUser::NEW_DataReader( ) {
     
     
-    String base;
+    Sc2String base;
     base << "ReadParam_" << id_calcul;
     
     Level1::CompilationEnvironment &ce = Level1::CompilationEnvironment::get_main_compilation_environment();
-//     String calcul_path;
-//     calcul_path << data_user.calcul_path.c_str();
+//     Sc2String calcul_path;
+//     calcul_path << data_user.calcul_path;
 //     ce.set_comp_dir( calcul_path );
     ce.add_inc_path("./src/COMPUTE/");
     ce.add_inc_path("./src/GEOMETRY/");
     ce.add_inc_path("./src/UTILS/json_spirit/");
     
-    String proc_DIM;
+    Sc2String proc_DIM;
     proc_DIM << "DIM=" << DIM;
-    String proc_TYPE;
+    Sc2String proc_TYPE;
     proc_TYPE << "TYPE=" << "double";
-    String proc_THREADSPERBLOCK;
+    Sc2String proc_THREADSPERBLOCK;
     proc_THREADSPERBLOCK << "THREADSPERBLOCK=" << 48;
-    String proc_SIZEGRID;
+    Sc2String proc_SIZEGRID;
     proc_SIZEGRID << "SIZEGRID=" << 6;
     ce.add_def_proc(proc_DIM);
     ce.add_def_proc(proc_TYPE);
     ce.add_def_proc(proc_THREADSPERBLOCK);
     ce.add_def_proc(proc_SIZEGRID);
-    String file_cu = ce.cu_for( base );
-    String file_h = ce.h_for( base );
+    Sc2String file_cu = ce.cu_for( base );
+    Sc2String file_h = ce.h_for( base );
 
     write_read_prop_cpp( file_cu,  file_h);
 
-    String so = ce.lib_for( base, true );
+    Sc2String so = ce.lib_for( base, true );
     SI64 date_so = last_modification_time_or_zero_of_file_named( so );
     if ( ce.make_lib( so, file_cu, true ) )
-        ERROR( "Pb during compilation of %s", file_cu.c_str() );
+        ERROR( "Pb during compilation of %s", file_cu );
 // 
     // load lib
     static std::map<String,DynamicLibrary> libs;

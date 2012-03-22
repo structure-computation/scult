@@ -19,6 +19,8 @@
 
 using namespace Metil;
 
+#include "../UTILS/Sc2String.h"
+
 #ifndef ENTITY_ELEMENT_USER_H
 #define ENTITY_ELEMENT_USER_H
 
@@ -33,7 +35,7 @@ struct EntityElementUser{
     
     //flag de l'element
     BasicVec< int > flags;
-    BasicVec< String > flags_names;
+    BasicVec< Sc2String > flags_names;
     
     // attributs elements correspondant au pattern
     int id;
@@ -76,7 +78,7 @@ struct EntityElementUser{
         flags[0] = num_piece_in_mesh;
         flags[1] = pattern_id;
     }
-    int find_flag_index(String flag_name){
+    int find_flag_index(Sc2String flag_name){
         int num_flag = -1;
         for( int i_flag=0; i_flag<flags.size(); i_flag++){
             if(flags_names[i_flag] == flag_name){
@@ -85,7 +87,7 @@ struct EntityElementUser{
         }
         return num_flag;
     }
-    bool valid_flags(BasicVec< int > &flags_test, BasicVec< String > &flags_test_names){
+    bool valid_flags(BasicVec< int > &flags_test, BasicVec< Sc2String > &flags_test_names){
         bool flags_valid = true;
         for( int i_flag_test=0; i_flag_test<flags_test.size(); i_flag_test++){
             int i_flag = find_flag_index(flags_test_names[i_flag_test]);

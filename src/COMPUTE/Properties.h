@@ -20,16 +20,16 @@ class Properties{
     
 public:
     // propriétés materiaux --------------------
-    BasicVec< std::string > mat_prop_name;
+    BasicVec< Sc2String > mat_prop_name;
     // propriétés liaisons --------------------
-    BasicVec< std::string > link_prop_name;
+    BasicVec< Sc2String > link_prop_name;
     // propriétés BC_step --------------------
-    BasicVec< std::string > BC_step_prop_name; 
+    BasicVec< Sc2String > BC_step_prop_name; 
     // propriétés BC_step --------------------
-    BasicVec< std::string > BCv_step_prop_name; 
+    BasicVec< Sc2String > BCv_step_prop_name; 
     
     Properties(){
-        mat_prop_name.resize(36);
+        mat_prop_name.resize(38);
         mat_prop_name[0] =  "elastic_modulus";
         mat_prop_name[1] =  "poisson_ratio";
         mat_prop_name[2] =  "alpha";
