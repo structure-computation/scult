@@ -10,6 +10,9 @@
 //
 //
 
+#ifndef FIELDSTRUCTUREUSER_H
+#define FIELDSTRUCTUREUSER_H
+
 #ifdef METIL_COMP_DIRECTIVE
     #pragma gpu_flag --compiler-options -fpermissive
 #endif
@@ -25,9 +28,6 @@
 #include "FieldStructureGroupInterfacesUser.h"
 
 using namespace Metil;
-
-#ifndef FIELDSTRUCTUREUSER_H
-#define FIELDSTRUCTUREUSER_H
 
 class FieldStructureUser{
     public:
@@ -81,6 +81,7 @@ class FieldStructureUser{
       //Methode d'initialisation----------------------------------------------------------------------------------------------------------------------
       FieldStructureUser();
       FieldStructureUser(GeometryUser &geometry_);
+      void load_geometry_user(GeometryUser &geometry_);
       
       void assign_material_id_to_group_elements(DataUser &data_user);                  // assignation des id des materiaux aux group_elements
       void assign_material_properties_to_group_elements(DataUser &data_user, BasicVec<BasicVec<TYPE> > &mat_prop);      // assignation des proprietes materiaux aux group_elements

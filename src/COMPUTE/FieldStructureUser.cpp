@@ -21,9 +21,13 @@ using namespace Metil;
 
 // fonctions d'initialisation ----------------------------------------------------------------------------------------------------------------------------
 
-FieldStructureUser::FieldStructureUser(){};
+FieldStructureUser::FieldStructureUser(){}
 
 FieldStructureUser::FieldStructureUser(GeometryUser &geometry_){
+    load_geometry_user(geometry_);
+}
+
+void FieldStructureUser::load_geometry_user(GeometryUser &geometry_){
     num_level = geometry_.num_level;
     dim = geometry_.dim;
     nb_group_elements =  geometry_.group_elements.size();
@@ -39,8 +43,7 @@ FieldStructureUser::FieldStructureUser(GeometryUser &geometry_){
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         group_interfaces[i_group].initialize(geometry_, i_group, properties);
     }
-    
-};
+}
 
 // FieldStructureUser::FieldStructureUser(GeometryUser &geometry_, Sst<DIM,TYPE> &S){
 //     FieldStructureUser(geometry_);

@@ -9,6 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#ifndef FIELD_STRUCTURE_GROUP_ELEMENTS_USER_H
+#define FIELD_STRUCTURE_GROUP_ELEMENTS_USER_H
 
 #include <cmath>
 #include <Metil/BasicVec.h>
@@ -21,8 +23,6 @@
 
 using namespace Metil;
 
-#ifndef FIELD_STRUCTURE_GROUP_ELEMENTS_USER_H
-#define FIELD_STRUCTURE_GROUP_ELEMENTS_USER_H
 
 
 //group elements---------------------------------------------------------------------------------------------------------------------------
@@ -111,10 +111,10 @@ struct FieldStructureGroupElementsUser{
             mat_prop[i_prop].resize(nb_elements, 0);
         }
         mat_elem.resize(geometry_.group_elements[i_group_].connectivities.size());
-	for(int i_mat=0;i_mat<mat_elem.size();i_mat++){
-	    mat_elem[i_mat].resize(nb_elements,0);
-	}
-	//initialisation des tailles des vecteurs champs
+        for(int i_mat=0;i_mat<mat_elem.size();i_mat++){
+            mat_elem[i_mat].resize(nb_elements,0);
+        }
+        //initialisation des tailles des vecteurs champs
         for(int d=0;d<DIM;d++){
             displacement_local_nodes[d].resize(nb_nodes,0);
             displacement_local_nodes_skin[d].resize(nb_nodes,0);
@@ -128,13 +128,11 @@ struct FieldStructureGroupElementsUser{
             epsilon_skin[d].resize(nb_elements_skin,0);
         }
         sigma_mises.resize(nb_elements,0);
-	sigma_mises_skin.resize(nb_elements_skin,0);
+        sigma_mises_skin.resize(nb_elements_skin,0);
         material_behaviour.resize(nb_elements,0);
         material_behaviour_skin.resize(nb_elements_skin,0);
         num_processor.resize(nb_elements,0);
         num_processor_skin.resize(nb_elements_skin,0);
-	
-	
     }
     // Définition des tailles des listes pour utilisation sous GPU
     void initialize_GPU(Patterns &patterns){
@@ -153,9 +151,9 @@ struct FieldStructureGroupElementsUser{
         for(int i_prop=0; i_prop<mat_prop.size(); i_prop++){
             mat_prop[i_prop].resize(nb_elements_for_GPU,0);
         }
-	for(int i_mat=0;i_mat<mat_elem.size();i_mat++){
-	    mat_elem[i_mat].resize(nb_elements_for_GPU);
-	}
+        for(int i_mat=0;i_mat<mat_elem.size();i_mat++){
+            mat_elem[i_mat].resize(nb_elements_for_GPU);
+        }
         for(int d=0;d<DIM;d++){
             displacement_local_nodes[d].resize(nb_nodes_for_GPU,0);
             explode_displacement_local_nodes[d].resize(nb_nodes_for_GPU,0);
@@ -164,11 +162,6 @@ struct FieldStructureGroupElementsUser{
             sigma[d].resize(nb_elements_for_GPU,0);
             epsilon[d].resize(nb_elements_for_GPU,0);
         }
-        //(nb_node_side,nb_node_eq_side,nb_side,num_motif) 
-//         int nb_sides = patterns.find_type(pattern_id).nb_sides;
-//         int nb_nodes_by_sides = patterns.find_type(pattern_id).nb_nodes_by_sides;
-//         int nb_nodes_eq_by_sides = patterns.find_type(pattern_id).nb_nodes_eq_by_sides;   
-        
     }
     // Affichage pour vérification
     void affiche(){

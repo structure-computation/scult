@@ -10,14 +10,14 @@
 //
 //
 
+#ifndef MESH_USER_H
+#define MESH_USER_H
+
 #ifdef METIL_COMP_DIRECTIVE
     #pragma src_file mesh_reader/read_bdf.cpp
     #pragma src_file mesh_reader/read_unv.cpp
     #pragma src_file code_genere/MeshUserFunctions.cpp
 #endif
-
-#ifndef MESH_USER_H
-#define MESH_USER_H
 
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>

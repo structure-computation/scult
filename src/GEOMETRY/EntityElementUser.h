@@ -10,6 +10,8 @@
 //
 //
 
+#ifndef ENTITY_ELEMENT_USER_H
+#define ENTITY_ELEMENT_USER_H
 
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
@@ -20,9 +22,6 @@
 using namespace Metil;
 
 #include "../UTILS/Sc2String.h"
-
-#ifndef ENTITY_ELEMENT_USER_H
-#define ENTITY_ELEMENT_USER_H
 
 //définition d'une entité élément (utile dans MeshUser)------------------------------------------------------------------------
 struct EntityElementUser{

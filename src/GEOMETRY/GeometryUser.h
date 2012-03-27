@@ -10,6 +10,8 @@
 //
 //
 
+#ifndef GEOMETRYUSER_H
+#define GEOMETRYUSER_H
 
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
@@ -26,8 +28,6 @@
 
 using namespace Metil;
 
-#ifndef GEOMETRYUSER_H
-#define GEOMETRYUSER_H
 
 class GeometryUser{
     public:

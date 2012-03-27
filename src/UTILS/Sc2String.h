@@ -6,11 +6,12 @@
 #include <Metil/String.h>
 
 
-/// Sc2String
-/// Cette classe herite de std::string et ses masquages/surcharges d'operateurs
-/// assure sa compatibilite de comportement avec la classe Metil::String.
-/// Les Sc2String peuvent donc remplacer ces deux classes et supportent leurs principaux
-/// formalismes d'ecriture.
+/** Sc2String
+ * Cette classe herite de std::string et ses masquages/surcharges d'operateurs
+ * assure sa compatibilite de comportement avec la classe Metil::String.
+ * Les Sc2String peuvent donc remplacer ces deux classes et supportent leurs principaux
+ * formalismes d'ecriture.
+ */
 class Sc2String: public std::string{
 public:
     ///Constructeurs associes a std::string
@@ -25,26 +26,27 @@ public:
     Sc2String ( const Metil::String &s ) : std::string(){assign(s.c_str());}
     
     /// Operateur =
-    Sc2String &operator=(const Metil::String &s){assign(s.c_str()); return (*this);}
-    Sc2String &operator=(const std::string &s){assign(s); return (*this);}
-    Sc2String &operator=(const char *s){assign(s); return (*this);}
+    template<class T> Sc2String& operator= (const Sc2String &s){
+        assign(convert(s));
+        return (*this);
+    }
     
     /// Operateur +=
-    Sc2String& operator+= ( const Metil::String& str ) {append(str.c_str());return (*this);}
-    Sc2String& operator+= ( const std::string& str ) {append(str);return (*this);}
-    Sc2String& operator+= ( const char* s ) {append(s);return (*this);}
+    template<class T> Sc2String& operator+= (const T &s){
+        append(convert(s)); 
+        return (*this);
+    }
     
     /// Operateur + (binaire) (reproduit le comportement de std::string)
     template<class T> Sc2String operator+ ( const T& str ) 
     {
         Sc2String sum = (*this);
-        sum << str ;
-        return sum;
+        return sum << str ;
     }
     
     /// Operateur << (reproduit le comportement de Metil::String)
-    template<class T> Sc2String &operator<<(const T &s){
-        convert(s); 
+    template<class T> Sc2String& operator<< (const T &s){
+        append(convert(s)); 
         return *this;
     }
     
@@ -54,15 +56,19 @@ public:
     
 private:
     /// fonction de conversion generique
-    template<class T> void convert(const T &s){
+    template<class T> std::string convert(const T &s){
         std::ostringstream tmp;
         tmp << s;
-        append(tmp.str());
+        return tmp.str();
     }
     
+    /// fonction de conversion specialisee pour les Sc2String
+    const char* convert(const Sc2String &s){
+        return s.c_str();
+    }
     /// fonction de conversion specialisee pour les Metil::String
-    void convert(const Metil::String &s){
-        append(s.c_str());
+    const char* convert(const Metil::String &s){
+        return s.c_str();
     }
 };
 

@@ -11,16 +11,17 @@
 //
 
 
+#ifndef ENTITY_INTERFACE_USER_H
+#define ENTITY_INTERFACE_USER_H
+
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
+#include <Metil/String.h>
 
 #include "Patterns.h"
 // #include <boost/concept_check.hpp>
 
 using namespace Metil;
-
-#ifndef ENTITY_INTERFACE_USER_H
-#define ENTITY_INTERFACE_USER_H
 
 
 //définition d'une entité interface (utile dans MeshUser)------------------------------------------------------------------------
@@ -143,13 +144,13 @@ struct EntityInterfaceUser{
         PRINT(id);
         PRINT(mesh_type);
         PRINT(group_id);
-        PRINT(elements_num_piece_in_mesh);
-        PRINT(elements_global_num);
-        PRINT(elements_group_id);
-        PRINT(elements_num_in_group);
-        PRINT(elements_num_side);
-        PRINT(mesh_connectivity);
-        PRINT(interface_connectivity);
+//         PRINT(elements_num_piece_in_mesh);
+//         PRINT(elements_global_num);
+//         PRINT(elements_group_id);
+//         PRINT(elements_num_in_group);
+//         PRINT(elements_num_side);
+//         PRINT(mesh_connectivity);
+//         PRINT(interface_connectivity);
     }
     
 };

@@ -11,6 +11,9 @@
 //
 
 
+#ifndef FIELD_STRUCTURE_GROUP_INTERFACES_USER_H
+#define FIELD_STRUCTURE_GROUP_INTERFACES_USER_H
+
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
 
@@ -21,9 +24,6 @@
 
 using namespace Metil;
 //using namespace LMT;
-
-#ifndef FIELD_STRUCTURE_GROUP_INTERFACES_USER_H
-#define FIELD_STRUCTURE_GROUP_INTERFACES_USER_H
               
 //group_interfaces---------------------------------------------------------------------------------------------------------------------------
 struct FieldStructureGroupInterfacesUser{ 

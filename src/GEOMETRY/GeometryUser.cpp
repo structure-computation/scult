@@ -12,12 +12,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cassert>
 
-#include "json_spirit.h"
 #include "GeometryUser.h"
-#include "DataUser.h"
-#include "utils_2.h"
+#include "../COMPUTE/DataUser.h"
+#include "../UTILS/utils_2.h"
+#include "../UTILS/Sc2String.h"
+#include "../UTILS/json_spirit/json_spirit.h"
 
 using namespace json_spirit;
 using namespace Metil;
@@ -286,136 +288,74 @@ void GeometryUser::initialize_group_interfaces_from_MeshUser(MeshUser &mesh) {
 //Methode de niveau sup**********************************************************
 
 bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Geometry &geom){
-    BasicVec< BasicVec<TYPE,DIM> > vertex_point;
-    vertex_point.resize(interfaces.find_type(group_interfaces[i_group].interface_base_id)->nb_vertex_nodes);
-    for(int i_node=0; i_node<vertex_point.size(); i_node++){
+    const int size_vertex_point = interfaces.find_type(group_interfaces[i_group].interface_base_id)->nb_vertex_nodes;
+    BasicVec< BasicVec<TYPEREEL,DIM> > vertex_point;
+    vertex_point.resize(size_vertex_point);
+    for(int i_node=0; i_node<size_vertex_point; i_node++){
         for(int d=0; d<DIM; d++){
             vertex_point[i_node][d] = mesh_nodes[d][group_interfaces[i_group].global_connectivities[i_node][num_edge]];
         }
     }
-    
-    bool S_respect_geometry = true;
     if(geom.type=="all_temp"){
-        S_respect_geometry = true;
-        return S_respect_geometry;
+        return true;
     }else if(geom.type=="is_in"){
         if(geom.nature=="box"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_in_box(vertex_point[num_point],geom.points)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_in_box(vertex_point[num_point],geom.points))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }else if(geom.nature=="cylinder"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_in_cylinder(vertex_point[num_point],geom.points,geom.radius)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_in_cylinder(vertex_point[num_point],geom.points,geom.radius))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }else if(geom.nature=="sphere"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_in_sphere(vertex_point[num_point],geom.points[0],geom.radius)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_in_sphere(vertex_point[num_point],geom.points[0],geom.radius))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }
     }else if(geom.type=="is_on"){
         if(geom.nature=="plan"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_on_plan(vertex_point[num_point],geom.points[0],geom.pdirection)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_on_plan(vertex_point[num_point],geom.points[0],geom.pdirection))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }else if(geom.nature=="disc"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_on_disc(vertex_point[num_point],geom.points[0],geom.pdirection,geom.radius)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_on_disc(vertex_point[num_point],geom.points[0],geom.pdirection,geom.radius))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }else if(geom.nature=="cylinder"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_on_cylinder(vertex_point[num_point],geom.points,geom.radius)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_on_cylinder(vertex_point[num_point],geom.points,geom.radius))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }else if(geom.nature=="sphere"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-                if(!pt_on_sphere(vertex_point[num_point],geom.points[0],geom.radius)){
-                    S_respect_geometry = false;
-                    break;
-                }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_on_sphere(vertex_point[num_point],geom.points[0],geom.radius))
+                    return false;
             }
-            return S_respect_geometry;
+            return true;
         }else if(geom.nature=="equation"){
-            for(int num_point=0; num_point<vertex_point.size(); num_point++){
-               if(!pt_match_equation(vertex_point[num_point],geom.equation)){
-                   S_respect_geometry = false;
-                   break;
-               }
+            for(int num_point=0; num_point<size_vertex_point; num_point++){
+                if(!GeomTest::pt_match_equation(vertex_point[num_point],geom.equation))
+                    return false;
             }
-            return S_respect_geometry;
-//             cout << "equation non implementé" << endl;
+            return true;
         }
     }
+    return true;
+    //std::cerr << "geom.type '" << geom.type << "' ou geom.nature '" << geom.nature << "' n'est pas valable";
+    //assert(0);
 };
 
-
-
-// void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
-//     PRINT("split des interfaces---------------");
-//     nb_group_interfaces = group_interfaces.size();
-//     PRINT(nb_group_interfaces);
-//     
-//     for(int i_data_group=0; i_data_group<data_user.group_edges.size(); i_data_group++){
-//         PRINT(i_data_group);
-//         BasicVec< BasicVec< int > > edge_assigned_;
-//         edge_assigned_.resize(group_interfaces.size());
-//         BasicVec< int > group_interfaces_found;
-//         group_interfaces_found.resize(0);
-//         for(int i_group=0; i_group<nb_group_interfaces; i_group++){
-//             bool group_found = false;
-//             if(group_interfaces[i_group].type == 0){
-//                 edge_assigned_[i_group].resize(group_interfaces[i_group].nb_interfaces,-1); // toute les interface sont assigné par defaut a la condition effort nul
-//                 for(int i_edge=0; i_edge<group_interfaces[i_group].nb_interfaces; i_edge++){
-//                     if(edge_assigned_[i_group][i_edge]==-1 and do_respect_geometry(i_group, i_edge, data_user.group_edges[i_data_group].geom)){
-//                         edge_assigned_[i_group][i_edge] = data_user.group_edges[i_data_group].id;
-//                         group_found = true;
-//                     }
-//                 }
-//                 if(group_found)
-//                     group_interfaces_found.push_back(i_group);
-//             }
-//         }
-//         PRINT(group_interfaces_found.size());
-//         for(int i_group=0; i_group<group_interfaces_found.size(); i_group++){
-//             int id = group_interfaces.size();
-//             GroupInterfacesUser *group_interface_temp = group_interfaces.push_back();
-//             group_interface_temp->split_from_group(group_interfaces[group_interfaces_found[i_group]], edge_assigned_[i_group], data_user.group_edges[i_data_group].id, id, mesh_nodes, group_elements);
-//             mise à jour des données du group_elements adjacent 
-//             for(int i_group_elements=0; i_group_elements<group_interface_temp->nb_group_elements; i_group_elements++){
-//                 group_elements[group_elements_id[i_group_elements]].group_interfaces_id[type].push_back(id) ;
-//                 int id_group_elements__ = group_interface_temp->group_elements_id[i_group_elements] ;
-//                 int type__ = group_interface_temp->type ;
-//                 int id__ = group_interface_temp->id ;
-//                 find_group_elements(id_group_elements__)->group_interfaces_id[type__].push_back(id__) ;
-//             }  
-//         }
-//     }
-//     
-//     nb_group_interfaces = group_interfaces.size();
-//     PRINT(nb_group_interfaces);
-// }
 
 void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {
     PRINT("Visualisation des bords respectant un critère donné -------");
@@ -451,12 +391,11 @@ void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {
 
 void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
     PRINT("split des interfaces---------------");
-/*    PRINT(nb_group_interfaces);*/
+    //PRINT(nb_group_interfaces);
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         if(group_interfaces[i_group].type == 0){
             //PRINT(i_group);
             BasicVec< int > edge_assigned_;
-//             edge_assigned_.resize(group_interfaces[i_group].nb_interfaces,-2);
             edge_assigned_.resize(group_interfaces[i_group].nb_interfaces,-1); // toute les interface sont assigné par defaut a la condition effort nul
             BasicVec< bool > find_data_group_edge;
             find_data_group_edge.resize(data_user.group_edges.size(),false);
@@ -527,9 +466,9 @@ void GeometryUser::write_json(MeshUser &mesh_user) {
         group.push_back(Pair( "id", group_elements[i_group].id ));
         group.push_back(Pair( "origine", "from_bulkdata" ));
         group.push_back(Pair( "identificateur", group_elements[i_group].id ));
-        std::ostringstream name_group;
+        Sc2String name_group;
         name_group << "piece " << group_elements[i_group].id;
-        group.push_back(Pair( "name", Sc2String(name_group.str()) ));
+        group.push_back(Pair( "name", name_group ));
         group.push_back(Pair( "assigned", -1 ));
         group.push_back(Pair( "group", -1 ));
 

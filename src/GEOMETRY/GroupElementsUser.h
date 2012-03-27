@@ -10,18 +10,20 @@
 //
 //
 
+#ifndef GROUP_ELEMENTS_USER_H
+#define GROUP_ELEMENTS_USER_H
+
+
 #include <cmath>
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
+#include <Metil/String.h>
 
 #include "Patterns.h"
 // #include <boost/concept_check.hpp>
 #include <boost/concept_check.hpp>
 
 using namespace Metil;
-
-#ifndef GROUP_ELEMENTS_USER_H
-#define GROUP_ELEMENTS_USER_H
 
 
 //group elements---------------------------------------------------------------------------------------------------------------------------
@@ -214,12 +216,11 @@ struct GroupElementsUser{
 
 //         PRINT(map_global_nodes);
 //         PRINT(local_nodes[0]);
-        for(int i=0; i<3; i++)
-            PRINT(group_interfaces_id[i]);
-        for(int i=0; i<interface_group_id.size(); i++){
-            PRINT(interface_group_id[i]);
-            PRINT(interface_num_in_group[i]);
-        }
+//         PRINT(group_interfaces_id);
+//         for(int i = 0; i < interface_group_id.size(); i++){
+//             PRINT(interface_group_id[i]);
+//             PRINT(interface_num_in_group[i]);
+//         }
     }
 };
 

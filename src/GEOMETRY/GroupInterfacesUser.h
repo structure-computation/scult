@@ -11,51 +11,54 @@
 //
 
 
+#ifndef GROUP_INTERFACES_USER_H
+#define GROUP_INTERFACES_USER_H
+
+
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
+#include <Metil/String.h>
 
 #include "Patterns.h"
-// #include <boost/concept_check.hpp>
+#include <boost/concept_check.hpp>
 //#include "containers/mat.h"
 
 using namespace Metil;
 //using namespace LMT;
 
-#ifndef GROUP_INTERFACES_USER_H
-#define GROUP_INTERFACES_USER_H
-              
+
 //group_interfaces---------------------------------------------------------------------------------------------------------------------------
 struct GroupInterfacesUser{ 
     // attributs du groupe------------------------------------------
-    int id;                                                          //identité du group
-    int interface_id;                                                //id du type d'interface
-    int interface_base_id;                                           //id du type d'interface dans le maillage de base
-    int edge_id;                                                     //id de l'edge géometrique définit par l'utilisateur pour créer ce nouveau group
-    int type;                                                        //type du group 0 : bord | 1 : interieur a un group_elements  |  2 : entre deux group_elements
+    int id;                                                     //identité du group
+    int interface_id;                                           //id du type d'interface
+    int interface_base_id;                                      //id du type d'interface dans le maillage de base
+    int edge_id;                                                //id de l'edge géometrique définit par l'utilisateur pour créer ce nouveau group
+    int type;                                                   //type du group 0 : bord | 1 : interieur a un group_elements  |  2 : entre deux group_elements
     int nb_group_elements;
     int nb_interfaces;
     int nb_interfaces_for_GPU;
-    int is_splited;                                                  // le group a été spliter ou non
-    int from_group_id;                                               // de quel group vient il (si c'est un split de group)
-    bool micro_loaded; 						// true si on a chargé le micro
+    int is_splited;                                             // le group a été spliter ou non
+    int from_group_id;                                          // de quel group vient il (si c'est un split de group)
+    bool micro_loaded;                                          // true si on a chargé le micro
     
-    BasicVec< int > group_elements_id;                            //identité des groupes d'elements adjacents (max 2)
-    BasicVec< int > patterns_id;                                  //identité patterns pour chaque groupes d'elements adjacents (max 2)
-    BasicVec< int > patterns_base_id;                             //identité patterns du maillage pour chaque groupes d'elements adjacents (max 2)
-    BasicVec< BasicVec< int > > element_num_in_group;             //numéros locals des elements adjacents à chaque interface dans leur group_elements (max 2, nb_interfaces) !meme ordre que id_group_elements
-    BasicVec< BasicVec< int > > element_num_side;                 //numéros des sides des elements adjacents à chaque interface dans leur group_elements (max 2, nb_interfaces)
-    BasicVec< int > to_visualize;                 //valeur booléenne pour visualiser ou non chaque interface du groupe (nb_interfaces)
+    BasicVec< int > group_elements_id;                          //identité des groupes d'elements adjacents (max 2)
+    BasicVec< int > patterns_id;                                //identité patterns pour chaque groupes d'elements adjacents (max 2)
+    BasicVec< int > patterns_base_id;                           //identité patterns du maillage pour chaque groupes d'elements adjacents (max 2)
+    BasicVec< BasicVec< int > > element_num_in_group;           //numéros locals des elements adjacents à chaque interface dans leur group_elements (max 2, nb_interfaces) !meme ordre que id_group_elements
+    BasicVec< BasicVec< int > > element_num_side;               //numéros des sides des elements adjacents à chaque interface dans leur group_elements (max 2, nb_interfaces)
+    BasicVec< int > to_visualize;                               //valeur booléenne pour visualiser ou non chaque interface du groupe (nb_interfaces)
     
-    BasicVec< int > map_global_nodes;                               //map entre les noeuds locaux et globaux
-    BasicVec< BasicVec< TYPE > > local_nodes;                     //liste des noeuds du groupe(nb_node_by_side_pattern, nb_interfaces)  
-    BasicVec< BasicVec< int > > local_connectivities;             //liste des connectivité des interfaces par rapport aux noeuds locaux(nb_node_by_side_pattern, nb_interfaces) 
-    BasicVec< BasicVec< int > > global_connectivities;              //liste des connectivité des interfaces dans le maillage de base (nb_node_by_side_pattern, nb_interfaces)
-    BasicVec< BasicVec< int > > connectivities;                   //liste des connectivité des interfaces (nb_node_by_side_pattern, nb_interfaces)
-    BasicVec< BasicVec< int > > correspondance_between_nodes;      //correspondance des noeuds du side 2 par rapport au side 1 (nb_node_by_side_pattern, nb_interfaces)
+    BasicVec< int > map_global_nodes;                           //map entre les noeuds locaux et globaux
+    BasicVec< BasicVec< TYPE > > local_nodes;                   //liste des noeuds du groupe(nb_node_by_side_pattern, nb_interfaces)  
+    BasicVec< BasicVec< int > > local_connectivities;           //liste des connectivité des interfaces par rapport aux noeuds locaux(nb_node_by_side_pattern, nb_interfaces) 
+    BasicVec< BasicVec< int > > global_connectivities;          //liste des connectivité des interfaces dans le maillage de base (nb_node_by_side_pattern, nb_interfaces)
+    BasicVec< BasicVec< int > > connectivities;                 //liste des connectivité des interfaces (nb_node_by_side_pattern, nb_interfaces)
+    BasicVec< BasicVec< int > > correspondance_between_nodes;   //correspondance des noeuds du side 2 par rapport au side 1 (nb_node_by_side_pattern, nb_interfaces)
     
-    BasicVec< BasicVec< TYPE > > Ne;                                    //operateur de passage entre W (depl sur interface) et U(déplacement sur le bord) (nb_node_side,nb_interfaces)
-    BasicVec< TYPE > Me;                                                //mesure de chaque interface, utilise pour faire l'integration FW sur un element (nb_interfaces) 
-    TYPE measure;               //mesure du groupe d'interface (surface ou longueur)
+    BasicVec< BasicVec< TYPE > > Ne;                            //operateur de passage entre W (depl sur interface) et U(déplacement sur le bord) (nb_node_side,nb_interfaces)
+    BasicVec< TYPE > Me;                                        //mesure de chaque interface, utilise pour faire l'integration FW sur un element (nb_interfaces) 
+    TYPE measure;                                               //mesure du groupe d'interface (surface ou longueur)
 //     
 
     // méthodes du groupe------------------------------------------
@@ -373,14 +376,14 @@ struct GroupInterfacesUser{
         PRINT(nb_interfaces);
         PRINT(interface_id);
         PRINT(interface_base_id);
-        PRINT(group_elements_id);
-        PRINT(patterns_id);
+//         PRINT(group_elements_id);
+//         PRINT(patterns_id);
         PRINT(element_num_in_group.size());
         PRINT(element_num_side.size());
         PRINT(map_global_nodes.size());
         PRINT(local_nodes[0].size());
-	PRINT(local_connectivities[0].size());
-	PRINT(global_connectivities[0].size());
+        PRINT(local_connectivities[0].size());
+        PRINT(global_connectivities[0].size());
         PRINT(connectivities.size());
     }
 };
