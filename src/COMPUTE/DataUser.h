@@ -17,9 +17,9 @@
 #include <Metil/BasicVec.h>
 
 #include "DataReader.h"
-#include "Patterns.h"
+#include "../GEOMETRY/Patterns.h"
 #include "Properties.h"
-#include "json_spirit.h"
+#include "../UTILS/json_spirit/json_spirit.h"
 #include "../UTILS/Sc2String.h"
 
 #include "../UTILS/Sc2String.h"

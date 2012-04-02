@@ -55,6 +55,7 @@ void write_groups_datasets(std::ofstream &f,Sc2String input_hdf5, Sc2String name
         int pattern_id;
         if(type_element==0){
             hdf.read_tag(name_list,"pattern_base_id",pattern_id,1);
+            std::cout << "PATTERN_ID : " << pattern_id << " ****************************************************************************" << endl;
             if (pattern_id==0) nb_nodes_elem=3;             // Triangle
             else if (pattern_id==1) nb_nodes_elem=3;        // Triangle_6, on ne prend que les 3 premiers noeuds
             else if (pattern_id==2) nb_nodes_elem=4;        // Tetra
@@ -65,6 +66,7 @@ void write_groups_datasets(std::ofstream &f,Sc2String input_hdf5, Sc2String name
             }
         }else if(type_element==1){ 
             hdf.read_tag(name_list,"interface_base_id",pattern_id,1);
+            std::cout << "PATTERN_ID : " << pattern_id << " ****************************************************************************" << endl;
             if (pattern_id==0) nb_nodes_elem=2;             // Bar
             else if (pattern_id==1) nb_nodes_elem=3;        // Bar_3
             else if (pattern_id==2) nb_nodes_elem=3;        // Triangle
@@ -113,30 +115,7 @@ void write_groups_datasets_2(std::ofstream &f,Sc2String input_hdf5, Sc2String na
             data_item << name_list << "/mesh_c" <<j ;
             f <<"           <DataItem Name=\"" << data_item << "\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_elems << " 1\">" <<  input_hdf5 <<":"<< data_item <<" </DataItem>" << endl;
         }
-//         if(i<50)
-//             nb_elems_tot+=nb_elems;
-        
-//         nb_nodes_elem_glob=nb_nodes_elem;
     }
-    
-//     int nb_list=50;
-//     Sc2String JOIN="JOIN(";
-//     for (unsigned i=0; i< nb_list-1; i++) {
-//         JOIN<<"$"<<i<<" ; ";
-//     }
-//     JOIN << "$"<<nb_list-1 <<")";
-//     
-//     for (unsigned j=0;j<nb_nodes_elem_glob ; j++) {
-//         f<<"                <DataItem Name=\" c" <<j<<"\" Dimensions=\" "<< nb_elems_tot <<" \" ItemType=\"Function\" Function=\""<<JOIN<<"\"> " <<endl;
-//         for (unsigned i=0; i< nb_list; i++) {
-//         Sc2String name_list; name_list << name_group_elements << "/"<<lists[i];   
-//         Sc2String data_item;
-//         data_item << name_list << "/mesh_c" <<j ;
-//         f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< data_item <<"\"] </DataItem> " << endl;
-//         }
-//         f<<"                                     </DataItem> " <<endl;
-//     }
-
 }
 
 template<class VB> BasicVec<unsigned> find_with_index(const VB &to_check) {

@@ -966,18 +966,19 @@ void GeometryUser::read_infos_group_elements_hdf5(Hdf &hdf, Sc2String &name, boo
                 group_elements[id].connectivities[i_connect].resize(0);
             }
         }
-
+        
         //lecture des sides pour chaque element (repere du groupe et du numéro local dans le groupe de l'interface voisine)
         BasicVec<Sc2String> list_side;
-        list_side=hdf.list_dir( name_list << "/sides");
+        list_side=hdf.list_dir( name_list + "/sides");
         group_elements[id].interface_group_id.resize(list_side.size());
         group_elements[id].interface_num_in_group.resize(list_side.size());
         for(unsigned nside=0;nside<group_elements[id].interface_group_id.size();nside++){
             Sc2String name_side_group_id;
-            name_side_group_id << name_list << "/sides/" <<list_side[nside] << "/interface_group_id";
+            name_side_group_id << name_list << "/sides/" << list_side[nside] << "/interface_group_id";
             group_elements[id].interface_group_id[nside].read_from( hdf, name_side_group_id );
+            
             Sc2String name_side_num_in_group;
-            name_side_num_in_group << name_list << "/sides/" <<list_side[nside] << "/num_in_group" ;
+            name_side_num_in_group << name_list << "/sides/" << list_side[nside] << "/num_in_group" ;
             group_elements[id].interface_num_in_group[nside].read_from( hdf, name_side_num_in_group );
         }
         //lecture des id des groupes d'interfaces voisins
@@ -1130,7 +1131,7 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
         assert(0);
     }
     Hdf hdf( name_file_hdf5 );
-
+    
     dim=DIM;
     
     Sc2String name;
@@ -1151,11 +1152,13 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
         PRINT(nb_group_elements);
         
         read_tag_group_elements_hdf5(hdf,  name, read_micro);
+        
         if(read_all){
             read_infos_group_elements_hdf5(hdf, name, read_micro);
         }
     }
     //lecture des groupes d'interfaces
+    
     PRINT("lecture des group_interfaces");
     Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
@@ -1166,10 +1169,9 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
     PRINT(nb_group_interfaces);
 
     read_tag_group_interfaces_hdf5(hdf, name, read_micro);
-    if(read_all){
+    
+    if(read_all)
         read_infos_group_interfaces_hdf5(hdf, name, read_micro);
-    }
-
 }
 
 #include "write_xdmf.h"
