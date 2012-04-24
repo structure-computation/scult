@@ -1139,7 +1139,6 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
     name << "/Level_" << num_level << "/Geometry";
     
     read_node_hdf5(hdf, name, read_micro);
-    
     BasicVec<Sc2String> list_groups;
     if(mode!="visu_CL"){
         //lecture des groupes d'elements
