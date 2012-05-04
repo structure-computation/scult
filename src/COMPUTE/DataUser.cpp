@@ -423,6 +423,16 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
             {
                 behaviour_materials[i].comp= value.get_str();
             }
+            else if( name == "type_plast" )
+            {
+                //behaviour_materials[i].type_plast = value.get_str();
+                behaviour_materials[i].type_plast= value.get_str();
+            }
+            else if( name == "type_endo" )
+            {
+                //behaviour_materials[i].type_plast = value.get_str();
+                behaviour_materials[i].type_endo= value.get_str();
+            }
             else if( name == "resolution" )
             {
                 behaviour_materials[i].resolution= value.get_str();
@@ -563,22 +573,22 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
                 //behaviour_materials[i].alpha_3=value.get_str();
                 behaviour_materials[i].mat_prop[25]=value.get_str();
             }
+            else if( name == "R0" )
+            {
+                //behaviour_materials[i].RO = value.get_str();
+                behaviour_materials[i].mat_prop[26]=value.get_str();
+            }
             else if( name == "k_p" )
             {
-                //behaviour_materials[i].Yo = value.get_str();
-                behaviour_materials[i].mat_prop[26]=value.get_str();
+                //behaviour_materials[i].k_p = value.get_str();
+                behaviour_materials[i].mat_prop[27]=value.get_str();
             }
             else if( name == "m_p" )
             {
-                //behaviour_materials[i].Ysp = value.get_str();
-                behaviour_materials[i].mat_prop[27]=value.get_str();
-            }
-            else if( name == "R0" )
-            {
-                //behaviour_materials[i].Yop = value.get_str();
+                //behaviour_materials[i].m_p = value.get_str();
                 behaviour_materials[i].mat_prop[28]=value.get_str();
             }
-            else if( name == "couplage" )
+            else if( name == "c_p" or name == "couplage")   // COUPLAGE EST CONSERVE JUSQU A MAJ DE L INTERFACE
             {
                 //behaviour_materials[i].Yc = value.get_str();
                 behaviour_materials[i].mat_prop[29]=value.get_str();

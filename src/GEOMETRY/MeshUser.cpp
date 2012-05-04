@@ -287,7 +287,6 @@ void MeshUser::create_mesh(Sc2String model_path, Sc2String file){
     std::cout << "** read_mesh_user ok" << std::endl;
     
     std::cout << "** create interfaces *******************************************************************************************" << std::endl;
-    #warning verifier les jacobiens
     test_create_list_interfaces(); 
     PRINT(nb_interfaces);
     PRINT(list_interfaces.size());
