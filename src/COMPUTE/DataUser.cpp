@@ -381,7 +381,7 @@ void DataUser::read_json_groups_edges( const Object& gr){
 #endif
             else
             {
-                std::cout << "Donnee groups_edge non implementee : " << name << std::endl;
+                std::cout << "WARNING Donnee groups_edge non implementee : " << name << std::endl;
             }
         }
     }
@@ -422,6 +422,16 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
             else if( name == "comp" )
             {
                 behaviour_materials[i].comp= value.get_str();
+            }
+            else if( name == "type_plast" )
+            {
+                //behaviour_materials[i].type_plast = value.get_str();
+                behaviour_materials[i].type_plast= value.get_str();
+            }
+            else if( name == "type_endo" )
+            {
+                //behaviour_materials[i].type_plast = value.get_str();
+                behaviour_materials[i].type_endo= value.get_str();
             }
             else if( name == "resolution" )
             {
@@ -563,22 +573,22 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
                 //behaviour_materials[i].alpha_3=value.get_str();
                 behaviour_materials[i].mat_prop[25]=value.get_str();
             }
+            else if( name == "R0" )
+            {
+                //behaviour_materials[i].RO = value.get_str();
+                behaviour_materials[i].mat_prop[26]=value.get_str();
+            }
             else if( name == "k_p" )
             {
-                //behaviour_materials[i].Yo = value.get_str();
-                behaviour_materials[i].mat_prop[26]=value.get_str();
+                //behaviour_materials[i].k_p = value.get_str();
+                behaviour_materials[i].mat_prop[27]=value.get_str();
             }
             else if( name == "m_p" )
             {
-                //behaviour_materials[i].Ysp = value.get_str();
-                behaviour_materials[i].mat_prop[27]=value.get_str();
-            }
-            else if( name == "R0" )
-            {
-                //behaviour_materials[i].Yop = value.get_str();
+                //behaviour_materials[i].m_p = value.get_str();
                 behaviour_materials[i].mat_prop[28]=value.get_str();
             }
-            else if( name == "couplage" )
+            else if( name == "c_p" or name == "couplage")   // COUPLAGE EST CONSERVE JUSQU A MAJ DE L INTERFACE
             {
                 //behaviour_materials[i].Yc = value.get_str();
                 behaviour_materials[i].mat_prop[29]=value.get_str();
@@ -625,7 +635,7 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
             }
             else
             {
-                std::cerr << "Donnee materials non implementee : " << name << std::endl;
+                std::cerr << "WARNING Donnee materials non implementee : " << name << std::endl;
             }
         }
     }
@@ -707,7 +717,7 @@ void DataUser::read_json_behaviour_interfaces(const Object& gr){
             }
             else
             {
-                std::cout << "Champ proprietes_interface non implementee" << std::endl;
+                std::cout << "WARNING Champ proprietes_interface non implementee" << std::endl;
             }
         }
     }  
@@ -885,7 +895,7 @@ void DataUser::read_json_behaviour_bc(const Object& gr){
             }
             else
             {
-                std::cout << "Champ CL non implementee : " << name << std::endl;
+                std::cout << "WARNING Champ CL non implementee : " << name << std::endl;
             }        
         }
     }   
@@ -1011,96 +1021,96 @@ void DataUser::read_json_calcul(){
                 const Pair& pair = obj[j];
                 const Sc2String& name  = pair.name_;
                 const Value&  value = pair.value_;
-                if( name == "model_directory" ){name_directory=value.get_str();}
-                else if( name == "mesh_directory" ){mesh_directory=value.get_str();}
-                else if( name == "mesh_name" ){name_mesh_user= value.get_str();}
-                else if( name == "extension" ){extension= value.get_str();}
-                else if( name == "nb_sst" ){std::cout << "nb_sst : " <<  value.get_int() << std::endl;}
-                else if( name == "nb_inter" ){std::cout << "nb_inter : " <<  value.get_int() << std::endl;}
-                else if( name == "nb_groups_elem" ){std::cout << "nb_groups_elem : " <<  value.get_int() << std::endl;}
-                else if( name == "nb_groups_inter" ){std::cout << "nb_groups_inter : " <<  value.get_int() << std::endl;}
+                if( name == "model_directory" )     {name_directory=value.get_str();}
+                else if( name == "mesh_directory" ) {mesh_directory=value.get_str();}
+                else if( name == "mesh_name" )      {name_mesh_user= value.get_str();}
+                else if( name == "extension" )      {extension= value.get_str();}
+                else if( name == "nb_sst" )         {std::cout << "Nombre de sous-structures     : " <<  value.get_int() << std::endl;}
+                else if( name == "nb_inter" )       {std::cout << "Nombre d'interface            : " <<  value.get_int() << std::endl;}
+                else if( name == "nb_groups_elem" ) {std::cout << "Nombre de groupe d'elements   : " <<  value.get_int() << std::endl;}
+                else if( name == "nb_groups_inter" ){std::cout << "Nombre de groupe d'interfaces : " <<  value.get_int() << std::endl;}
                 else{assert( false );}
             }        
         }
         
         if(name_groups=="groups_elem"){//lecture des groupes d'elements
-            std::cout << "in groups_elem " <<  std::endl;
+            std::cout << "reading groups_elem " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             group_elements.resize(gr.size());
             read_json_groups_elements(gr);
         }
         
         if(name_groups=="groups_inter"){//lecture des groupes d'interfaces
-            std::cout << "in groups_inter " <<  std::endl;
+            std::cout << "reading groups_inter " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             group_interfaces.resize(gr.size());
             read_json_groups_interfaces(gr);
         }
         
-        if(name_groups=="groups_edge"){//lecture des groupes d'interfaces
-            std::cout << "in groups_edge " <<  std::endl;
+        if(name_groups=="groups_edge"){//lecture des groupes de bords
+            std::cout << "reading groups_edge " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             group_edges.resize(gr.size()+1);
             read_json_groups_edges( gr);
         }
         
         if(name_groups=="links"){//lecture des proprietes d'interfaces et creation de behaviour_links
-            std::cout << "in links " <<  std::endl;
+            std::cout << "reading links " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             behaviour_links.resize(gr.size()+1);
             read_json_behaviour_interfaces(gr);
         }
         
         if(name_groups=="materials"){//lecture des caracteristiques materiaux et creation de behaviour_materials
-            std::cout << "in materials " <<  std::endl;
+            std::cout << "reading materials " <<  std::endl;
             const Object& mat = value_groups.get_obj();
             behaviour_materials.resize(mat.size());
             read_json_behaviour_materials(mat);
         }
         
         if(name_groups=="CL"){//lecture des proprietes d'interfaces et creation de behaviour_links
-            std::cout << "in CL " <<  std::endl;
+            std::cout << "reading CL " <<  std::endl;
             const Object& cl = value_groups.get_obj();
             behaviour_bc.resize(cl.size()+1);
             read_json_behaviour_bc(cl);
         }
         if(name_groups=="CLvolume"){//lecture des proprietes d'interfaces et creation de behaviour_links
-            std::cout << "in CLvolume " <<  std::endl;
+            std::cout << "reading CLvolume " <<  std::endl;
             const Object& clvol = value_groups.get_obj();
             behaviour_bc_volume.resize(clvol.size());
             read_json_behaviour_bc_volume(clvol);
         }
         if(name_groups=="time_step"){//lecture des proprietes pour les steps temporels
-            std::cout << "in time_step " <<  std::endl;
+            std::cout << "reading time_step " <<  std::endl;
             const Object& timestep = value_groups.get_obj();
             time_step.resize(timestep.size());
             read_step_calcul(timestep);
         }
         if(name_groups=="multiresolution"){//lecture des proprietes pour les steps temporels
-            std::cout << "in_multiresolution " <<  std::endl;
+            std::cout << "reading multiresolution " <<  std::endl;
             const Object& multiresolution = value_groups.get_obj();
             Multiresolution_parameters.resize(multiresolution.size());
             read_multiresolution(multiresolution);
         }
         if(name_groups=="options"){//lecture des donnees de maillage
-            std::cout << "in options " <<  std::endl;
+            std::cout << "--------------options--------------" << std::endl;
             const Object obj=value_groups.get_obj();
             for( Object::size_type j = 0; j != obj.size(); ++j ){
                 const Pair& pair = obj[j];
                 const Sc2String& name  = pair.name_;
                 std::cout << name << std::endl;
                 const Value&  value = pair.value_;
-                if( name == "dissipation" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>> options.dissipation;}
-                else if( name == "nb_options" ){options.nb_option=value.get_int();}
-                else if( name == "PREC_nb_niveaux" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.nb_level;}
-                else if( name == "Temp_statique" ){options.Temp_statique=value.get_str();}
-                else if( name == "LATIN_nb_iter" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_nb_iter_max;}
-                else if( name == "LATIN_conv" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error;}
-                else if( name == "LATIN_auto_stop" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error_auto_stop;}
+                if     ( name == "dissipation" )       {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.dissipation;}
+                else if( name == "nb_options" )        {options.nb_option=value.get_int();}
+                else if( name == "PREC_nb_niveaux" )   {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.nb_level;}
+                else if( name == "Temp_statique" )     {options.Temp_statique=value.get_str();}
+                else if( name == "LATIN_nb_iter" )     {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_nb_iter_max;}
+                else if( name == "LATIN_conv" )        {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error;}
+                else if( name == "LATIN_auto_stop" )   {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error_auto_stop;}
                 else if( name == "LATIN_multiechelle" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.multiechelle;}
-                else if( name == "trac_ener_imp" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_imp;}
-                else if( name == "trac_ener_diss" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_diss;}
-                else if( name == "2D_resolution" ){Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.resolution_2D;}
+                else if( name == "trac_ener_imp" )     {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_imp;}
+                else if( name == "trac_ener_diss" )    {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.trac_ener_diss;}
+                else if( name == "2D_resolution" )     {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.resolution_2D;}
                 else if( name == "Multiresolution_on" ){
                     Sc2String temp=value.get_str();
                     if(temp=="off") {options.Multiresolution_on=0;options.Multiresolution_type="none";}
@@ -1111,7 +1121,7 @@ void DataUser::read_json_calcul(){
 /*                else if( name == "Multiresolution_type" ){options.Multiresolution_type=value.get_str();} */
                 else if( name == "mode" ){options.mode=value.get_str();}
             }   
-            std::cout << "fin options " <<  std::endl;
+            std::cout << "------------fin options------------" <<  std::endl;
         }
     }
 }
@@ -1639,7 +1649,7 @@ DataReader *DataUser::NEW_DataReader( ) {
     Sc2String so = ce.lib_for( base, true );
     SI64 date_so = last_modification_time_or_zero_of_file_named( so );
     if ( ce.make_lib( so, file_cu, true ) )
-        ERROR( "Pb during compilation of %s", file_cu );
+        ERROR( "Pb during compilation of %s", file_cu.c_str() );
 // 
     // load lib
     static std::map<String,DynamicLibrary> libs;

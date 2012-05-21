@@ -188,6 +188,8 @@ class DataUser{
         Sc2String description;
         Sc2String type;
         Sc2String comp;
+        Sc2String type_plast;
+        Sc2String type_endo;
         Sc2String resolution;
         int    type_num;
         int    id;

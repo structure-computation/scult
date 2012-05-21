@@ -1,5 +1,6 @@
 #parametres a modifier si necessaire
 DIM = 3
+NB_COMP_PROC = 1
 DIR_SOURCES_COMPUTE = -Isrc -Isrc/GEOMETRY -Isrc/COMPUTE -Isrc/UTILS -Isrc/UTILS/hdf -Isrc/UTILS/xdmf  -Isrc/UTILS/json_spirit 
 
 PRG_create_2_cpu = SC_create_2_cpu_$(DIM).exe
@@ -11,14 +12,18 @@ CFLAGS=`xml2-config --cflags`
 LIBS=`xml2-config  --libs`
 DIR_SOURCES_LMT =  -ILMT -ILMT/include -ILMT/include/LDL -ILMT/include/util -Iusr/include/suitesparse
 DIR_SOURCES_CUDA = -I/usr/local/cuda/include -I/home/jbellec/driver_toolkit/NVIDIA_GPU_Computing_SDK/C/common/inc
-OPT = -ne -gdb -O3 -ffast-math -fexpensive-optimizations
+OPT = -ne -j$(NB_COMP_PROC) -gdb -O3 -ffast-math -fexpensive-optimizations
+OPTDEBUG = -ne -j$(NB_COMP_PROC) -ggdb -g3 -ffast-math -fexpensive-optimizations
 
 # all: compact_GEOMETRY 
 all: metil_comp_create_2_cpu
 
 metil_test :
 	metil src/CALCUL/code_metil/test.met
-
+	
+SC_create_DEBUG :
+	$(LOC_MC)  -o  $(PRG_create_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPTDEBUG)  src/SC_create_2.cpp 8
+		
 metil_comp_create_2_cpu :
 	$(LOC_MC)  -o  $(PRG_create_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_create_2.cpp 8
 
