@@ -20,22 +20,22 @@ metil_test :
 	metil src/CALCUL/code_metil/test.met
 
 metil_comp_create_2_cpu :
-	$(LOC_MC)  -o  $(PRG_create_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_create_2.cpp 8
+	$(LOC_MC)  -o  $(PRG_create_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_create_2.cpp 8
 
 metil_comp_compute_2_cpu :
-	$(LOC_MC)  -o  $(PRG_compute_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTHREADSPERBLOCK=48  -DSIZEGRID=6  -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK   $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_compute_2.cpp
+	$(LOC_MC)  -o  $(PRG_compute_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DTHREADSPERBLOCK=48  -DSIZEGRID=6  -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK   $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_compute_2.cpp
 
 metil_comp_data_2_cpu :
-	$(LOC_MC)  -o  $(PRG_data_reader_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_data_reader_2.cpp 8
+	$(LOC_MC)  -o  $(PRG_data_reader_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_data_reader_2.cpp 8
 
 compact_GEOMETRY: 
-	$(LOC_MC) -o compact_GEOMETRY.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/GEOMETRY/GenerationGeometryCompactClass.cpp
+	$(LOC_MC) -o compact_GEOMETRY.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/GEOMETRY/GenerationGeometryCompactClass.cpp
 
 compact_FIELD_STRUCTURE: 
-	$(LOC_MC) -o compact_FIELD_STRUCTURE.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/COMPUTE/GenerationFieldStructureCompactClass.cpp
+	$(LOC_MC) -o compact_FIELD_STRUCTURE.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/COMPUTE/GenerationFieldStructureCompactClass.cpp
 
 compact_DATA: 
-	$(LOC_MC) -o compact_DATA.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/COMPUTE/GenerationDataUserCompactClass.cpp
+	$(LOC_MC) -o compact_DATA.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/COMPUTE/GenerationDataUserCompactClass.cpp
 
 codegen:
 	cd LMT/include/codegen; scons

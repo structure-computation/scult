@@ -122,6 +122,7 @@ GeometryUser::GeometryUser(MeshUser &mesh_) {
     
     std::cout << "** écriture du json       ********************************************************************************************" << std::endl;
     write_json( mesh_ );
+    write_json_v2( mesh_ );
 
     std::cout << "** écriture du hdf5       ********************************************************************************************" << std::endl;
     Sc2String file_output_hdf5=mesh_.name_visu_hdf;
@@ -554,6 +555,131 @@ void GeometryUser::write_json(MeshUser &mesh_user) {
 
 }
 
+
+void GeometryUser::write_json_v2(MeshUser &mesh_user) {
+    //ecriture du nom du fichier json
+    Sc2String path=mesh_user.name_directory+"/MESH/mesh_v2.txt";
+    std::ofstream os( path.c_str() );
+    //ecriture du debut du fichier------------------
+    Object mesh;
+    mesh.push_back(Pair( "model_directory", mesh_user.name_directory ));
+    mesh.push_back(Pair( "mesh_directory", mesh_user.mesh_directory ));
+    mesh.push_back(Pair( "mesh_name", mesh_user.name_mesh_user ));
+    mesh.push_back(Pair( "extension", mesh_user.extension ));
+
+    int nb_ddl = mesh_user.mesh_num_nodes.size() * DIM;
+    mesh.push_back(Pair( "nb_ddl", nb_ddl));
+    mesh.push_back(Pair( "nb_sst", mesh_user.nb_elements ));
+    mesh.push_back(Pair( "nb_inter", mesh_user.nb_interfaces ));
+    mesh.push_back(Pair( "nb_groups_elem", nb_group_elements ));
+    mesh.push_back(Pair( "nb_groups_inter", nb_group_interfaces ));
+
+    Object mesh_o;
+    mesh_o.push_back( Pair( "mesh", mesh ) );
+
+    //ecriture des groupes d'elements---------------
+    Array group_elem_a;
+    //Object group_elem_a;
+    for (int i_group=0; i_group< nb_group_elements; i_group++) {
+        Object group;
+        group.push_back(Pair( "id", group_elements[i_group].id ));
+        group.push_back(Pair( "origine", "from_bulkdata" ));
+        group.push_back(Pair( "identificateur", group_elements[i_group].id ));
+        Sc2String name_group;
+        name_group << "piece " << group_elements[i_group].id;
+        group.push_back(Pair( "name", name_group ));
+        group.push_back(Pair( "assigned", -1 ));
+        group.push_back(Pair( "group", -1 ));
+
+        std::ostringstream num;
+        num << i_group;
+        //group_elem_a.push_back(Pair(num.str(),group));
+        group_elem_a.push_back(group);
+    }
+    Object group_elem_o;
+    group_elem_o.push_back( Pair( "pieces", group_elem_a ) );
+
+    //ecriture des groupes d'interfaces------------
+    Array group_inter_a;
+    //Object group_inter_a;
+    for (int i_group=0; i_group< nb_group_interfaces; i_group++) {
+        if (group_interfaces[i_group].type==2) {
+            Object group;
+            group.push_back(Pair( "id", group_interfaces[i_group].id ));
+            group.push_back(Pair( "origine", "from_bulkdata" ));
+            group.push_back(Pair( "type", "between_group_elem" ));
+            std::ostringstream name_group;
+            name_group << "interface " << group_interfaces[i_group].id;
+            group.push_back(Pair( "name", Sc2String(name_group.str()) ));
+            group.push_back(Pair( "assigned", -1 ));
+            group.push_back(Pair( "group", -1 ));
+            std::ostringstream adj;
+            adj << group_interfaces[i_group].group_elements_id[0] << " " << group_interfaces[i_group].group_elements_id[1];
+            group.push_back(Pair( "adj_num_group", Sc2String(adj.str()) ));
+            std::ostringstream num;
+            num << i_group;
+            //group_inter_a.push_back(Pair(num.str(),group));
+            group_inter_a.push_back(group);
+        }
+    }
+    Object group_inter_o;
+    group_inter_o.push_back( Pair( "interfaces", group_inter_a ) );
+
+    //ecriture des proprietes_interfaces par defaut---------------
+    Array prop_inter_a;
+    //Object prop_inter_a;
+//     for (unsigned i=0;i< 1;i++) {
+//         Object prop;
+//         prop.push_back(Pair( "id", 0 ));
+//         prop.push_back(Pair( "type", "parfait" ));
+//         prop.push_back(Pair( "coef_frottement", 0. ));
+//         std::ostringstream num;
+//         num << i;
+//         //prop_inter_a.push_back(Pair(num.str(),prop));
+//         prop_inter_a.push_back(prop);
+//     }
+    Object prop_inter_o;
+    prop_inter_o.push_back( Pair( "links", prop_inter_a ) );
+
+
+    //ecriture des CL par defaut-------------------------------
+    Array cl_a;
+    //Object cl_a;
+//     for (unsigned i=0;i< 1;i++) {
+//         Object cl;
+//         cl.push_back(Pair( "id", 0 ));
+//         cl.push_back(Pair( "type", "effort" ));
+//         cl.push_back(Pair( "fcts_spatiales", "0 0" ));
+//         cl.push_back(Pair( "fcts_temporelles", "0 0" ));
+//         std::ostringstream num;
+//         num << i;
+//         //cl_a.push_back(Pair(num.str(),cl));
+//         cl_a.push_back(cl);
+//     }
+    Object cl_o;
+    cl_o.push_back( Pair( "boundary_condition", cl_a ) );
+    
+    //ecriture des materiaux, time step, edges...-------------------------------
+    Array edge_a;
+    Array materials_a;
+    Array volumic_forces;
+    
+
+    //regroupement des donnees pour ecriture du fichier de sortie
+    Object output;
+    output.push_back(Pair( "mesh", mesh ));
+    output.push_back(Pair( "pieces", group_elem_a ));
+    output.push_back(Pair( "interfaces", group_inter_a ));
+    output.push_back(Pair( "edges", edge_a ));
+    output.push_back(Pair( "materials", materials_a ));
+    output.push_back(Pair( "links", prop_inter_a ));
+    output.push_back(Pair( "boundary_condition", cl_a ));
+
+    write_formatted( output, os );
+
+    os.close();
+
+}
 
 void GeometryUser::write_nodes_hdf5(Hdf &hdf, Sc2String name_geometry){
     //ecriture des noeuds du maillage
