@@ -42,7 +42,9 @@ class DataUser{
     DataUser(Sc2String id_model_, Sc2String id_calcul_){
         model_path = "/share/sc2/Developpement/MODEL/";
         calcul_path = model_path + "model_" + id_model_ + "/calcul_" + id_calcul_ ;
-        file_calcul = calcul_path + "/calcul.json" ;    
+        result_path = model_path + "model_" + id_model_ + "/calcul_" + id_calcul_ + "/results" ;
+        file_calcul = calcul_path + "/calcul.json" ;  
+        file_calcul_v2 = result_path + "/calcul.txt" ; 
         id_calcul << id_calcul_;
 //         PRINT(id_calcul);
     }
@@ -56,11 +58,19 @@ class DataUser{
     Sc2String name_directory;         //nom du repertoire pour sauvegarder le motif
     Sc2String mesh_directory;         //nom du repertoire pour sauvegarder les meshs  
     Sc2String calcul_path;            //chemin d'acces au repertoire model
+    Sc2String result_path;            //chemin d'acces au repertoire model
     Sc2String file_calcul;            //fichier json pour le calcul
+    Sc2String file_calcul_v2;          //fichier json pour le calcul v2
     Sc2String id_calcul;                   // id du calcul en cours
     Patterns patterns;
     Properties properties;  
     static const int dim = DIM;
+    
+    int nb_ddl;
+    int nb_sst;
+    int nb_inter;
+    int nb_groups_elem;
+    int nb_groups_inter;
     
     // attribut des groupes ----------------------------------------------------------------
     // DATA pour les groupes d'elements--------------------
@@ -71,6 +81,12 @@ class DataUser{
         Sc2String origine; //origine du groupe d'element
         int id_material;
         
+        GroupElements(){
+            id = -1;
+            num_in_mesh_file = -1;
+            id_material = -1;
+        }
+        
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "GroupElements" );
@@ -80,6 +96,14 @@ class DataUser{
 //             APPLY_WN( res, name    );
             APPLY_WN( res, num_in_mesh_file    );
             APPLY_WN( res, id_material    );
+        }
+        void affich(){
+          std::cout << "Pieces----------------------------" << std::endl;
+          PRINT(name);
+          PRINT(id);
+          PRINT(num_in_mesh_file);
+          PRINT(origine);
+          PRINT(id_material);
         }
     };
     BasicVec<GroupElements> group_elements;
@@ -98,11 +122,15 @@ class DataUser{
         
         GroupInterfaces(){
             adj_num_group.resize(2);
+            id = -1;
+            name = "";
+            num_in_mesh_file = -1;
+            id_link = -1;
         }
         
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
-            res.set_type( "GeometryEdges" );
+            res.set_type( "GroupInterfaces" );
             //pour SC_create-------------------------
             //info du groupe
             APPLY_WN( res, id    );
@@ -110,6 +138,15 @@ class DataUser{
             APPLY_WN( res, num_in_mesh_file    );
             APPLY_WN( res, adj_num_group    );
             APPLY_WN( res, id_link    );
+        }
+        
+        void affich(){
+          std::cout << "Interfaces------------------------------------" << std::endl;
+          PRINT(id);
+          PRINT(name);
+          PRINT(num_in_mesh_file);
+          PRINT(adj_num_group);
+          PRINT(id_link);
         }
     };
     BasicVec<GroupInterfaces> group_interfaces;
@@ -125,8 +162,10 @@ class DataUser{
         Sc2String equation;
         
         Geometry(){
-            points.resize(DIM);
-            pdirection.resize(DIM);
+            radius = 0;
+            equation = "";
+            points.resize(DIM,0);
+            pdirection.resize(DIM,0);
         }
         
         template<class TB,class TP>
@@ -156,6 +195,10 @@ class DataUser{
         int to_visualize;
         
         GroupEdges(){
+            id = -1;
+            name = "";
+            num_in_mesh_file = -1;
+            id_CL = -1;
             adj_num_group.resize(1);
         }
         
@@ -172,6 +215,21 @@ class DataUser{
             APPLY_WN( res, assigned    );
             APPLY_WN( res, geom    );
         }
+        
+        void affich(){
+          std::cout << "Edges----------------------------" << std::endl;
+          PRINT(id);
+          PRINT(name);
+          PRINT(num_in_mesh_file);
+          PRINT(adj_num_group);
+          PRINT(id_CL);
+          PRINT(geom.type);
+          PRINT(geom.nature);
+          PRINT(geom.radius);
+          PRINT(geom.points);
+          PRINT(geom.pdirection);
+        }
+        
     };
     BasicVec<GroupEdges> group_edges;
     
@@ -262,11 +320,19 @@ class DataUser{
         StepBc(){
             CL_step_prop.resize(properties.BC_step_prop_name.size(),"0");
             CL_step_prop_name = properties.BC_step_prop_name;
+            CL_step_prop[3] = "1";
         }
         
         Properties properties;
         BasicVec< Sc2String > CL_step_prop;
         BasicVec< Sc2String > CL_step_prop_name;   
+        
+        void affich(){
+            std::cout << "  step========="  << std::endl;
+            for(int i=0; i<CL_step_prop_name.size(); i++){
+                std::cout << CL_step_prop_name[i] << " : " << CL_step_prop[i] << std::endl;
+            }
+        }
     };
     struct BehavBc {
         int id;
@@ -281,6 +347,14 @@ class DataUser{
             APPLY_WN( res, id    );
 //             APPLY_WN( res, type    );
         }
+        void affich(){
+            std::cout << "Bc-----------------------------------" << std::endl;
+            PRINT(id);
+            PRINT(type);
+            for(int i=0; i<step.size(); i++){
+                step[i].affich();
+            }
+        } 
     }; 
     BasicVec<BehavBc > behaviour_bc;
    
@@ -294,7 +368,14 @@ class DataUser{
         
         Properties properties;
         BasicVec< Sc2String > CLv_step_prop;
-        BasicVec< Sc2String > CLv_step_prop_name;   
+        BasicVec< Sc2String > CLv_step_prop_name; 
+        
+        void affich(){
+            std::cout << "  step========="  << std::endl;
+            for(int i=0; i<CLv_step_prop_name.size(); i++){
+                std::cout << CLv_step_prop_name[i] << " : " << CLv_step_prop[i] << std::endl;
+            }
+        }
         
     };
     struct BehavBcVolume{
@@ -317,6 +398,17 @@ class DataUser{
         BehavBcVolume(){
 	    select = false;
 	}
+	void affich(){
+            std::cout << "BcVolume-----------------------------------" << std::endl;
+            PRINT(name);
+            PRINT(select);
+            PRINT(type);
+            for(int i=0; i<step.size(); i++){
+                step[i].affich();
+            }
+        } 
+	
+	
     };
     BasicVec<BehavBcVolume> behaviour_bc_volume;
     
@@ -326,6 +418,15 @@ class DataUser{
         int nb_time_step; // nombre de pas de temps dans le step
         TYPE tf; //temps final du step
         TYPE ti; //temps initial du step
+        
+        void affich(){
+          std::cout << "TimeStep----------------------------" << std::endl;
+          PRINT(name);
+          PRINT(dt);
+          PRINT(nb_time_step);
+          PRINT(tf);
+          PRINT(ti);
+        }
     }; 
     BasicVec<TimeStep> time_step; // ensemble des données sur les steps
     
@@ -359,14 +460,17 @@ class DataUser{
             APPLY_WN( res, save_depl    );
         }
         OptionsCalcul(){
-            Multiresolution_on = 0;
+            Multiresolution_on = 1;
             Multiresolution_nb_cycle = 1;
-            Multiresolution_type = "fatigue";
+            Multiresolution_type = "off";
             Multiresolution_nb_calcul = 1;
             Multiresolution_material_link_CL_CLvolume=BasicVec<int>(0,0,0,0);
 	    LATIN_crit_error_auto_stop = 0;
 	    trac_ener_diss=0;
 	    trac_ener_imp=0;
+            LATIN_crit_error = 0.0001;
+            LATIN_nb_iter_max = 100;
+            resolution_2D = "CP";
         }
         Sc2String mode;
         Sc2String resolution_2D;
@@ -389,6 +493,16 @@ class DataUser{
         int LATIN_current_iter;
 	int trac_ener_imp;
 	int trac_ener_diss;
+        
+        void affich(){
+          std::cout << "options----------------------------" << std::endl;
+          PRINT(mode);
+          PRINT(Temp_statique);
+          PRINT(LATIN_nb_iter_max);
+          PRINT(LATIN_crit_error);
+          PRINT(multiechelle);
+          PRINT(Multiresolution_on);
+        }
     };
     OptionsCalcul options;
     
@@ -446,10 +560,30 @@ class DataUser{
     void read_json_behaviour_bc(const Object& gr);		                //lecture des BC
     
     void read_step_calcul(const Object& gr);                                    //lecture des time_step
-    void read_multiresolution(const Object& gr);                                    //lecture des parametres de multiresolution
+    void read_multiresolution(const Object& gr);                                //lecture des parametres de multiresolution
     
     void read_json_calcul(); 
     
+    //lecture du json pour les differente structure de données v2------------------------------------------------------------
+    void read_json_groups_elements_v2(const Array& gr);                           //lecture des groupes d'elements
+    void read_json_groups_interfaces_v2(const Array& gr);                         //lecture des groupes d'interface
+    void read_json_groups_edges_v2(const Array& gr);                              //lecture des groupes de bord
+    
+    void read_json_behaviour_materials_v2(const Array& gr);                       //lecture des données matériaux
+    void read_json_behaviour_interfaces_v2(const Array& gr);                      //lecture des données liaisons
+    
+    void read_step_bc_volume_v2(const Object& gr, BasicVec<StepBcVolume> &step);   //lecture des step BCvolumes
+    void read_json_behaviour_bc_volume_v2(const Array& gr);                       //lecture des BCvolumes
+    
+    void read_step_bc_v2(const Array& gr, BasicVec<StepBc> &step);                //lecture des step BC
+    void read_json_behaviour_bc_v2(const Array& gr);                              //lecture des BC
+    
+    void read_step_calcul_v2(const Array& gr);                                    //lecture des time_step
+    void read_multiresolution_v2(const Array& gr);                                //lecture des parametres de multiresolution
+    
+    void read_json_calcul_v2(); 
+    
+    // fin de l'initialisation --------------------------------------------------------------------------------------------------
     void find_Multiresolution_parameters();     //recherche des parametres de multiresolution dans les donnees materiau, liaisons, CL, et CLvolume. Stockage des id dans le vecteur Multiresolution_parameters
     
     void assign_num_materials_id_group_elements();                              //assignation des materiaux au groupe_elements
