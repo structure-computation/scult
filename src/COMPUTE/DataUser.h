@@ -145,7 +145,7 @@ class DataUser{
           PRINT(id);
           PRINT(name);
           PRINT(num_in_mesh_file);
-          PRINT(adj_num_group);
+          //PRINT(adj_num_group);
           PRINT(id_link);
         }
     };
@@ -221,13 +221,13 @@ class DataUser{
           PRINT(id);
           PRINT(name);
           PRINT(num_in_mesh_file);
-          PRINT(adj_num_group);
+//           PRINT(adj_num_group);
           PRINT(id_CL);
           PRINT(geom.type);
           PRINT(geom.nature);
           PRINT(geom.radius);
-          PRINT(geom.points);
-          PRINT(geom.pdirection);
+//           PRINT(geom.points);
+//           PRINT(geom.pdirection);
         }
         
     };

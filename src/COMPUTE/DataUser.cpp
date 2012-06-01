@@ -1763,7 +1763,10 @@ void DataUser::read_json_calcul_v2(){
                 std::cout << name << std::endl;
                 if( name == "time_scheme" )  { 
                   const Value&  value = pair.value_; 
-                  options.Temp_statique=value.get_str();
+                  Sc2String temp = value.get_str();
+                  if(temp == "static"){options.Temp_statique="statique";}
+                  else if(temp == "quasistatic"){options.Temp_statique="quasistatique";}
+                  //options.Temp_statique=value.get_str();
                 }else if( name == "collection" ) {
                   const Array& timestep = pair.value_.get_array();
                   time_step.resize(timestep.size());
