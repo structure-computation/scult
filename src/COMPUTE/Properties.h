@@ -29,7 +29,7 @@ public:
     BasicVec< Sc2String > BCv_step_prop_name; 
     
     Properties(){
-        mat_prop_name.resize(38);
+        mat_prop_name.resize(39);
         mat_prop_name[0] =  "elastic_modulus";
         mat_prop_name[1] =  "poisson_ratio";
         mat_prop_name[2] =  "alpha";
@@ -56,12 +56,12 @@ public:
         mat_prop_name[23] = "alpha_1";
         mat_prop_name[24] = "alpha_2";
         mat_prop_name[25] = "alpha_3";
-        //plasticite : f(s,p) = seq - R(p) - R0 avec R(p) = k_p * p ^ m_p et seq = von_mises(s)
+        ///plasticite : f(s,p) = seq - R(p) - R0 avec R(p) = k_p * p ^ m_p et seq = von_mises(s)
         mat_prop_name[26] = "R0";           /// Limite d'elasticite
         mat_prop_name[27] = "k_p";          /// Coefficient multiplicateur de la loi d'ecrouissage
         mat_prop_name[28] = "m_p";          /// Coefficient multiplicateur de la loi d'ecrouissage
         mat_prop_name[29] = "couplage";     /// Coefficient de couplage pour le calcul de la contrainte equivalente
-        //endommagement
+        ///endommagement et mesomodele
         mat_prop_name[30] = "Yo";       /// Seuil d'endommagement du matériau (de la matrice)
         mat_prop_name[31] = "Yc";       /// Seuil d'endommagement critique du matériau (de la matrice)
         mat_prop_name[32] = "Ycf";      /// Seuil d'endommagement critique des fibres
@@ -70,7 +70,7 @@ public:
         mat_prop_name[35] = "effet_retard";     /// Booleen "effet retard active?"
         mat_prop_name[36] = "a";                /// Parametre de l'effet retard
         mat_prop_name[37] = "tau_c";            /// Parametre de l'effet retard
-        
+        mat_prop_name[38] = "couplage";         /// Coefficient pour le calcul de la contrainte equivalente
         
         link_prop_name.resize(8);
         link_prop_name[0] = "coef_frottement";      /// coefficient de frottement

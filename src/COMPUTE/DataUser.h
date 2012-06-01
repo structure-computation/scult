@@ -48,34 +48,34 @@ class DataUser{
     }
     DataUser(){
     }
-    //nom et chemins de fichier--------------------------------
-    Sc2String metil_comp_path;        //chemin vers metil_comp pour la compilation à la volée
-    Sc2String model_path;             //chemin d'acces au repertoire model
-    Sc2String name_mesh_user;         //nom du fichier mesh utilisateur
-    Sc2String extension;              //extention pour le nom du fichier de mesh
-    Sc2String name_directory;         //nom du repertoire pour sauvegarder le motif
-    Sc2String mesh_directory;         //nom du repertoire pour sauvegarder les meshs  
-    Sc2String calcul_path;            //chemin d'acces au repertoire model
-    Sc2String file_calcul;            //fichier json pour le calcul
-    Sc2String id_calcul;                   // id du calcul en cours
+    ///nom et chemins de fichier--------------------------------
+    Sc2String metil_comp_path;        ///chemin vers metil_comp pour la compilation à la volée
+    Sc2String model_path;             ///chemin d'acces au repertoire model
+    Sc2String name_mesh_user;         ///nom du fichier mesh utilisateur
+    Sc2String extension;              ///extention pour le nom du fichier de mesh
+    Sc2String name_directory;         ///nom du repertoire pour sauvegarder le motif
+    Sc2String mesh_directory;         ///nom du repertoire pour sauvegarder les meshs  
+    Sc2String calcul_path;            ///chemin d'acces au repertoire model
+    Sc2String file_calcul;            ///fichier json pour le calcul
+    Sc2String id_calcul;              /// id du calcul en cours
     Patterns patterns;
     Properties properties;  
     static const int dim = DIM;
     
-    // attribut des groupes ----------------------------------------------------------------
-    // DATA pour les groupes d'elements--------------------
+    /// attribut des groupes ----------------------------------------------------------------
+    /// DATA pour les groupes d'elements--------------------
     struct GroupElements{
         int id;
         Sc2String name;
         int num_in_mesh_file;
-        Sc2String origine; //origine du groupe d'element
+        Sc2String origine; ///origine du groupe d'element
         int id_material;
         
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "GroupElements" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
             APPLY_WN( res, id    );
 //             APPLY_WN( res, name    );
             APPLY_WN( res, num_in_mesh_file    );
@@ -84,14 +84,14 @@ class DataUser{
     };
     BasicVec<GroupElements> group_elements;
     
-    // DATA pour les groupes d'interfaces------------------
+    /// DATA pour les groupes d'interfaces------------------
     struct GroupInterfaces{
         int id;
         Sc2String name;
         int num_in_mesh_file;
         BasicVec<GroupInterfaces *,2> adj_group_elements;
         BasicVec<int> adj_num_group;
-        Sc2String origine; //origine du groupe d'interface
+        Sc2String origine; ///origine du groupe d'interface
         Sc2String type;
         int id_link;
         float assigned;
@@ -103,8 +103,8 @@ class DataUser{
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "GeometryEdges" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
             APPLY_WN( res, id    );
 //             APPLY_WN( res, name    );
             APPLY_WN( res, num_in_mesh_file    );
@@ -114,7 +114,7 @@ class DataUser{
     };
     BasicVec<GroupInterfaces> group_interfaces;
     
-    // DATA pour les groupes de bords --------------------
+    /// DATA pour les groupes de bords --------------------
     struct Geometry{
         Sc2String origine;
         Sc2String type;
@@ -132,8 +132,8 @@ class DataUser{
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "GeometryEdges" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
 //             APPLY_WN( res, origine    );
 //             APPLY_WN( res, type    );
 //             APPLY_WN( res, nature    );
@@ -162,8 +162,8 @@ class DataUser{
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "GroupEdges" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
             APPLY_WN( res, id    );
 //             APPLY_WN( res, name    );
             APPLY_WN( res, num_in_mesh_file    );
@@ -176,7 +176,7 @@ class DataUser{
     BasicVec<GroupEdges> group_edges;
     
     
-    // DATA pour les comportement materiaux --------------------
+    /// DATA pour les comportement materiaux --------------------
     struct BehaviourMaterial {
         BehaviourMaterial(){
             mat_prop.resize(properties.mat_prop_name.size(),"0");
@@ -217,7 +217,7 @@ class DataUser{
     BasicVec< BasicVec< int > > num_materials_id_group_elements;
     
     
-    // DATA pour les comportement liaison --------------------
+    /// DATA pour les comportement liaison --------------------
     struct BehaviourLink {
         BehaviourLink(){
             link_prop.resize(properties.link_prop_name.size(),"0");
@@ -241,8 +241,8 @@ class DataUser{
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "BehaviourLink" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
             APPLY_WN( res, id    );
 //             APPLY_WN( res, name    );
 //             APPLY_WN( res, familly    );
@@ -257,7 +257,7 @@ class DataUser{
     BasicVec< BasicVec< int > > num_links_id_group_interfaces;
     
     
-    // DATA pour les condition limite --------------------
+    /// DATA pour les condition limite --------------------
     struct StepBc{
         StepBc(){
             CL_step_prop.resize(properties.BC_step_prop_name.size(),"0");
@@ -276,8 +276,8 @@ class DataUser{
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "BehaviourBc" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
             APPLY_WN( res, id    );
 //             APPLY_WN( res, type    );
         }
@@ -285,7 +285,7 @@ class DataUser{
     BasicVec<BehavBc > behaviour_bc;
    
     
-    // DATA pour les condition limite en volume-----------
+    /// DATA pour les condition limite en volume-----------
     struct StepBcVolume{
         StepBcVolume(){
             CLv_step_prop.resize(properties.BCv_step_prop_name.size(),"0");
@@ -307,8 +307,8 @@ class DataUser{
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "BehaviourBcVolume" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
 //             APPLY_WN( res, name    );
 //             APPLY_WN( res, type    );
 //             APPLY_WN( res, select    );
@@ -321,29 +321,29 @@ class DataUser{
     BasicVec<BehavBcVolume> behaviour_bc_volume;
     
     struct TimeStep{
-        TYPE dt; //pas de temps
-        Sc2String name ; //nom du step
-        int nb_time_step; // nombre de pas de temps dans le step
-        TYPE tf; //temps final du step
-        TYPE ti; //temps initial du step
+        TYPE dt;            /// pas de temps
+        Sc2String name ;    /// nom du step
+        int nb_time_step;   /// nombre de pas de temps dans le step
+        TYPE tf;            /// temps final du step
+        TYPE ti;            /// temps initial du step
     }; 
-    BasicVec<TimeStep> time_step; // ensemble des données sur les steps
+    BasicVec<TimeStep> time_step; /// ensemble des données sur les steps
     
     struct MultiresolutionParameters{
-        TYPE min_value,max_value,nominal_value, current_value; //données concernant les variations d'un paramètre
-        Sc2String name ; //nom du paramètre donné par l'utilisateur et utilisé dans les expressions
-        int nb_values; // nombre de valeurs du paramètre (uniquement en plan d'exp) sinon utilisation de Multiresolution_nb_cycle
-        BasicVec<int> materials, links, CL, CLvolume; //liste des numeros des données utilisées pour la multirésolution
+        TYPEREEL min_value,max_value,nominal_value, current_value;  ///données concernant les variations d'un paramètre
+        Sc2String name ;    ///nom du paramètre donné par l'utilisateur et utilisé dans les expressions
+        int nb_values;      /// nombre de valeurs du paramètre (uniquement en plan d'exp) sinon utilisation de Multiresolution_nb_cycle
+        BasicVec<int> materials, links, CL, CLvolume;   ///liste des numeros des données utilisées pour la multiresolution
     };
-    BasicVec<MultiresolutionParameters> Multiresolution_parameters; // ensemble des données pour la multirésolution
+    BasicVec<MultiresolutionParameters> Multiresolution_parameters; /// ensemble des données pour la multiresolution
     
-    // DATA pour les options de calcul-----------------------
+    /// DATA pour les options de calcul-----------------------
     struct OptionsCalcul {
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "OptionsCalcul" );
-            //pour SC_create-------------------------
-            //info du groupe
+            ///pour SC_create-------------------------
+            ///info du groupe
             APPLY_WN( res, dissipation    );
             APPLY_WN( res, nb_option    );
             APPLY_WN( res, nb_level    );
@@ -364,9 +364,9 @@ class DataUser{
             Multiresolution_type = "fatigue";
             Multiresolution_nb_calcul = 1;
             Multiresolution_material_link_CL_CLvolume=BasicVec<int>(0,0,0,0);
-	    LATIN_crit_error_auto_stop = 0;
-	    trac_ener_diss=0;
-	    trac_ener_imp=0;
+            LATIN_crit_error_auto_stop = 0;
+            trac_ener_diss=0;
+            trac_ener_imp=0;
         }
         Sc2String mode;
         Sc2String resolution_2D;
@@ -377,18 +377,18 @@ class DataUser{
         TYPE LATIN_crit_error_auto_stop;
         int PREC_erreur;
         int nb_level;
-        int multiechelle;
+        int multiechelle;   /// Indique si le calcul est multi-echelle
         int save_depl;        
-        int Multiresolution_on;
-        Sc2String Multiresolution_type;
-        int Multiresolution_nb_cycle;
-        int Multiresolution_current_resolution;
-        int Multiresolution_nb_calcul;
+        int Multiresolution_on; /// Indique si la multi-resolution est activee
+        Sc2String Multiresolution_type; /// Type de la multi-resolution (fatigue, plan d'experience, ...)
+        int Multiresolution_nb_cycle;   /// Nombre de cycles (pour la fatigue)
+        int Multiresolution_current_resolution; /// Numero du calcul courant
+        int Multiresolution_nb_calcul;  /// Nombre total de calculs
         BasicVec<int,4> Multiresolution_material_link_CL_CLvolume;
         int dissipation;
         int LATIN_current_iter;
-	int trac_ener_imp;
-	int trac_ener_diss;
+        int trac_ener_imp;
+        int trac_ener_diss;
     };
     OptionsCalcul options;
     
@@ -414,48 +414,48 @@ class DataUser{
     //Méthodes
     //******************************************************************************************
     
-    GroupElements* find_group_elements(int id_) ;                       // recherche d'un group_elements particulier avec son id
-    GroupInterfaces* find_group_interfaces(int id_);                    // recherche d'un group_interfaces particulier avec son id
-    GroupEdges* find_group_edges(int id_);                              // recherche d'un group_edges particulier avec son id
-    BehaviourMaterial* find_behaviour_materials(int id_);               // recherche d'un behaviour_materials particulier avec son id
-    BehaviourLink* find_behaviour_links(int id_);                       // recherche d'un behaviour_links particulier avec son id
-    BehavBc* find_behaviour_bc(int id_);                                // recherche d'un behaviour_bc particulier avec son id
+    GroupElements* find_group_elements(int id_) ;                       /// recherche d'un group_elements particulier avec son id
+    GroupInterfaces* find_group_interfaces(int id_);                    /// recherche d'un group_interfaces particulier avec son id
+    GroupEdges* find_group_edges(int id_);                              /// recherche d'un group_edges particulier avec son id
+    BehaviourMaterial* find_behaviour_materials(int id_);               /// recherche d'un behaviour_materials particulier avec son id
+    BehaviourLink* find_behaviour_links(int id_);                       /// recherche d'un behaviour_links particulier avec son id
+    BehavBc* find_behaviour_bc(int id_);                                /// recherche d'un behaviour_bc particulier avec son id
     
-    int find_index_group_elements(int id_);                             // recherche de l'indexe d'un group_elements particulier avec son id
-    int find_index_group_interfaces(int id_);                           // recherche de l'indexe d'un group_interfaces particulier avec son id
-    int find_index_group_edges(int id_);                                // recherche de l'indexe d'un group_edges particulier avec son id
-    int find_index_behaviour_materials(int id_);                        // recherche de l'indexe d'un behaviour_materials particulier avec son id
-    int find_index_behaviour_links(int id_);                            // recherche de l'indexe d'un behaviour_links particulier avec son id
-    int find_index_behaviour_bc(int id_);                               // recherche de l'indexe d'un behaviour_bc particulier avec son id
+    int find_index_group_elements(int id_);                             /// recherche de l'indexe d'un group_elements particulier avec son id
+    int find_index_group_interfaces(int id_);                           /// recherche de l'indexe d'un group_interfaces particulier avec son id
+    int find_index_group_edges(int id_);                                /// recherche de l'indexe d'un group_edges particulier avec son id
+    int find_index_behaviour_materials(int id_);                        /// recherche de l'indexe d'un behaviour_materials particulier avec son id
+    int find_index_behaviour_links(int id_);                            /// recherche de l'indexe d'un behaviour_links particulier avec son id
+    int find_index_behaviour_bc(int id_);                               /// recherche de l'indexe d'un behaviour_bc particulier avec son id
     
-    //initialisation des données------------------------------------------------------------------------------------------
-    void initialisation(Sc2String id_model_, Sc2String id_calcul_);         // même fonction que le constructeur ayant les mêmes arguments
+    ///initialisation des données------------------------------------------------------------------------------------------
+    void initialisation(Sc2String id_model_, Sc2String id_calcul_);         /// même fonction que le constructeur ayant les mêmes arguments
     
-    //lecture du json pour les differente structure de données------------------------------------------------------------
-    void read_json_groups_elements(const Object& gr);	                        //lecture des groupes d'elements
-    void read_json_groups_interfaces(const Object& gr);	                        //lecture des groupes d'interface
-    void read_json_groups_edges(const Object& gr);	                        //lecture des groupes de bord
+    ///lecture du json pour les differente structure de données------------------------------------------------------------
+    void read_json_groups_elements(const Object& gr);                       ///lecture des groupes d'elements
+    void read_json_groups_interfaces(const Object& gr);                     ///lecture des groupes d'interface
+    void read_json_groups_edges(const Object& gr);                          ///lecture des groupes de bord
     
-    void read_json_behaviour_materials(const Object& gr);	                //lecture des données matériaux
-    void read_json_behaviour_interfaces(const Object& gr);                      //lecture des données liaisons
+    void read_json_behaviour_materials(const Object& gr);                   ///lecture des données matériaux
+    void read_json_behaviour_interfaces(const Object& gr);                  ///lecture des données liaisons
     
-    void read_step_bc_volume(const Object& gr, BasicVec<StepBcVolume> &step);	//lecture des step BCvolumes
-    void read_json_behaviour_bc_volume(const Object& gr);		        //lecture des BCvolumes
+    void read_step_bc_volume(const Object& gr, BasicVec<StepBcVolume> &step);   ///lecture des step BCvolumes
+    void read_json_behaviour_bc_volume(const Object& gr);                       ///lecture des BCvolumes
     
-    void read_step_bc(const Object& gr, BasicVec<StepBc> &step);		//lecture des step BC
-    void read_json_behaviour_bc(const Object& gr);		                //lecture des BC
+    void read_step_bc(const Object& gr, BasicVec<StepBc> &step);    ///lecture des step BC
+    void read_json_behaviour_bc(const Object& gr);                  ///lecture des BC
     
-    void read_step_calcul(const Object& gr);                                    //lecture des time_step
-    void read_multiresolution(const Object& gr);                                    //lecture des parametres de multiresolution
+    void read_step_calcul(const Object& gr);        ///lecture des time_step
+    void read_multiresolution(const Object& gr);    ///lecture des parametres de multiresolution
     
     void read_json_calcul(); 
     
-    void find_Multiresolution_parameters();     //recherche des parametres de multiresolution dans les donnees materiau, liaisons, CL, et CLvolume. Stockage des id dans le vecteur Multiresolution_parameters
+    void find_Multiresolution_parameters();     ///recherche des parametres de multiresolution dans les donnees materiau, liaisons, CL, et CLvolume. Stockage des id dans le vecteur Multiresolution_parameters
     
-    void assign_num_materials_id_group_elements();                              //assignation des materiaux au groupe_elements
-    void assign_num_links_id_group_interfaces();                                //assignation des materiaux au groupe_elements
+    void assign_num_materials_id_group_elements();      ///assignation des materiaux au groupe_elements
+    void assign_num_links_id_group_interfaces();        ///assignation des materiaux au groupe_elements
     
-    //ecriture des .cpp read_prop pour compilation à la volée------------------------------------------------------------
+    ///ecriture des .cpp read_prop pour compilation à la volée------------------------------------------------------------
     void write_entete_h( StringWithSepInCppLineMaker &file);
     
     void write_global_read_data_materials_group_elements( int i_mat,  StringWithSepInCppLineMaker &file);   // ecriture de la fonction globale pour les calcul des propriété materiaux        
