@@ -6,6 +6,7 @@ DIR_SOURCES_COMPUTE = -Isrc -Isrc/GEOMETRY -Isrc/COMPUTE -Isrc/UTILS -Isrc/UTILS
 PRG_create_2_cpu = SC_create_2_cpu_$(DIM).exe
 PRG_compute_2_cpu = SC_compute_2_cpu_$(DIM).exe
 PRG_data_reader_2_cpu = SC_data_reader_2_cpu_$(DIM).exe
+PRG_test_read_data_v2_cpu = SC_test_read_data_v2_cpu_$(DIM).exe
 
 LOC_MC = metil_comp 
 CFLAGS=`xml2-config --cflags`
@@ -16,7 +17,8 @@ OPT = -ne -j$(NB_COMP_PROC) -gdb -O3 -ffast-math -fexpensive-optimizations
 OPTDEBUG = -ne -j$(NB_COMP_PROC) -ggdb -g3 -ffast-math -fexpensive-optimizations
 
 # all: compact_GEOMETRY 
-all: metil_comp_create_2_cpu
+# all: metil_comp_create_2_cpu 
+all: metil_comp_test_read_data_v2_cpu
 
 metil_test :
 	metil src/CALCUL/code_metil/test.met
@@ -32,6 +34,9 @@ metil_comp_compute_2_cpu :
 
 metil_comp_data_2_cpu :
 	$(LOC_MC)  -o  $(PRG_data_reader_2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/SC_data_reader_2.cpp 8
+
+metil_comp_test_read_data_v2_cpu :
+	$(LOC_MC)  -o  $(PRG_test_read_data_v2_cpu) -DDIM=$(DIM) -DGPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(CFLAGS) $(LIBS) $(OPT)  src/test_read_DataUser_v2.cpp 8
 
 compact_GEOMETRY: 
 	$(LOC_MC) -o compact_GEOMETRY.exe -O0 -DDIM=$(DIM) -DCPU  -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_cpu) $(CFLAGS) $(LIBS) src/GEOMETRY/GenerationGeometryCompactClass.cpp

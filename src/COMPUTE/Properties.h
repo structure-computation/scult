@@ -60,8 +60,8 @@ public:
         mat_prop_name[26] = "R0";           /// Limite d'elasticite
         mat_prop_name[27] = "k_p";          /// Coefficient multiplicateur de la loi d'ecrouissage
         mat_prop_name[28] = "m_p";          /// Coefficient multiplicateur de la loi d'ecrouissage
-        mat_prop_name[29] = "couplage";     /// Coefficient de couplage pour le calcul de la contrainte equivalente
-        ///endommagement et mesomodele
+        mat_prop_name[29] = "coeff_plast_cinematique";     /// Coefficient de plasticité cinématique
+        //endommagement et mesomodele
         mat_prop_name[30] = "Yo";       /// Seuil d'endommagement du matériau (de la matrice)
         mat_prop_name[31] = "Yc";       /// Seuil d'endommagement critique du matériau (de la matrice)
         mat_prop_name[32] = "Ycf";      /// Seuil d'endommagement critique des fibres
@@ -70,7 +70,8 @@ public:
         mat_prop_name[35] = "effet_retard";     /// Booleen "effet retard active?"
         mat_prop_name[36] = "a";                /// Parametre de l'effet retard
         mat_prop_name[37] = "tau_c";            /// Parametre de l'effet retard
-        mat_prop_name[38] = "couplage";         /// Coefficient pour le calcul de la contrainte equivalente
+        mat_prop_name[38] = "couplage";         /// Coefficient de couplage pour le calcul de la contrainte equivalente
+        
         
         link_prop_name.resize(8);
         link_prop_name[0] = "coef_frottement";      /// coefficient de frottement
