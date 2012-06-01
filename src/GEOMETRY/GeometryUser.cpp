@@ -391,7 +391,7 @@ void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {
 }
 
 void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
-    PRINT("split des interfaces---------------");
+    std::cout << " - split des interfaces";
     //PRINT(nb_group_interfaces);
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         if(group_interfaces[i_group].type == 0){
@@ -687,6 +687,12 @@ void GeometryUser::write_nodes_hdf5(Hdf &hdf, Sc2String name_geometry){
     mesh_nodes[1].write_to( hdf, name_geometry + "/nodes/y" );
 #if DIM==3
     mesh_nodes[2].write_to( hdf, name_geometry + "/nodes/z" );
+    //* AST begin
+#else
+    BasicVec< TYPE > tmp;
+    tmp.resize(mesh_nodes[0].size(),0.0);
+    tmp.write_to( hdf, name_geometry + "/nodes/z");
+    /// AST end */
 #endif
 /*    //ecriture des noeuds du maillage
     mesh_nodes[0].write_to( hdf, name + "/mesh_nodes/x" );
@@ -718,6 +724,15 @@ void GeometryUser::write_group_elements_hdf5(Hdf &hdf, Sc2String name_geometry, 
         name_dim << name_list << "/local_nodes/" << name_direction[d];
         group_elements[ng].local_nodes[d].write_to( hdf, name_dim );
     }
+    //* AST Begin
+    if(DIM == 2){
+        Sc2String name_dim;
+        name_dim << name_list << "/local_nodes/z";
+        BasicVec< TYPE > tmp;
+        tmp.resize(group_elements[ng].local_nodes[0].size(),0.0);
+        tmp.write_to( hdf, name_dim);
+    }
+    /// AST end */
     Sc2String name_map;
     name_map << name_list << "/map_global_nodes" ;
     group_elements[ng].map_global_nodes.write_to( hdf, name_map );
@@ -796,6 +811,15 @@ PRINT(group_elements[ng].id);
             name_dim << name_list << "/local_nodes/" << name_direction[d];
             group_elements[ng].local_nodes[d].write_to( hdf, name_dim );
         }
+        //* AST Begin
+        if(DIM == 2){
+            Sc2String name_dim;
+            name_dim << name_list << "/local_nodes/z";
+            BasicVec< TYPE > tmp;
+            tmp.resize(group_elements[ng].local_nodes[0].size(),0.0);
+            tmp.write_to( hdf, name_dim);
+        }
+        /// AST end */
         for (unsigned i_connect=0;i_connect<group_elements[ng].local_connectivities_skin.size();i_connect++) {
             Sc2String name_connect;
             name_connect << name_list << "/local_connectivities_"<<i_connect;
@@ -823,6 +847,15 @@ void GeometryUser::write_group_interfaces_hdf5(Hdf &hdf, Sc2String name_geometry
             name_dim << name_list << "/local_nodes/" << name_direction[d];
             group_interfaces[ng].local_nodes[d].write_to( hdf, name_dim );
         }
+        //* AST Begin
+        if(DIM == 2){
+            Sc2String name_dim;
+            name_dim << name_list << "/local_nodes/z";
+            BasicVec< TYPE > tmp;
+            tmp.resize(group_interfaces[ng].local_nodes[0].size(),0.0);
+            tmp.write_to( hdf, name_dim);
+        }
+        /// AST end */
 
         Sc2String name_map;
         name_map << name_list << "/map_global_nodes" ;
@@ -1268,13 +1301,13 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
     BasicVec<Sc2String> list_groups;
     if(mode!="visu_CL"){
         //lecture des groupes d'elements
-        PRINT("lecture des group_elements");
+        std::cout << " - Lecture des group_elements";
         Sc2String name_group_0; name_group_0 << name << "/elements_0";
         BasicVec<Sc2String> list_groups;
         list_groups=hdf.list_dir( name_group_0 );
         group_elements.resize(list_groups.size());
         nb_group_elements=group_elements.size();
-        PRINT(nb_group_elements);
+        std::cout << " ---- Total : " << nb_group_elements << std::endl;
         
         read_tag_group_elements_hdf5(hdf,  name, read_micro);
         
@@ -1284,14 +1317,14 @@ void GeometryUser::read_hdf5(bool read_micro, bool read_all, Sc2String mode) {
     }
     //lecture des groupes d'interfaces
     
-    PRINT("lecture des group_interfaces");
+    std::cout << " - Lecture des group_interfaces";
     Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
     list_groups=hdf.list_dir( name_group_1 );
     group_interfaces.reserve(list_groups.size()+10);
     group_interfaces.resize(list_groups.size());
     nb_group_interfaces=group_interfaces.size();
-    PRINT(nb_group_interfaces);
+    std::cout << " ---- Total : " << nb_group_interfaces << std::endl;
 
     read_tag_group_interfaces_hdf5(hdf, name, read_micro);
     

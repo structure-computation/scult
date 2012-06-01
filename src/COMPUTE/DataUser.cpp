@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
 
 #include <Metil/Level1/CompilationEnvironment.h>
 #include <Metil/DynamicLibrary.h>
@@ -427,12 +428,10 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
             }
             else if( name == "type_plast" )
             {
-                //behaviour_materials[i].type_plast = value.get_str();
                 behaviour_materials[i].type_plast= value.get_str();
             }
             else if( name == "type_endo" )
             {
-                //behaviour_materials[i].type_plast = value.get_str();
                 behaviour_materials[i].type_endo= value.get_str();
             }
             else if( name == "resolution" )
@@ -441,199 +440,165 @@ void DataUser::read_json_behaviour_materials(const Object& gr){
             }
             else if( name == "elastic_modulus" )
             {
-                //behaviour_materials[i].elastic_modulus=value.get_str();
                 behaviour_materials[i].mat_prop[0]=value.get_str();
             }
             else if( name == "poisson_ratio" )
             {
-                //behaviour_materials[i].poisson_ratio=value.get_str();
                 behaviour_materials[i].mat_prop[1]=value.get_str();
             }
             else if( name == "alpha" )
             {
-                //behaviour_materials[i].alpha=value.get_str();
                 behaviour_materials[i].mat_prop[2]=value.get_str();
             }
             else if( name == "rho" )
             {
-                //behaviour_materials[i].rho=value.get_str();
                 behaviour_materials[i].mat_prop[3]=value.get_str();
             }
             else if( name == "viscosite" )
             {
-                //behaviour_materials[i].viscosite=value.get_str();
                 behaviour_materials[i].mat_prop[4]=value.get_str();
             }
             else if( name == "dir_1_x" )
             {
-                //behaviour_materials[i].dir_1_x = value.get_str();
                 behaviour_materials[i].mat_prop[5]=value.get_str();
             }
             else if( name == "dir_1_y" )
             {
-                //behaviour_materials[i].dir_1_y  = value.get_str();
                 behaviour_materials[i].mat_prop[6]=value.get_str();
             }
 #if DIM==3
             else if( name == "dir_1_z" )
             {
-                //behaviour_materials[i].dir_1_z  = value.get_str();
                 behaviour_materials[i].mat_prop[7]=value.get_str();
             }
 #endif
             else if( name == "dir_2_x" )
             {
-                //behaviour_materials[i].dir_2_x = value.get_str();
                 behaviour_materials[i].mat_prop[8]=value.get_str();
             }
             else if( name == "dir_2_y" )
             {
-                //behaviour_materials[i].dir_2_y = value.get_str();
                 behaviour_materials[i].mat_prop[9]=value.get_str();
             }
 #if DIM==3
             else if( name == "dir_2_z" )
             {
-                //behaviour_materials[i].dir_2_z = value.get_str();
                 behaviour_materials[i].mat_prop[10]=value.get_str();
             }
 #endif
             else if( name == "dir_3_x" )
             {
-                //behaviour_materials[i].dir_3_x = value.get_str();
                 behaviour_materials[i].mat_prop[11]=value.get_str();
             }
             else if( name == "dir_3_y" )
             {
-                //behaviour_materials[i].dir_3_y = value.get_str();
                 behaviour_materials[i].mat_prop[12]=value.get_str();
             }
 #if DIM==3
             else if( name == "dir_3_z" )
             {
-                //behaviour_materials[i].dir_3_z = value.get_str();
                 behaviour_materials[i].mat_prop[13]=value.get_str();
             }
 #endif
             else if( name == "E1" )
             {
-                //behaviour_materials[i].E1=value.get_str();
                 behaviour_materials[i].mat_prop[14]=value.get_str();
             }
             else if( name == "E2" )
             {
-                //behaviour_materials[i].E2=value.get_str();
                 behaviour_materials[i].mat_prop[15]=value.get_str();
             }
             else if( name == "E3" )
             {
-                //behaviour_materials[i].E3=value.get_str();
                 behaviour_materials[i].mat_prop[16]=value.get_str();
             }
             else if( name == "G12" )
             {
-                //behaviour_materials[i].G12=value.get_str();
                 behaviour_materials[i].mat_prop[17]=value.get_str();
             }
             else if( name == "G23" )
             {
-                //behaviour_materials[i].G23=value.get_str();
                 behaviour_materials[i].mat_prop[18]=value.get_str();
             }
             else if( name == "G13" )
             {
-                //behaviour_materials[i].G13=value.get_str();
                 behaviour_materials[i].mat_prop[19]=value.get_str();
             }
             else if( name == "nu12" )
             {
-                //behaviour_materials[i].nu12=value.get_str();
                 behaviour_materials[i].mat_prop[20]=value.get_str();
             }
             else if( name == "nu23" )
             {
-                //behaviour_materials[i].nu23=value.get_str();
                 behaviour_materials[i].mat_prop[21]=value.get_str();
             }
             else if( name == "nu13" )
             {
-                //behaviour_materials[i].nu13=value.get_str();
                 behaviour_materials[i].mat_prop[22]=value.get_str();
             }
             else if( name == "alpha_1" )
             {
-                //behaviour_materials[i].alpha_1=value.get_str();
                 behaviour_materials[i].mat_prop[23]=value.get_str();
             }
             else if( name == "alpha_2" )
             {
-                //behaviour_materials[i].alpha_2=value.get_str();
                 behaviour_materials[i].mat_prop[24]=value.get_str();
             }
             else if( name == "alpha_3" )
             {
-                //behaviour_materials[i].alpha_3=value.get_str();
                 behaviour_materials[i].mat_prop[25]=value.get_str();
             }
             else if( name == "R0" )
             {
-                //behaviour_materials[i].RO = value.get_str();
                 behaviour_materials[i].mat_prop[26]=value.get_str();
             }
             else if( name == "k_p" )
             {
-                //behaviour_materials[i].k_p = value.get_str();
                 behaviour_materials[i].mat_prop[27]=value.get_str();
             }
             else if( name == "m_p" )
             {
-                //behaviour_materials[i].m_p = value.get_str();
                 behaviour_materials[i].mat_prop[28]=value.get_str();
             }
-            else if( name == "c_p" or name == "couplage")   // COUPLAGE EST CONSERVE JUSQU A MAJ DE L INTERFACE
+            else if( name == "c_p")
             {
-                //behaviour_materials[i].Yc = value.get_str();
                 behaviour_materials[i].mat_prop[29]=value.get_str();
             }
             else if( name == "Yo" )
             {
-                //behaviour_materials[i].Ycp = value.get_str();
                 behaviour_materials[i].mat_prop[30]=value.get_str();
             }
             else if( name == "Yc" )
             {
-                //behaviour_materials[i].b = value.get_str();
                 behaviour_materials[i].mat_prop[31]=value.get_str();
             }
             else if( name == "Ycf" )
             {
-                //behaviour_materials[i].Yop = value.get_str();
                 behaviour_materials[i].mat_prop[32]=value.get_str();
             }
             else if( name == "dmax" )
             {
-                //behaviour_materials[i].Yc = value.get_str();
                 behaviour_materials[i].mat_prop[33]=value.get_str();
             }
             else if( name == "b_c" )
             {
-                //behaviour_materials[i].Ycp = value.get_str();
                 behaviour_materials[i].mat_prop[34]=value.get_str();
             }
             else if( name == "effet_retard" )
             {
-                //behaviour_materials[i].b = value.get_str();
                 behaviour_materials[i].mat_prop[35]=value.get_str();
             }
             else if( name == "a" )
             {
-                //behaviour_materials[i].b = value.get_str();
                 behaviour_materials[i].mat_prop[36]=value.get_str();
             }
             else if( name == "tau_c" )
             {
-                //behaviour_materials[i].b = value.get_str();
                 behaviour_materials[i].mat_prop[37]=value.get_str();
+            }
+            else if( name == "couplage" )
+            {
+                behaviour_materials[i].mat_prop[38]=value.get_str();
             }
             else
             {
@@ -832,9 +797,10 @@ void DataUser::read_step_bc(const Object& gr, BasicVec<StepBc> &step){
     for( Object::size_type k = 0; k != gr.size(); ++k )
     {
         const Pair& pair1 = gr[k];
-        //const Sc2String& name1  = pair1.name_;
+        const Sc2String& name1  = pair1.name_;
         const Value&  value1 = pair1.value_;
         Object obj=value1.get_obj();
+        unsigned num_step = atoi(name1.c_str());
         for( Object::size_type l = 0; l != obj.size(); ++l )
         {
             const Pair& pair = obj[l];
@@ -842,27 +808,27 @@ void DataUser::read_step_bc(const Object& gr, BasicVec<StepBc> &step){
             const Value&  value = pair.value_;
             if( name == "fct_spatiale_x" )
             {
-                step[k].CL_step_prop[0]=value.get_str();
+                step[num_step].CL_step_prop[0]=value.get_str();
             }
             else if( name == "fct_spatiale_y" )
             {
-                step[k].CL_step_prop[1]=value.get_str();
+                step[num_step].CL_step_prop[1]=value.get_str();
             }
             else if( name == "fct_spatiale_z" )
             {
-                step[k].CL_step_prop[2]=value.get_str();
+                step[num_step].CL_step_prop[2]=value.get_str();
             }
             else if( name == "fct_temporelle_x" )
             {
-                step[k].CL_step_prop[3]=value.get_str();
+                step[num_step].CL_step_prop[3]=value.get_str();
             }
             else if( name == "fct_temporelle_y" )
             {
-                step[k].CL_step_prop[4]=value.get_str();
+                step[num_step].CL_step_prop[4]=value.get_str();
             }
             else if( name == "fct_temporelle_z" )
             {
-                step[k].CL_step_prop[5]=value.get_str();
+                step[num_step].CL_step_prop[5]=value.get_str();
             }
         }
     }
@@ -871,9 +837,9 @@ void DataUser::read_step_bc(const Object& gr, BasicVec<StepBc> &step){
 void DataUser::read_json_behaviour_bc(const Object& gr){
     for(Object::size_type i=0;i != gr.size() ;i++){
         //Object obj=pr[i].get_obj();;
-    const Pair& pair1 = gr[i];        
+        const Pair& pair1 = gr[i];        
         const Value&  value1 = pair1.value_;
-    Object obj=value1.get_obj();
+        Object obj=value1.get_obj();
 
         for( Object::size_type j = 0; j != obj.size(); ++j )
         {
@@ -926,6 +892,7 @@ void DataUser::read_step_calcul(const Object& gr){
         const Sc2String& name1  = pair1.name_;
         const Value&  value1 = pair1.value_;
         Object obj=value1.get_obj();
+        unsigned num_step = atoi(name1.c_str());
         for( Object::size_type l = 0; l != obj.size(); ++l )
         {
             const Pair& pair = obj[l];
@@ -935,25 +902,25 @@ void DataUser::read_step_calcul(const Object& gr){
             {
                 Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
-                s >> time_step[k].dt;
+                s >> time_step[num_step].dt;
             }
             else if( name == "name" )
             {
-                time_step[k].name=value.get_str();
+                time_step[num_step].name=value.get_str();
             }
             else if( name == "nb_PdT" )
             {
                 Sc2String temp=value.get_str() ;
                 std::istringstream s(temp);
-                s >> time_step[k].nb_time_step;
+                s >> time_step[num_step].nb_time_step;
             }
             else if( name == "Tf" )
             {
-                time_step[k].tf=value.get_real();
+                time_step[num_step].tf=value.get_real();
             }
             else if( name == "Ti" )
             {
-                time_step[k].ti=value.get_real();
+                time_step[num_step].ti=value.get_real();
             }
         }
     }
@@ -964,41 +931,52 @@ void DataUser::read_multiresolution(const Object& gr){
     {
         const Pair& pair1 = gr[k];
         const Sc2String& name1  = pair1.name_;
-        const Value&  value1 = pair1.value_;
-        Object obj=value1.get_obj();
-        for( Object::size_type l = 0; l != obj.size(); ++l )
-        {
-            const Pair& pair = obj[l];
-            const Sc2String& name  = pair.name_;
-            const Value&  value = pair.value_;
-            if( name == "name" )
+        if(name1 == "type"){
+            pair1.value_.get_str();
+        }else if(name1 == "nb_calculs"){
+            pair1.value_.get_int();
+        }else if(name1 == "nb_values"){
+            pair1.value_.get_int();
+        }else if(name1 == "collection"){
+            const Array &collection = pair1.value_.get_array();
+            Multiresolution_parameters.resize(collection.size());
+            for( Array::size_type i_param = 0; i_param != collection.size(); ++i_param )
             {
-                Multiresolution_parameters[k].name=value.get_str();
-            }
-            else if( name == "nb_values" )
-            {
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].nb_values;
-            }
-            else if( name == "min_value" )
-            {
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].min_value;
-            }
-            else if( name == "max_value" )
-            {
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].max_value;
-            }
-            else if( name == "nominal_value" )
-            {
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].nominal_value;
-                Multiresolution_parameters[k].current_value=Multiresolution_parameters[k].nominal_value;
+                const Object&  obj = collection[i_param].get_obj();
+                for(Object::size_type l; l < obj.size(); ++l){
+                    const Pair& pair = obj[l];
+                    const Sc2String& name = pair.name_;
+                    const Value& value = pair.value_;
+                    if( name == "name" )
+                    {
+                        Multiresolution_parameters[k].name=value.get_str();
+                    }
+                    else if( name == "nb_values" )
+                    {
+                        Sc2String temp=value.get_str() ;
+                        std::istringstream s(temp);
+                        s >> Multiresolution_parameters[k].nb_values;
+                    }
+                    else if( name == "min_value" )
+                    {
+                        Sc2String temp=value.get_str() ;
+                        std::istringstream s(temp);
+                        s >> Multiresolution_parameters[k].min_value;
+                    }
+                    else if( name == "max_value" )
+                    {
+                        Sc2String temp=value.get_str() ;
+                        std::istringstream s(temp);
+                        s >> Multiresolution_parameters[k].max_value;
+                    }
+                    else if( name == "nominal_value" )
+                    {
+                        Sc2String temp=value.get_str() ;
+                        std::istringstream s(temp);
+                        s >> Multiresolution_parameters[k].nominal_value;
+                        Multiresolution_parameters[k].current_value=Multiresolution_parameters[k].nominal_value;
+                    }
+                }
             }
         }
     }
@@ -1036,71 +1014,70 @@ void DataUser::read_json_calcul(){
         }
         
         if(name_groups=="groups_elem"){//lecture des groupes d'elements
-            std::cout << "reading groups_elem " <<  std::endl;
+            std::cout << " - reading groups_elem " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             group_elements.resize(gr.size());
             read_json_groups_elements(gr);
         }
         
         if(name_groups=="groups_inter"){//lecture des groupes d'interfaces
-            std::cout << "reading groups_inter " <<  std::endl;
+            std::cout << " - reading groups_inter " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             group_interfaces.resize(gr.size());
             read_json_groups_interfaces(gr);
         }
         
         if(name_groups=="groups_edge"){//lecture des groupes de bords
-            std::cout << "reading groups_edge " <<  std::endl;
+            std::cout << " - reading groups_edge " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             group_edges.resize(gr.size()+1);
             read_json_groups_edges( gr);
         }
         
         if(name_groups=="links"){//lecture des proprietes d'interfaces et creation de behaviour_links
-            std::cout << "reading links " <<  std::endl;
+            std::cout << " - reading links " <<  std::endl;
             const Object& gr = value_groups.get_obj();
             behaviour_links.resize(gr.size()+1);
             read_json_behaviour_interfaces(gr);
         }
         
         if(name_groups=="materials"){//lecture des caracteristiques materiaux et creation de behaviour_materials
-            std::cout << "reading materials " <<  std::endl;
+            std::cout << " - reading materials " <<  std::endl;
             const Object& mat = value_groups.get_obj();
             behaviour_materials.resize(mat.size());
             read_json_behaviour_materials(mat);
         }
         
         if(name_groups=="CL"){//lecture des proprietes d'interfaces et creation de behaviour_links
-            std::cout << "reading CL " <<  std::endl;
+            std::cout << " - reading CL " <<  std::endl;
             const Object& cl = value_groups.get_obj();
             behaviour_bc.resize(cl.size()+1);
             read_json_behaviour_bc(cl);
         }
         if(name_groups=="CLvolume"){//lecture des proprietes d'interfaces et creation de behaviour_links
-            std::cout << "reading CLvolume " <<  std::endl;
+            std::cout << " - reading CLvolume " <<  std::endl;
             const Object& clvol = value_groups.get_obj();
             behaviour_bc_volume.resize(clvol.size());
             read_json_behaviour_bc_volume(clvol);
         }
         if(name_groups=="time_step"){//lecture des proprietes pour les steps temporels
-            std::cout << "reading time_step " <<  std::endl;
+            std::cout << " - reading time_step " <<  std::endl;
             const Object& timestep = value_groups.get_obj();
             time_step.resize(timestep.size());
             read_step_calcul(timestep);
         }
         if(name_groups=="multiresolution"){//lecture des proprietes pour les steps temporels
-            std::cout << "reading multiresolution " <<  std::endl;
+            std::cout << " - reading multiresolution " <<  std::endl;
             const Object& multiresolution = value_groups.get_obj();
-            Multiresolution_parameters.resize(multiresolution.size());
             read_multiresolution(multiresolution);
         }
         if(name_groups=="options"){//lecture des donnees de maillage
-            std::cout << "--------------options--------------" << std::endl;
+            std::cout << " - reading options :" << std::endl;
             const Object obj=value_groups.get_obj();
             for( Object::size_type j = 0; j != obj.size(); ++j ){
                 const Pair& pair = obj[j];
                 const Sc2String& name  = pair.name_;
-                std::cout << name << std::endl;
+                std::cout << "     - " << name << std::endl;
                 const Value&  value = pair.value_;
                 if     ( name == "dissipation" )       {Sc2String temp=value.get_str();std::istringstream s(temp); s>>options.dissipation;}
                 else if( name == "nb_options" )        {options.nb_option=value.get_int();}
@@ -1122,8 +1099,7 @@ void DataUser::read_json_calcul(){
 /*                else if( name == "Multiresolution_nb_cycle" ){options.Multiresolution_nb_cycle=value.get_int();} */
 /*                else if( name == "Multiresolution_type" ){options.Multiresolution_type=value.get_str();} */
                 else if( name == "mode" ){options.mode=value.get_str();}
-            }   
-            std::cout << "------------fin options------------" <<  std::endl;
+            }
         }
     }
 }
@@ -1172,7 +1148,7 @@ void DataUser::find_Multiresolution_parameters(){
             }
         }     
     }
-    PRINT(options.Multiresolution_material_link_CL_CLvolume);
+    //PRINT(options.Multiresolution_material_link_CL_CLvolume);
     
 }
 //*************************************************************************************************************

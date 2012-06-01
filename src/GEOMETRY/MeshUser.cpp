@@ -161,7 +161,7 @@ void MeshUser::test_create_list_interfaces(){
 //     PRINT(h.size());
     BasicVec< EntitySideUser > list_sides;
     for( int num_elem = 0; num_elem < list_elements.size(); ++num_elem ) {
-//         std::cout << "elem " << num_elem << std::endl;
+        std::cout << "\rElements a traiter : " << list_elements.size()-num_elem << "          ";
         Patterns::Types current_type = patterns.find_type(list_elements[num_elem].pattern_base_id);
         //PRINT(current_type.nb_sides);
         for( int num_side = 0; num_side < current_type.nb_sides; ++num_side ){
@@ -192,8 +192,10 @@ void MeshUser::test_create_list_interfaces(){
 //     for( int  num_side = 0; num_side < list_sides.size(); ++num_side ){
 //         PRINT(list_sides[num_side].mesh_connectivity);
 //     }
+    std::cout << std::endl;
 
     for( int  num_side = 0; num_side < list_sides.size(); ++num_side ){
+        std::cout << "\rCotes a traiter : " << list_sides.size() - num_side << "          ";
 //         PRINT(num_side);
 //         PRINT(list_sides[num_side].mesh_connectivity);
 //          PRINT(list_sides[num_side].assigned);
@@ -268,10 +270,11 @@ void MeshUser::test_create_list_interfaces(){
                     } 
                 }
             }
-            nb_interfaces = nb_interfaces + 1;
+            nb_interfaces += 1;
         }
 /*        else{std::cerr << "list_side["<<num_side<<"] non assigned " << std::endl; assert(0);}*/
     }
+    std::cout << std::endl;
 }
 
 
@@ -287,7 +290,7 @@ void MeshUser::create_mesh(Sc2String model_path, Sc2String file){
     std::cout << "** read_mesh_user ok" << std::endl;
     
     std::cout << "** create interfaces *******************************************************************************************" << std::endl;
-    test_create_list_interfaces(); 
+    test_create_list_interfaces();
     PRINT(nb_interfaces);
     PRINT(list_interfaces.size());
     
@@ -298,9 +301,10 @@ void MeshUser::create_mesh(Sc2String model_path, Sc2String file){
     
     std::cout << "** create elements *********************************************************************************************" << std::endl;
     for( int i_elem = 0; i_elem < nb_elements; i_elem++ ){
+        std::cout << "\rElements a traiter : " << nb_elements-i_elem << "          ";
         create_list_elements( i_elem );
     }
-    std::cout << "** create elements ok" << std::endl;
+    std::cout << std::endl << "** create elements ok" << std::endl;
     
 }
 
