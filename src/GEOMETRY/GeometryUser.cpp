@@ -583,6 +583,7 @@ void GeometryUser::write_json_v2(MeshUser &mesh_user) {
     for (int i_group=0; i_group< nb_group_elements; i_group++) {
         Object group;
         group.push_back(Pair( "id", group_elements[i_group].id ));
+        group.push_back(Pair( "id_in_calcul", group_elements[i_group].id ));
         group.push_back(Pair( "origine", "from_bulkdata" ));
         group.push_back(Pair( "identificateur", group_elements[i_group].id ));
         Sc2String name_group;
@@ -606,6 +607,7 @@ void GeometryUser::write_json_v2(MeshUser &mesh_user) {
         if (group_interfaces[i_group].type==2) {
             Object group;
             group.push_back(Pair( "id", group_interfaces[i_group].id ));
+            group.push_back(Pair( "id_in_calcul", group_interfaces[i_group].id ));
             group.push_back(Pair( "origine", "from_bulkdata" ));
             group.push_back(Pair( "type", "between_group_elem" ));
             std::ostringstream name_group;
