@@ -142,7 +142,9 @@ int DataUser::find_index_behaviour_bc(int id_) {
 void DataUser::initialisation(Sc2String id_model_, Sc2String id_calcul_){
         model_path = "/share/sc2/Developpement/MODEL/";
         calcul_path = model_path + "model_" + id_model_ + "/calcul_" + id_calcul_ ;
-        file_calcul = calcul_path + "/calcul.json" ;    
+        result_path = model_path + "model_" + id_model_ + "/calcul_" + id_calcul_ + "/results" ;
+        file_calcul = calcul_path + "/calcul.json" ;  
+        file_calcul_v2 = result_path + "/calcul.txt" ; 
         id_calcul << id_calcul_;
     }
 
@@ -1178,6 +1180,668 @@ void DataUser::assign_num_links_id_group_interfaces() {
         }
     }
 }
+
+
+
+
+
+
+
+//*************************************************************************************************************
+// fonction de lecture du fichier de calcul v2
+//*************************************************************************************************************
+
+Sc2String to_string(const Sc2String& name, const Value&  value){
+    Sc2String data;
+    int typeValue = value.type();
+    //PRINT(name);
+    //PRINT(typeValue);
+    if(typeValue == 2) {data = value.get_str() ; if(data == ""){data = "0";}} 
+    else if(typeValue == 4) {int temp = value.get_int() ;std::ostringstream oss; oss << temp; data = oss.str();} 
+    else if(typeValue == 5) {float temp = value.get_real() ;std::ostringstream oss; oss << temp; data = oss.str();} 
+    else if(typeValue == 6) {data = "0";} 
+    else {assert( "Value ne peut pas être convertie en String" );}
+    //PRINT(data);
+    return data;
+}
+
+
+//lecture des groupes d'elements dans un fichier json--------------------------------------
+void DataUser::read_json_groups_elements_v2(const Array& gr){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        Object obj=gr[i].get_obj();
+        for( Object::size_type j = 0; j != obj.size(); ++j )
+        {
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+
+            if( name == "id" )                  { group_elements[i].id= value.get_int(); }
+            else if( name == "origine" )        { group_elements[i].origine = value.get_str() ;}
+            else if( name == "identificateur" ) { group_elements[i].num_in_mesh_file = value.get_int() ; }
+            else if( name == "name" )           { group_elements[i].name = value.get_str();}
+            else if( name == "group" )          {  } //TODO
+            else if( name == "assigned" )       {  } //TODO
+            else if(name=="material_id")        { group_elements[i].id_material= value.get_int(); }
+            else                                { assert( "Donnees groups_elem non implementee" );}
+        }
+        group_elements[i].affich();
+    }
+}
+
+
+///lecture des groupes d'interfaces dans un fichier json
+void DataUser::read_json_groups_interfaces_v2( const Array& gr ){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        Object obj=gr[i].get_obj();
+        for( Object::size_type j = 0; j != obj.size(); ++j )
+        {
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+
+            if( name == "id" )                  { group_interfaces[i].id= value.get_int(); }
+            else if( name == "origine" )        { group_interfaces[i].origine= value.get_str(); }
+            else if( name == "name" )           { group_interfaces[i].name= value.get_str();}
+            else if( name == "type" )           { group_interfaces[i].type= value.get_str();}
+            else if( name == "adj_num_group" ) {
+                Sc2String adj=value.get_str();
+                std::istringstream s(adj);
+                BasicVec<int,2> adjnum;
+                for(unsigned k=0;k< 2 ;k++){
+                    s>>adjnum[k];
+                }
+                group_interfaces[i].adj_num_group=adjnum;
+            }
+            else if( name == "link_id" )        { group_interfaces[i].id_link= value.get_int(); }
+            else if( name == "group" )          {  } //TODO
+            else if( name == "assigned" )       { group_interfaces[i].assigned= value.get_real(); }
+            else                                { assert( "Donnee groups_inter non implementee" );}
+        }
+        group_interfaces[i].affich();
+    }
+}
+
+///lecture des groupes de bord dans un fichier json
+void DataUser::read_json_groups_edges_v2( const Array& gr){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        group_edges[i].geom.points.resize(2);
+        for(int k=0; k<2; k++){
+            group_edges[i].geom.points[k].resize(DIM);
+        }
+        Object obj=gr[i].get_obj();
+        for( Object::size_type j = 0; j != obj.size(); ++j )
+        {
+
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            if( name == "id_in_calcul" )                { group_edges[i].id= value.get_int(); }
+            else if( name == "origine" )                { group_edges[i].geom.origine= value.get_str();}
+            else if( name == "name" )                   { group_edges[i].name= value.get_str();}
+            else if( name == "criteria" )  // type
+            {
+                Sc2String temp = value.get_str();
+                if(temp == "surface") group_edges[i].geom.type= "is_on";
+                else if(temp == "volume") group_edges[i].geom.type= "is_in";
+                else std::cout << "WARNING Donnee groups_edge criteria non reconnue : " << temp << std::endl;
+                
+            }
+            else if( name == "boundary_condition_id" )  { group_edges[i].id_CL= value.get_int(); }
+            else if( name == "to_visualize" )           { group_edges[i].to_visualize= value.get_int(); }
+            else if( name == "assigned" )               { group_edges[i].assigned= value.get_real(); }
+            else if(name == "direction_x" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.pdirection[0];
+            }
+            else if(name == "direction_y" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.pdirection[1];
+            }
+#if DIM==3
+            else if(name == "direction_z" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.pdirection[2];
+            }
+#endif
+            else if( name == "geometry" )
+            {
+                Sc2String temp = value.get_str();
+                if(temp == "plan")  group_edges[i].geom.nature= "plan";
+                else if(temp == "disc")  group_edges[i].geom.nature= "disc";
+                else if(temp == "cylinder")  group_edges[i].geom.nature= "cylinder";
+                else if(temp == "sphere")  group_edges[i].geom.nature= "sphere";
+                else if(temp == "parameterized")  group_edges[i].geom.nature= "equation";
+                else if(temp == "box")  group_edges[i].geom.nature= "box";
+                else std::cout << "WARNING Donnee groups_edge geometry non reconnue : " << temp << std::endl;
+            }
+            else if(name == "radius" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream is(temp);
+                is >>group_edges[i].geom.radius;
+//                 group_edges[i].geom.radius=value.get_real();
+            }
+            else if(name == "equation" )
+            {
+                group_edges[i].geom.equation=value.get_str();
+            }
+            else if(name == "point_1_x" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.points[0][0];
+            }
+            else if(name == "point_1_y" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.points[0][1];
+            }
+#if DIM==3
+            else if(name == "point_1_z" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.points[0][2];                
+            }
+#endif
+            else if(name == "point_2_x" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.points[1][0];
+            }
+            else if(name == "point_2_y" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.points[1][1];
+            }
+#if DIM==3
+            else if(name == "point_2_z" )
+            {
+                Sc2String temp=value.get_str();
+                std::istringstream s(temp);
+                s >> group_edges[i].geom.points[1][2];
+            }
+#endif
+            else
+            {
+                std::cout << "WARNING Donnee groups_edge non implementee : " << name << std::endl;
+            }
+        }
+        group_edges[i].affich();
+        
+    }
+    //Ajout du groupe en fin des groupes d'edge (comportement generique pour tous les edges non assignees
+    group_edges[gr.size()].id=-1;
+    group_edges[gr.size()].geom.type="all";
+    group_edges[gr.size()].id_CL=-1; 
+    
+
+}
+
+///lecture des proprietes materiaux donnees dans un fichier json
+void DataUser::read_json_behaviour_materials_v2(const Array& gr){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        Object obj=gr[i].get_obj();  
+        for( Object::size_type j = 0; j != obj.size(); ++j ){
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            
+            if( name == "id_in_calcul" )        { behaviour_materials[i].id= value.get_int(); }
+            else if( name == "mtype" )          { behaviour_materials[i].type= to_string(name, value);}
+            else if( name == "type_num" )       { behaviour_materials[i].type_num= value.get_int();}
+            else if( name == "comp" )           { behaviour_materials[i].comp=       to_string(name, value);}
+            else if( name == "type_plast" )     { behaviour_materials[i].type_plast= to_string(name, value);}
+            else if( name == "type_endo" )      { behaviour_materials[i].type_endo=  to_string(name, value);}
+            else if( name == "resolution" )     { behaviour_materials[i].resolution= to_string(name, value);}
+            else if( name == "elastic_modulus" ){ behaviour_materials[i].mat_prop[0]=to_string(name, value);}
+            else if( name == "poisson_ratio" )  { behaviour_materials[i].mat_prop[1]=to_string(name, value);}
+            else if( name == "alpha" )          { behaviour_materials[i].mat_prop[2]=to_string(name, value);}
+            else if( name == "rho" )            { behaviour_materials[i].mat_prop[3]=to_string(name, value);}
+            
+            else if( name == "viscosite" )      { behaviour_materials[i].mat_prop[4]=to_string(name, value);}
+            else if( name == "dir_1_x" )        { behaviour_materials[i].mat_prop[5]=to_string(name, value);}
+            else if( name == "dir_1_y" )        { behaviour_materials[i].mat_prop[6]=to_string(name, value);}
+            else if( name == "dir_2_x" )        { behaviour_materials[i].mat_prop[8]=to_string(name, value);}
+            else if( name == "dir_2_y" )        { behaviour_materials[i].mat_prop[9]=to_string(name, value);}
+            else if( name == "dir_3_x" )        { behaviour_materials[i].mat_prop[11]=to_string(name, value);}
+            else if( name == "dir_3_y" )        { behaviour_materials[i].mat_prop[12]=to_string(name, value);}
+            else if( name == "E_1" )            { behaviour_materials[i].mat_prop[14]=to_string(name, value); behaviour_materials[i].mat_prop[0]=to_string(name, value);}
+            else if( name == "E_2" )            { behaviour_materials[i].mat_prop[15]=to_string(name, value);}
+            else if( name == "E_3" )            { behaviour_materials[i].mat_prop[16]=to_string(name, value);}
+            else if( name == "cis_1" )          { behaviour_materials[i].mat_prop[17]=to_string(name, value);}
+            else if( name == "cis_2" )          { behaviour_materials[i].mat_prop[18]=to_string(name, value);}
+            else if( name == "cis_3" )          { behaviour_materials[i].mat_prop[19]=to_string(name, value);}
+            else if( name == "nu_12" )          { behaviour_materials[i].mat_prop[20]=to_string(name, value); behaviour_materials[i].mat_prop[1]=to_string(name, value);}
+            else if( name == "nu_23" )          { behaviour_materials[i].mat_prop[21]=to_string(name, value);}
+            else if( name == "nu_13" )          { behaviour_materials[i].mat_prop[22]=to_string(name, value);}
+            else if( name == "alpha_1" )        { behaviour_materials[i].mat_prop[23]=to_string(name, value); behaviour_materials[i].mat_prop[2]=to_string(name, value);}
+            else if( name == "alpha_2" )        { behaviour_materials[i].mat_prop[24]=to_string(name, value);}
+            else if( name == "alpha_3" )        { behaviour_materials[i].mat_prop[25]=to_string(name, value);}
+            
+            else if( name == "R0" )             { behaviour_materials[i].mat_prop[26]=to_string(name, value);}
+            else if( name == "k_p" )            { behaviour_materials[i].mat_prop[27]=to_string(name, value);}
+            else if( name == "m_p" )            { behaviour_materials[i].mat_prop[28]=to_string(name, value);}
+            else if( name == "coeff_plast_cinematique" ){ behaviour_materials[i].mat_prop[29]=to_string(name, value);}
+            
+            else if( name == "Yo" )             { behaviour_materials[i].mat_prop[30]=to_string(name, value);}
+            else if( name == "Yc" )             { behaviour_materials[i].mat_prop[31]=to_string(name, value);}
+            else if( name == "Ycf" )            { behaviour_materials[i].mat_prop[32]=to_string(name, value);}
+            else if( name == "dmax" )           { behaviour_materials[i].mat_prop[33]=to_string(name, value);}
+            else if( name == "b_c" )            { behaviour_materials[i].mat_prop[34]=to_string(name, value);}
+            else if( name == "effet_retard" )   { behaviour_materials[i].mat_prop[35]=to_string(name, value);}
+            else if( name == "a" )              { behaviour_materials[i].mat_prop[36]=to_string(name, value);}
+            else if( name == "tau_c" )          { behaviour_materials[i].mat_prop[37]=to_string(name, value);}
+            else if( name == "couplage")        { behaviour_materials[i].mat_prop[38]=to_string(name, value);}
+            
+#if DIM==3
+            else if( name == "dir_1_z" )        { behaviour_materials[i].mat_prop[7]=to_string(name, value);}
+            else if( name == "dir_2_z" )        { behaviour_materials[i].mat_prop[10]=to_string(name, value);}
+            else if( name == "dir_3_z" )        { behaviour_materials[i].mat_prop[13]=to_string(name, value);}
+#endif
+        
+            else {  std::cerr << "WARNING Donnee materials non implementee : " << name << std::endl;}
+        }
+    }
+}
+
+///Lecture des proprietes des interfaces donnees dans un fichier json
+void DataUser::read_json_behaviour_interfaces_v2(const Array& gr){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        Object obj=gr[i].get_obj();
+        for( Object::size_type j = 0; j != obj.size(); ++j )
+        {
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+
+            if( name == "id_in_calcul" )        { behaviour_links[i].id= value.get_int(); }
+            //else if( name == "id_select" )      { behaviour_links[i].id_select= value.get_int(); }
+            else if( name == "type_num" )       { behaviour_links[i].type_num= value.get_int();  }
+            else if( name == "comp_generique" ) { behaviour_links[i].type= to_string(name, value); }
+            else if( name == "comp_complexe" )  { behaviour_links[i].comp_complexe= to_string(name, value); }
+            else if( name == "f" )              { behaviour_links[i].link_prop[0]=to_string(name, value); }
+            else if( name == "Ep" )             { behaviour_links[i].link_prop[1]=to_string(name, value); }
+            else if( name == "jeu" )            { behaviour_links[i].link_prop[2]=to_string(name, value); }
+            else if( name == "R" )              { behaviour_links[i].link_prop[3]=to_string(name, value); }
+            else if( name == "Lp" )             { behaviour_links[i].link_prop[4]=to_string(name, value); }
+            else if( name == "Dp" )             { behaviour_links[i].link_prop[5]=to_string(name, value); }
+            else if( name == "p" )              { behaviour_links[i].link_prop[6]=to_string(name, value); }
+            else if( name == "Lr" )             { behaviour_links[i].link_prop[7]=to_string(name, value); }
+            else { std::cout << "WARNING Champ proprietes_interface non implementee : " << name << std::endl; }
+        }
+    }  
+    //Ajout du comportement parfait en fin des groupes d'interface (comportement generique pour toutes les interfaces non assignees
+    behaviour_links[gr.size()].type="Parfait";
+    behaviour_links[gr.size()].id=-1; 
+    behaviour_links[gr.size()].type_num=0; 
+    for(int i_prop=0; i_prop < behaviour_links[gr.size()].link_prop.size(); i_prop++){
+        behaviour_links[gr.size()].link_prop[i_prop] = "0";
+    }
+}
+
+void DataUser::read_step_bc_volume_v2(const Object& gr, BasicVec<StepBcVolume> &step){
+    for( Object::size_type k = 0; k != gr.size(); ++k )
+    {
+        const Pair& pair1 = gr[k];
+        //const Sc2String& name1  = pair1.name_;
+        const Value&  value1 = pair1.value_;
+        Object obj=value1.get_obj();
+        for( Object::size_type l = 0; l != obj.size(); ++l )
+        {
+            const Pair& pair = obj[l];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            
+            if( name == "pdirection_x" )        { step[k].CLv_step_prop[0]=value.get_str();}
+            else if( name == "pdirection_y" )   { step[k].CLv_step_prop[1]=value.get_str();}
+            else if( name == "pdirection_z" )   { step[k].CLv_step_prop[2]=value.get_str();}
+            else if( name == "point_1_x" )      { step[k].CLv_step_prop[3]=value.get_str();}
+            else if( name == "point_1_y" )      { step[k].CLv_step_prop[4]=value.get_str();}            
+            else if( name == "point_1_z" )      { step[k].CLv_step_prop[5]=value.get_str();}
+            else if( name == "gravity" )        { step[k].CLv_step_prop[6]=value.get_str();}
+            else if( name == "wrotation" )      { step[k].CLv_step_prop[7]=value.get_str();}
+        }
+    }
+}
+
+///lecture des CL volumiques dans un fichier json
+void DataUser::read_json_behaviour_bc_volume_v2(const Array& gr){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        Object obj=gr[i].get_obj();
+        
+        //initialisation du pas de temps
+        StepBcVolume step_0;
+        for( Object::size_type j = 0; j != obj.size(); ++j ){
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            
+            
+            if( name == "name" )        {behaviour_bc_volume[i].name = to_string(name, value);}
+            else if( name == "type" )   {behaviour_bc_volume[i].type = to_string(name, value);}
+            else if( name == "ref" )    {behaviour_bc_volume[i].ref = value.get_int(); }
+            else if( name == "dx" )     {step_0.CLv_step_prop[0]=to_string(name, value); }
+            else if( name == "dy" )     {step_0.CLv_step_prop[1]=to_string(name, value); }
+            else if( name == "dz" )     {step_0.CLv_step_prop[2]=to_string(name, value); }
+            else if( name == "gamma" )  {step_0.CLv_step_prop[6]=to_string(name, value); }
+            else                        {assert( "Donnee behaviour_bc_volume non implementee" );}
+        }
+        behaviour_bc_volume[i].select = true;
+        behaviour_bc_volume[i].step.resize(time_step.size());
+        for(int k=0; k<time_step.size(); k++){
+           behaviour_bc_volume[i].step[k] = step_0;
+        }
+        //read_step_bc_volume(obj2,behaviour_bc_volume[i].step); 
+        behaviour_bc_volume[i].affich();
+    }
+
+}
+
+
+void DataUser::read_step_bc_v2(const Array& gr, BasicVec<StepBc> &step){
+    for( Object::size_type k = 0; k != gr.size(); ++k ){
+        Object obj=gr[k].get_obj();
+        for( Object::size_type l = 0; l != obj.size(); ++l ){
+            const Pair& pair = obj[l];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            if( name == "spatial_function_x" )          { step[k].CL_step_prop[0]=to_string(name, value);}
+            else if( name == "spatial_function_y" )     { step[k].CL_step_prop[1]=to_string(name, value);}
+            else if( name == "spatial_function_z" )     { step[k].CL_step_prop[2]=to_string(name, value);}
+            else if( name == "temporal_function_t" )    { step[k].CL_step_prop[3]=to_string(name, value);}
+        }
+    }
+}
+///lecture des CL donnees dans un fichier json
+void DataUser::read_json_behaviour_bc_v2(const Array& gr){
+    for(Object::size_type i=0;i != gr.size() ;i++){
+        Object obj=gr[i].get_obj();
+        behaviour_bc[i].step.resize(time_step.size());
+        for( Object::size_type j = 0; j != obj.size(); ++j )
+        {
+            const Pair& pair = obj[j];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+
+            if( name == "id_in_calcul" )        { behaviour_bc[i].id= value.get_int(); }
+            else if( name == "condition_type" ) { behaviour_bc[i].type= to_string(name, value);}
+            else if( name == "stepFunctions" ){
+                Array obj2=value.get_array();
+                read_step_bc_v2(obj2,behaviour_bc[i].step);
+            }
+            else{std::cout << "WARNING Champ CL non implementee : " << name << std::endl;}        
+        }
+        behaviour_bc[i].affich();
+    }   
+    //Ajout d'une CL en effort nul pour les interfaces non assignees sur les cotes
+    behaviour_bc[gr.size()].type="effort";
+    behaviour_bc[gr.size()].id=-1;
+    
+//     StepBc step_0;
+//     step_0.CL_step_prop[0] = "0";
+//     step_0.CL_step_prop[1] = "0";
+//     step_0.CL_step_prop[2] = "0";
+//     step_0.CL_step_prop[3] = "1";
+//     step_0.CL_step_prop[4] = "1";
+//     step_0.CL_step_prop[5] = "1";
+
+    int nb_step_temp = time_step.size();
+    behaviour_bc[gr.size()].step.resize(nb_step_temp);
+    //behaviour_bc[gr.size()].step[0] = step_0;
+    behaviour_bc[gr.size()].affich();
+}
+
+
+void DataUser::read_step_calcul_v2(const Array& gr){
+    for( Object::size_type k = 0; k != gr.size(); ++k )
+    {
+        Object obj=gr[k].get_obj();
+        for( Object::size_type l = 0; l != obj.size(); ++l )
+        {
+            const Pair& pair = obj[l];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            if( name == "time_step" )           { time_step[k].dt=value.get_real();}
+            else if( name == "name" )           { time_step[k].name=value.get_str(); }
+            else if( name == "nb_time_steps" )  { time_step[k].nb_time_step=value.get_real(); }
+            else if( name == "final_time" )     { time_step[k].tf=value.get_real();}
+            else if( name == "initial_time" )   { time_step[k].ti=value.get_real();}
+        }
+        time_step[k].affich();
+    }
+}
+
+void DataUser::read_multiresolution_v2(const Array& gr){
+    for( Object::size_type k = 0; k != gr.size(); ++k )
+    {
+        Object obj=gr[k].get_obj();
+        for( Object::size_type l = 0; l != obj.size(); ++l )
+        {
+            const Pair& pair = obj[l];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            if( name == "name" ){ Multiresolution_parameters[k].name=value.get_str();}
+            else if( name == "nb_values" ){
+                Sc2String temp=value.get_str() ;
+                std::istringstream s(temp);
+                s >> Multiresolution_parameters[k].nb_values;
+            }
+            else if( name == "min_value" ){
+                Sc2String temp=value.get_str() ;
+                std::istringstream s(temp);
+                s >> Multiresolution_parameters[k].min_value;
+            }
+            else if( name == "max_value" ){
+                Sc2String temp=value.get_str() ;
+                std::istringstream s(temp);
+                s >> Multiresolution_parameters[k].max_value;
+            }
+            else if( name == "nominal_value" ){
+                Sc2String temp=value.get_str() ;
+                std::istringstream s(temp);
+                s >> Multiresolution_parameters[k].nominal_value;
+                Multiresolution_parameters[k].current_value=Multiresolution_parameters[k].nominal_value;
+            }
+        }
+    }
+}
+
+void DataUser::read_json_calcul_v2(){
+    PRINT(file_calcul_v2);
+    std::ifstream is( file_calcul_v2.c_str() );
+    Value value_i;
+
+    read( is, value_i );
+    const Object& input = value_i.get_obj();
+    
+    // informations sur le maillage
+    for( Object::size_type i = 0; i != input.size(); ++i )
+    {
+        const Pair& pair_groups = input[i];
+        const Sc2String& name_groups  = pair_groups.name_;
+        const Value& value_groups= pair_groups.value_;
+        
+        PRINT(name_groups);
+        
+        if(name_groups=="mesh"){
+            const Object obj=value_groups.get_obj();
+            for( Object::size_type j = 0; j != obj.size(); ++j ){
+                const Pair& pair = obj[j];
+                const Sc2String& name  = pair.name_;
+                const Value&  value = pair.value_;
+                if( name == "model_directory" )     {name_directory=value.get_str();}
+                else if( name == "mesh_directory" ) {mesh_directory=value.get_str();}
+                else if( name == "mesh_name" )      {name_mesh_user= value.get_str();}
+                else if( name == "extension" )      {extension= value.get_str();}
+                else if( name == "nb_ddl" )         {nb_ddl=value.get_int();}
+                else if( name == "nb_sst" )         {nb_sst=value.get_int();}
+                else if( name == "nb_inter" )       {nb_inter=value.get_int();}
+                else if( name == "nb_groups_elem" ) {nb_groups_elem=value.get_int();}
+                else if( name == "nb_groups_inter" ){nb_groups_inter=value.get_int();}
+                else{std::cout << name ; assert( false );}
+            }        
+        }
+        
+    }
+    
+    // lecture des step temporels, de la multirésolution et des options de calcul en premier
+    for( Object::size_type i = 0; i != input.size(); ++i )
+    {
+        const Pair& pair_groups = input[i];
+        const Sc2String& name_groups  = pair_groups.name_;
+        const Value& value_groups= pair_groups.value_;
+        
+        PRINT(name_groups);
+        // informations sur le maillage
+        if(name_groups=="options"){//lecture des donnees de maillage
+            std::cout << "--------------options--------------" << std::endl;
+            const Object obj=value_groups.get_obj();
+            for( Object::size_type j = 0; j != obj.size(); ++j ){
+                const Pair& pair = obj[j];
+                const Sc2String& name  = pair.name_;
+                std::cout << name << std::endl;
+                const Value&  value = pair.value_;
+                if( name == "convergence_method_LATIN" ){
+                    const Object& conv = value.get_obj();
+                    for( Object::size_type k = 0; k != conv.size(); ++k ){
+                        const Pair& conv_pair = conv[k];
+                        const Sc2String& conv_name  = conv_pair.name_;
+                        PRINT(conv_name);
+                        const Value&  conv_value = conv_pair.value_;
+                        if(conv_name == "convergence_rate" )    {Sc2String temp=conv_value.get_str();std::istringstream s(temp); s>>options.LATIN_crit_error;}
+                        else if(conv_name == "max_iteration" )  {Sc2String temp=conv_value.get_str();std::istringstream s(temp); s>>options.LATIN_nb_iter_max;}
+                        else if(conv_name == "multiscale" )     {Sc2String temp=conv_value.get_str();PRINT(temp);std::istringstream s(temp); s>>options.multiechelle;}
+                    }
+                }
+                else if( name == "mode" )                       {options.mode = to_string(name, value);}
+            }  
+            if(nb_groups_inter > 3){ options.multiechelle = true;}
+            else{ options.multiechelle = false;}
+            options.affich();
+        }
+        if(name_groups=="time_steps"){//lecture des proprietes pour les steps temporels
+            std::cout << "reading time_steps " <<  std::endl;
+            const Object obj=value_groups.get_obj();
+            for( Object::size_type j = 0; j != obj.size(); ++j ){
+                const Pair& pair = obj[j];
+                const Sc2String& name  = pair.name_;
+                std::cout << name << std::endl;
+                if( name == "time_scheme" )  { 
+                  const Value&  value = pair.value_; 
+                  Sc2String temp = value.get_str();
+                  if(temp == "static"){options.Temp_statique="statique";}
+                  else if(temp == "quasistatic"){options.Temp_statique="quasistatique";}
+                  //options.Temp_statique=value.get_str();
+                }else if( name == "collection" ) {
+                  const Array& timestep = pair.value_.get_array();
+                  time_step.resize(timestep.size());
+                  PRINT(time_step.size());
+                  read_step_calcul_v2(timestep);
+                }
+            }
+        }
+        if(name_groups=="multiresolution_parameters"){//lecture des proprietes pour les steps de multiresolution TODO
+            std::cout << "reading multiresolution " <<  std::endl;
+            const Object obj=value_groups.get_obj();
+            for( Object::size_type j = 0; j != obj.size(); ++j ){
+                const Pair& pair = obj[j];
+                const Sc2String& name  = pair.name_;
+                std::cout << name << std::endl;
+                if( name == "multiresolution_type" )  { 
+                    const Value&  value = pair.value_; 
+                    Sc2String temp=value.get_str();
+                    if(temp=="off")             {options.Multiresolution_on=0; options.Multiresolution_type="none";}
+                    else if(temp=="fatigue")    {options.Multiresolution_on=1; options.Multiresolution_type="fatigue";}
+                    else                        { std::cout << "type de multiresolution non reconnu, revoir les noms" << std::endl; assert( false );}
+                }else if( name == "collection" ) {
+                    const Array& multiresolution = pair.value_.get_array();
+                    Multiresolution_parameters.resize(multiresolution.size());
+                    PRINT(Multiresolution_parameters.size());
+                    read_multiresolution_v2(multiresolution);
+                }
+            }
+        }
+    }
+    
+    for( Object::size_type i = 0; i != input.size(); ++i )
+    {
+        const Pair& pair_groups = input[i];
+        const Sc2String& name_groups  = pair_groups.name_;
+        const Value& value_groups= pair_groups.value_;
+        
+        PRINT(name_groups);
+        
+        if(name_groups=="pieces"){//lecture des groupes d'elements
+            std::cout << "reading groups_elem " <<  std::endl;
+            const Array& gr = value_groups.get_array();
+            group_elements.resize(gr.size());
+            read_json_groups_elements_v2(gr);
+        }
+        
+        if(name_groups=="interfaces"){//lecture des groupes d'interfaces
+            std::cout << "reading groups_inter " <<  std::endl;
+            const Array& gr = value_groups.get_array();
+            group_interfaces.resize(gr.size());
+            read_json_groups_interfaces_v2(gr);
+        }
+        
+        if(name_groups=="edges"){//lecture des groupes de bords
+            std::cout << "reading groups_edge " <<  std::endl;
+            const Array& gr = value_groups.get_array();
+            group_edges.resize(gr.size()+1);
+            PRINT(group_edges.size());
+            read_json_groups_edges_v2( gr);
+        }
+        
+        if(name_groups=="links"){//lecture des proprietes d'interfaces et creation de behaviour_links
+            std::cout << "reading links " <<  std::endl;
+            const Array& gr = value_groups.get_array();
+            behaviour_links.resize(gr.size()+1);
+            read_json_behaviour_interfaces_v2(gr);
+        }
+        
+        if(name_groups=="materials"){//lecture des caracteristiques materiaux et creation de behaviour_materials
+            std::cout << "reading materials " <<  std::endl;
+            const Array& mat = value_groups.get_array();
+            behaviour_materials.resize(mat.size());
+            read_json_behaviour_materials_v2(mat);
+        }
+        
+        if(name_groups=="boundary_condition"){//lecture des proprietes d'interfaces et creation de behaviour_links
+            std::cout << "reading CL " <<  std::endl;
+            const Array& cl = value_groups.get_array();
+            behaviour_bc.resize(cl.size()+1);
+            read_json_behaviour_bc_v2(cl);
+        }
+        if(name_groups=="volumic_forces"){//lecture des proprietes d'interfaces et creation de behaviour_links
+            std::cout << "reading CLvolume " <<  std::endl;
+            const Array& clvol = value_groups.get_array();
+            behaviour_bc_volume.resize(clvol.size());
+            read_json_behaviour_bc_volume_v2(clvol);
+        }  
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -99,6 +99,7 @@ class GeometryUser{
       void initialize_group_interfaces_from_MeshUser(MeshUser &mesh_);                  // initialisation à partir des interfaces du maillage
       
       void write_json(MeshUser &mesh_user);                                             // ecriture du fichier json pour l'interface
+      void write_json_v2(MeshUser &mesh_user);                                             // ecriture du fichier json pour l'interface
       void write_nodes_hdf5(Hdf &hdf, Sc2String name);             //ecriture des noeuds globaux dans un fichier hdf5
       void write_group_elements_hdf5(Hdf &hdf, Sc2String name, int i_group);             //ecriture des donnees d'un groupe d'elements dans un fichier hdf5
       void write_group_elements_skin_hdf5(Hdf &hdf, Sc2String name, int i_group);             //ecriture des donnees d'un groupe d'elements dans un fichier hdf5
