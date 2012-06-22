@@ -1531,10 +1531,10 @@ void DataUser::read_json_behaviour_bc_volume_v2(const Array& gr){
             if( name == "name" )        {behaviour_bc_volume[i].name = to_string(name, value);}
             else if( name == "type" )   {behaviour_bc_volume[i].type = to_string(name, value);}
             else if( name == "ref" )    {behaviour_bc_volume[i].ref = value.get_int(); }
-            else if( name == "dx" )     {step_0.CLv_step_prop[0]=to_string(name, value); }
-            else if( name == "dy" )     {step_0.CLv_step_prop[1]=to_string(name, value); }
-            else if( name == "dz" )     {step_0.CLv_step_prop[2]=to_string(name, value); }
-            else if( name == "gamma" )  {step_0.CLv_step_prop[6]=to_string(name, value); }
+            else if( name == "dx" )     {behaviour_bc_volume[i].CLv_prop[0]=to_string(name, value); }
+            else if( name == "dy" )     {behaviour_bc_volume[i].CLv_prop[1]=to_string(name, value); }
+            else if( name == "dz" )     {behaviour_bc_volume[i].CLv_prop[2]=to_string(name, value); }
+            else if( name == "gamma" )  {behaviour_bc_volume[i].CLv_prop[6]=to_string(name, value); }
             else                        {assert( "Donnee behaviour_bc_volume non implementee" );}
         }
         behaviour_bc_volume[i].select = true;
@@ -1574,8 +1574,13 @@ void DataUser::read_json_behaviour_bc_v2(const Array& gr){
             const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
 
-            if( name == "id_in_calcul" )        { behaviour_bc[i].id= value.get_int(); }
-            else if( name == "condition_type" ) { behaviour_bc[i].type= to_string(name, value);}
+            if( name == "id_in_calcul" )                { behaviour_bc[i].id= value.get_int(); }
+            else if( name == "condition_type" )         { behaviour_bc[i].type= to_string(name, value);}
+            else if( name == "spatial_function_x" )     { behaviour_bc[i].CL_prop[0]= to_string(name, value);}
+            else if( name == "spatial_function_y" )     { behaviour_bc[i].CL_prop[1]= to_string(name, value);}
+            else if( name == "spatial_function_z" )     { behaviour_bc[i].CL_prop[2]= to_string(name, value);}
+            else if( name == "normal_function" )        { behaviour_bc[i].CL_prop[6]= to_string(name, value);}
+            
             else if( name == "stepFunctions" ){
                 Array obj2=value.get_array();
                 read_step_bc_v2(obj2,behaviour_bc[i].step);
@@ -1603,6 +1608,41 @@ void DataUser::read_json_behaviour_bc_v2(const Array& gr){
 }
 
 
+void DataUser::read_step_time_parameter_v2(const Array& gr, BasicVec<StepParameter> &step){
+    for( Object::size_type k = 0; k != gr.size(); ++k ){
+        Object obj=gr[k].get_obj();
+        for( Object::size_type l = 0; l != obj.size(); ++l ){
+            const Pair& pair = obj[l];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            if( name == "step_id" )                     { step[k].step_id = value.get_int();}
+            else if( name == "temporal_function_t" )    { step[k].temporal_function_t=to_string(name, value);}
+        }
+    }
+}
+
+void DataUser::read_time_parameters_v2(const Array& gr){
+    for( Object::size_type k = 0; k != gr.size(); ++k )
+    {
+        Object obj=gr[k].get_obj();
+        time_parameters[k].step.resize(time_step.size());
+        for( Object::size_type l = 0; l != obj.size(); ++l )
+        {
+            const Pair& pair = obj[l];
+            const Sc2String& name  = pair.name_;
+            const Value&  value = pair.value_;
+            if( name == "id_in_calcul" )        { time_parameters[k].id=value.get_int(); }  
+            else if( name == "name" )           { time_parameters[k].name=to_string(name, value);}
+            else if( name == "alias_name" )     { time_parameters[k].alias_name=to_string(name, value); }
+            else if( name == "stepFunctions" ){
+                Array obj2=value.get_array();
+                read_step_time_parameter_v2(obj2,time_parameters[k].step);
+            }
+        }
+        time_parameters[k].affich();
+    }
+}
+
 void DataUser::read_step_calcul_v2(const Array& gr){
     for( Object::size_type k = 0; k != gr.size(); ++k )
     {
@@ -1613,6 +1653,7 @@ void DataUser::read_step_calcul_v2(const Array& gr){
             const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "time_step" )           { time_step[k].dt=value.get_real();}
+            if( name == "id_in_calcul" )        { time_step[k].id=value.get_int();}
             else if( name == "name" )           { time_step[k].name=value.get_str(); }
             else if( name == "nb_time_steps" )  { time_step[k].nb_time_step=value.get_real(); }
             else if( name == "final_time" )     { time_step[k].tf=value.get_real();}
@@ -1632,28 +1673,36 @@ void DataUser::read_multiresolution_v2(const Array& gr){
             const Sc2String& name  = pair.name_;
             const Value&  value = pair.value_;
             if( name == "name" ){ Multiresolution_parameters[k].name=value.get_str();}
-            else if( name == "nb_values" ){
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].nb_values;
+            else if( name == "nb_value" ){
+//                 Sc2String temp=value.get_str() ;
+//                 std::istringstream s(temp);
+//                 s >> Multiresolution_parameters[k].nb_values;
+                Multiresolution_parameters[k].nb_values = value.get_real();
             }
             else if( name == "min_value" ){
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].min_value;
+//                 Sc2String temp=value.get_str() ;
+//                 std::istringstream s(temp);
+//                 s >> Multiresolution_parameters[k].min_value;
+                Multiresolution_parameters[k].min_value = value.get_real();
             }
             else if( name == "max_value" ){
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].max_value;
+//                 Sc2String temp=value.get_str() ;
+//                 std::istringstream s(temp);
+//                 s >> Multiresolution_parameters[k].max_value;
+                Multiresolution_parameters[k].max_value = value.get_real();
             }
             else if( name == "nominal_value" ){
-                Sc2String temp=value.get_str() ;
-                std::istringstream s(temp);
-                s >> Multiresolution_parameters[k].nominal_value;
+//                 Sc2String temp=value.get_str() ;
+//                 std::istringstream s(temp);
+//                 s >> Multiresolution_parameters[k].nominal_value;
+                Multiresolution_parameters[k].nominal_value = value.get_real();
                 Multiresolution_parameters[k].current_value=Multiresolution_parameters[k].nominal_value;
             }
+            else if( name == "parametric_function" ){
+                Multiresolution_parameters[k].parametric_function= to_string(name, value);
+            }
         }
+        Multiresolution_parameters[k].affich();
     }
 }
 
@@ -1750,6 +1799,17 @@ void DataUser::read_json_calcul_v2(){
                   read_step_calcul_v2(timestep);
                 }
             }
+            for( Object::size_type j = 0; j != obj.size(); ++j ){
+                const Pair& pair = obj[j];
+                const Sc2String& name  = pair.name_;
+                std::cout << name << std::endl;
+                if( name == "parameter_collection" ) {
+                  const Array& timeparameter = pair.value_.get_array();
+                  time_parameters.resize(timeparameter.size());
+                  PRINT(time_parameters.size());
+                  read_time_parameters_v2(timeparameter);
+                }
+            }
         }
         if(name_groups=="multiresolution_parameters"){//lecture des proprietes pour les steps de multiresolution TODO
             std::cout << "reading multiresolution " <<  std::endl;
@@ -1761,9 +1821,12 @@ void DataUser::read_json_calcul_v2(){
                 if( name == "multiresolution_type" )  { 
                     const Value&  value = pair.value_; 
                     Sc2String temp=value.get_str();
-                    if(temp=="off")             {options.Multiresolution_on=0; options.Multiresolution_type="none";}
-                    else if(temp=="fatigue")    {options.Multiresolution_on=1; options.Multiresolution_type="fatigue";}
+                    if(temp=="off")                     {options.Multiresolution_on=0; options.Multiresolution_type="none";}
+                    else if(temp=="function")           {options.Multiresolution_on=1; options.Multiresolution_type="function";}
+                    else if(temp=="orthogonal_plan")    {options.Multiresolution_on=1; options.Multiresolution_type="orthogonal_plan";}
                     else                        { std::cout << "type de multiresolution non reconnu, revoir les noms" << std::endl; assert( false );}
+                }else if( name == "resolution_number" ) {
+                    const Value&  value = pair.value_; options.Multiresolution_nb_calcul=value.get_int();
                 }else if( name == "collection" ) {
                     const Array& multiresolution = pair.value_.get_array();
                     Multiresolution_parameters.resize(multiresolution.size());
@@ -1818,7 +1881,7 @@ void DataUser::read_json_calcul_v2(){
             read_json_behaviour_materials_v2(mat);
         }
         
-        if(name_groups=="boundary_condition"){//lecture des proprietes d'interfaces et creation de behaviour_links
+        if(name_groups=="boundary_conditions"){//lecture des proprietes d'interfaces et creation de behaviour_links
             std::cout << "reading CL " <<  std::endl;
             const Array& cl = value_groups.get_array();
             behaviour_bc.resize(cl.size()+1);

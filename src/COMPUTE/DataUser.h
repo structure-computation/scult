@@ -335,9 +335,22 @@ class DataUser{
         }
     };
     struct BehavBc {
+        BehavBc(){
+            CL_prop.resize(properties.BC_step_prop_name.size(),"0");
+            CL_prop_name = properties.BC_step_prop_name;
+            CL_prop[3] = "1";
+        }
+      
         int id;
         Sc2String type;
         BasicVec<StepBc> step;
+        
+        // pour la v2
+        Properties properties;
+        BasicVec< Sc2String > CL_prop;
+        BasicVec< Sc2String > CL_prop_name;   
+        
+        
         
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
@@ -351,9 +364,12 @@ class DataUser{
             std::cout << "Bc-----------------------------------" << std::endl;
             PRINT(id);
             PRINT(type);
-            for(int i=0; i<step.size(); i++){
-                step[i].affich();
+            for(int i=0; i<CL_prop_name.size(); i++){
+                std::cout << "  " << CL_prop_name[i] << " : " << CL_prop[i] << std::endl;
             }
+//             for(int i=0; i<step.size(); i++){
+//                 step[i].affich();
+//             }
         } 
     }; 
     BasicVec<BehavBc > behaviour_bc;
@@ -385,6 +401,10 @@ class DataUser{
         bool select;
         int ref;
         
+        Properties properties;
+        BasicVec< Sc2String > CLv_prop;
+        BasicVec< Sc2String > CLv_prop_name; 
+        
         template<class TB,class TP>
         void apply_bs( TB &res, TP ) const {
             res.set_type( "BehaviourBcVolume" );
@@ -397,22 +417,63 @@ class DataUser{
         }
         BehavBcVolume(){
 	    select = false;
+            CLv_prop.resize(properties.BCv_step_prop_name.size(),"0");
+            CLv_prop_name = properties.BCv_step_prop_name;  
 	}
 	void affich(){
             std::cout << "BcVolume-----------------------------------" << std::endl;
             PRINT(name);
             PRINT(select);
             PRINT(type);
-            for(int i=0; i<step.size(); i++){
-                step[i].affich();
+            for(int i=0; i<CLv_prop_name.size(); i++){
+                std::cout << "   " << CLv_prop_name[i] << " : " << CLv_prop[i] << std::endl;
             }
+//             for(int i=0; i<step.size(); i++){
+//                 step[i].affich();
+//             }
         } 
 	
 	
     };
     BasicVec<BehavBcVolume> behaviour_bc_volume;
     
+    /// DATA pour les paramètre temporels-----------------------------------------
+    struct StepParameter{
+        StepParameter(){
+            temporal_function_t = "1";
+            step_id = -1;
+        }
+        
+        Sc2String temporal_function_t;
+        int step_id; 
+        
+        void affich(){
+            std::cout << "  step ========="  << std::endl;
+            PRINT(temporal_function_t);
+            PRINT(step_id);
+        }
+    };
+    
+    struct TimeParameter{
+        int id; //id du paramètre
+        Sc2String name ; //nom du paramètre
+        Sc2String alias_name ; //alias du paramètre
+        BasicVec<StepParameter> step;
+        
+        void affich(){
+          std::cout << "TimeParameter----------------------------" << std::endl;
+          PRINT(id);
+          PRINT(name);
+          PRINT(alias_name);
+          for(int i=0; i<step.size(); i++){
+            step[i].affich();
+          }
+        }
+    }; 
+    BasicVec<TimeParameter> time_parameters; /// ensemble des données sur les steps
+    
     struct TimeStep{
+        int id; //id du step
         TYPE dt; //pas de temps
         Sc2String name ; //nom du step
         int nb_time_step; // nombre de pas de temps dans le step
@@ -421,6 +482,7 @@ class DataUser{
         
         void affich(){
           std::cout << "TimeStep----------------------------" << std::endl;
+          PRINT(id);
           PRINT(name);
           PRINT(dt);
           PRINT(nb_time_step);
@@ -432,9 +494,19 @@ class DataUser{
     
     struct MultiresolutionParameters{
         TYPEREEL min_value,max_value,nominal_value, current_value;  ///données concernant les variations d'un paramètre
+        Sc2String parametric_function ;
         Sc2String name ;    ///nom du paramètre donné par l'utilisateur et utilisé dans les expressions
         int nb_values;      /// nombre de valeurs du paramètre (uniquement en plan d'exp) sinon utilisation de Multiresolution_nb_cycle
         BasicVec<int> materials, links, CL, CLvolume;   ///liste des numeros des données utilisées pour la multiresolution
+        void affich(){
+          std::cout << "MultiresolutionParameters----------------------------" << std::endl;
+          PRINT(name);
+          PRINT(parametric_function);
+          PRINT(min_value);
+          PRINT(max_value);
+          PRINT(nominal_value);
+          PRINT(nb_values);
+        }
     };
     BasicVec<MultiresolutionParameters> Multiresolution_parameters; /// ensemble des données pour la multiresolution
     
@@ -504,6 +576,8 @@ class DataUser{
           PRINT(LATIN_crit_error);
           PRINT(multiechelle);
           PRINT(Multiresolution_on);
+          PRINT(Multiresolution_type);
+          PRINT(Multiresolution_nb_calcul);
         }
     };
     OptionsCalcul options;
@@ -580,6 +654,8 @@ class DataUser{
     void read_step_bc_v2(const Array& gr, BasicVec<StepBc> &step);                //lecture des step BC
     void read_json_behaviour_bc_v2(const Array& gr);                              //lecture des BC
     
+    void read_step_time_parameter_v2(const Array& gr, BasicVec<StepParameter> &step); //lecture des step des paramètres temporel
+    void read_time_parameters_v2(const Array& gr);                                //lecture des paramètres temporel
     void read_step_calcul_v2(const Array& gr);                                    //lecture des time_step
     void read_multiresolution_v2(const Array& gr);                                //lecture des parametres de multiresolution
     
