@@ -17,8 +17,8 @@ OPT = -ne -j$(NB_COMP_PROC) -gdb -O3 -ffast-math -fexpensive-optimizations
 OPTDEBUG = -ne -j$(NB_COMP_PROC) -ggdb -g3 -ffast-math -fexpensive-optimizations
 
 # all: compact_GEOMETRY 
-# all: metil_comp_create_2_cpu 
-all: metil_comp_test_read_data_v2_cpu
+all: metil_comp_create_2_cpu 
+# all: metil_comp_test_read_data_v2_cpu
 
 metil_test :
 	metil src/CALCUL/code_metil/test.met
