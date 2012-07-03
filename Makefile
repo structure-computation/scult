@@ -1,5 +1,5 @@
 #parametres a modifier si necessaire
-DIM = 2
+DIM = 3
 NB_COMP_PROC = 1
 MACHINE_TYPE = CPU
 
