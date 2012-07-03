@@ -18,13 +18,16 @@ OPT = -ne -j$(NB_COMP_PROC) -gdb -O3 -ffast-math -fexpensive-optimizations
 OPTDEBUG = -ne -j$(NB_COMP_PROC) -ggdb -g3 -ffast-math -fexpensive-optimizations
 GLOB_VAR = -D$(MACHINE_TYPE) -DDIM=$(DIM) -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK
 
-all: clean codegen DEBUG RELEASE
+all: clean codegen DEBUG RELEASE JSONREADER
 
 DEBUG :
 	$(LOC_MC)  -o  $(PRG_create_2) $(GLOB_VAR) $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_debug_cpu) $(CFLAGS) $(LIBS) $(OPTDEBUG)  src/SC_create_2.cpp 8
 
 RELEASE :
 	$(LOC_MC)  -o  $(PRG_create_2) $(GLOB_VAR) $(DIR_SOURCES_LMT) $(DIR_SOURCES_COMPUTE) $(DIR_build_release_cpu) $(CFLAGS) $(LIBS) $(OPT)  src/SC_create_2.cpp 8
+
+JSONREADER:
+	$(LOC_MC) -o DataUserUpdater.exe $(DIR_SOURCES_LMT) -Ihome/scproduction/code_dev/Metil-test/src $(DIR_SOURCES_SC) $(DIR_SOURCES_GEOMETRY) $(DIR_SOURCES_MPI) --comp-dir build/DataUserUpdater $(CFLAGS) src/SCJSONREADER/run.cpp
 
 codegen:
 	cd LMT/include/codegen; scons
