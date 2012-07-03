@@ -19,6 +19,8 @@
 #include <Metil/MathBasicVec.h>
 #include <math.h>
 
+#include "Sc2String.h"
+#include "PARAMETERS/Parameters.h"
 #include "../../LMT/include/io/ioexception.h"
 #include "../../LMT/include/containers/vec.h"
 #include "../../LMT/include/codegen/codegen.h"
@@ -28,7 +30,7 @@ using namespace Metil;
 using namespace LMT;
 
 
-template<typename T> void debug(const char* name, const T& val){
+template<typename T> void debug(const Sc2String& name, const T& val){
     std::cout << name << " : '";
     try{
         std::cout << val << "'" << std::endl;
@@ -38,8 +40,16 @@ template<typename T> void debug(const char* name, const T& val){
         std::cout << e.what() << std::endl;
     }
 }
+/*
+template<> void debug(const Sc2String& name, const MainParameter &param){
+    std::cout << "MainParameter " << name << "(" << param.symbol << ") = '" << param.value << "'" << std::endl;
+}
 
-template<typename T> void debug(const char* name, const BasicVec<T>& val){
+template<> void debug(const Sc2String& name, const UserParameter &param){
+    std::cout << "UserParameter " << name << "(" << param.symbol << ") : '" << param.str_expr << "' = '" << param.value << "'" << std::endl;
+}
+*/
+template<typename T> void debug(const Sc2String& name, const BasicVec<T>& val){
     std::cout << name << " : '";
     try{
         std::cout << val.size() << "'" << std::endl;
@@ -54,7 +64,7 @@ template<typename T> void debug(const char* name, const BasicVec<T>& val){
     }
 }
 
-template<typename T,int dim> void debug(const char* name, const BasicVec<T,dim>& val){
+template<typename T,int dim> void debug(const Sc2String& name, const BasicVec<T,dim>& val){
     std::cout << name << " : '";
     try{
         std::cout << val.size() << "'" << std::endl;
@@ -68,7 +78,7 @@ template<typename T,int dim> void debug(const char* name, const BasicVec<T,dim>&
         std::cout << e.what() << std::endl;
     }
 }
-template<typename T> void debug(const char* name, const Vec<T>& val){
+template<typename T> void debug(const Sc2String& name, const LMT::Vec<T>& val){
     std::cout << name << " : '";
     try{
         std::cout << val.size() << "'" << std::endl;

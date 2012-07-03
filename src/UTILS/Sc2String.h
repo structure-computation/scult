@@ -24,6 +24,8 @@ public:
     template<class InputIterator> Sc2String (InputIterator begin, InputIterator end) : std::string(begin,end){}
     /// Constructeur associe a Metil::String
     Sc2String ( const Metil::String &s ) : std::string(){assign(s.c_str());}
+    /// Constructeur de copie
+    Sc2String ( const Sc2String &s ) : std::string(){assign(s.c_str());}
     
     /// Operateur =
     template<class T> Sc2String& operator= (const Sc2String &s){
