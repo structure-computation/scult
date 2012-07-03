@@ -26,13 +26,13 @@
 using namespace Metil;
 
 
-//group elements---------------------------------------------------------------------------------------------------------------------------
+///group elements---------------------------------------------------------------------------------------------------------------------------
 struct GroupElementsUser{
-    //flag du group
+    ///flag du group
     BasicVec< int > flags;
     BasicVec< Sc2String > flags_names;
   
-    // attributs du groupe------------------------------------------
+    /// attributs du groupe------------------------------------------
     int id;
     int processor_rank;         //numero du processeur sur lequel est traite le groupe d'element (sst)
     int nb_elements;
@@ -43,30 +43,30 @@ struct GroupElementsUser{
     int pattern_id;
     int pattern_base_id;
     
-    // attributs des elements du groupe
-    BasicVec< int > map_global_nodes;                                    //map entre les noeuds locaux et globaux locale du groupe
-    BasicVec< BasicVec< TYPE > > local_nodes;                          //liste des noeuds du groupe(DIM, nb_nodes)  
-    BasicVec< BasicVec< int > > local_connectivities;                  //liste des connectivité des elements par rapport aux noeuds locaux(nb_node_by_pattern de base, nb_elements)  
-    BasicVec< BasicVec< int > > local_connectivities_skin;                  //liste des connectivité des elements par rapport aux noeuds locaux(nb_node_by_pattern de base, nb_elements)  
-    BasicVec< BasicVec< int > > global_connectivities;                   //liste des connectivité des elements dans le maillage de base (nb_node_by_pattern de base, nb_elements)  
-    BasicVec< BasicVec< int > > global_connectivities_skin;              //liste des connectivité des elements de peau dans le maillage de base (nb_node_by_pattern de base skin, nb_elements_on_skin)  
-    BasicVec< BasicVec< int > > connectivities;                        //liste des connectivité des elements (nb_node_by_pattern, nb_elements)  
-    BasicVec< BasicVec< int > > interface_group_id;                    //numero local du groupe des interfaces adjactentes à chaque motif rangés dans l'ordre des sides (nb_side_by_pattern, nb_elements)
-    BasicVec< BasicVec< int > > interface_num_in_group;                //numero local des interfaces adjactentes à chaque motif dans leur groupe rangés dans l'ordre des sides (nb_side_by_pattern, nb_elements)
+    /// attributs des elements du groupe
+    BasicVec< int > map_global_nodes;                               ///map entre les noeuds locaux et globaux locale du groupe
+    BasicVec< BasicVec< TYPE > > local_nodes;                       ///liste des noeuds du groupe(DIM, nb_nodes)  
+    BasicVec< BasicVec< int > > local_connectivities;               ///liste des connectivité des elements par rapport aux noeuds locaux(nb_node_by_pattern de base, nb_elements)  
+    BasicVec< BasicVec< int > > local_connectivities_skin;          ///liste des connectivité des elements par rapport aux noeuds locaux(nb_node_by_pattern de base, nb_elements)  
+    BasicVec< BasicVec< int > > global_connectivities;              ///liste des connectivité des elements dans le maillage de base (nb_node_by_pattern de base, nb_elements)  
+    BasicVec< BasicVec< int > > global_connectivities_skin;         ///liste des connectivité des elements de peau dans le maillage de base (nb_node_by_pattern de base skin, nb_elements_on_skin)  
+    BasicVec< BasicVec< int > > connectivities;                     ///liste des connectivité des elements (nb_node_by_pattern, nb_elements)  
+    BasicVec< BasicVec< int > > interface_group_id;                 ///numero local du groupe des interfaces adjactentes à chaque motif rangés dans l'ordre des sides (nb_side_by_pattern, nb_elements)
+    BasicVec< BasicVec< int > > interface_num_in_group;             ///numero local des interfaces adjactentes à chaque motif dans leur groupe rangés dans l'ordre des sides (nb_side_by_pattern, nb_elements)
     
-    // attributs des groupes d'interfaces adjacents au groupe
-    BasicVec< BasicVec< int > > group_interfaces_id;                   //identité des groupes d'interfaces adjactents taille 3 * nb_group_interfaces adjacents en fonction du type : 0 : bord | 1 : interieur au group_elements  |  2 : entre deux group_elements
-    BasicVec<int> id_adjacent_group_interfaces;   //identite des groupes d'interfaces adjacents a un groupe d'elements (uniquement des groupes d'interfaces de bord ou des liaisons)
-    BasicVec<int> side_adjacent_group_interfaces;   //numero (0 ou 1) indiquant le coté adjacent des groupes d'interfaces 
+    /// attributs des groupes d'interfaces adjacents au groupe
+    BasicVec< BasicVec< int > > group_interfaces_id;                ///identité des groupes d'interfaces adjactents taille 3 * nb_group_interfaces adjacents en fonction du type : 0 : bord | 1 : interieur au group_elements  |  2 : entre deux group_elements
+    BasicVec<int> id_adjacent_group_interfaces;                     ///identite des groupes d'interfaces adjacents a un groupe d'elements (uniquement des groupes d'interfaces de bord ou des liaisons)
+    BasicVec<int> side_adjacent_group_interfaces;                   ///numero (0 ou 1) indiquant le coté adjacent des groupes d'interfaces 
     
     
-    // operateur geometrique des elements 
-    BasicVec< BasicVec< BasicVec< BasicVec< TYPE > > > > side_N;       // operateur de passage entre W et U(nb_node_side,nb_node_eq_side,nb_side,nb_elements)  
-    BasicVec< BasicVec< BasicVec< TYPE > > > side_M;       // operateur pour l'intégration sur un side entre W et F (nb_node_eq_side,nb_side,nb_elements)  
+    /// operateur geometrique des elements 
+    BasicVec< BasicVec< BasicVec< BasicVec< TYPE > > > > side_N;    /// operateur de passage entre W et U(nb_node_side,nb_node_eq_side,nb_side,nb_elements)  
+    BasicVec< BasicVec< BasicVec< TYPE > > > side_M;                /// operateur pour l'intégration sur un side entre W et F (nb_node_eq_side,nb_side,nb_elements)  
     
-    // méthodes du groupe------------------------------------------
+    /// méthodes du groupe------------------------------------------
     
-    //Méthode permettant de spécifier les champs à inclure dans la structure compactée dont le nom est donné par set_type. Cette méthode est appelée lors de la génération des classes compactées.
+    ///Méthode permettant de spécifier les champs à inclure dans la structure compactée dont le nom est donné par set_type. Cette méthode est appelée lors de la génération des classes compactées.
     template<class TB,class TP>
     void apply_bs( TB &res, TP ) const {
         res.set_type( "GroupElementsCompactClass" );
@@ -85,7 +85,7 @@ struct GroupElementsUser{
         APPLY_WN( res, side_M    );
     }
     
-    //Constructeur
+    ///Constructeur
     GroupElementsUser(int id_, EntityElementUser &entity_element){
         //std::cout << "ajout d'un group_elements n° " << id_ << std::endl;
         id = id_;
@@ -108,13 +108,13 @@ struct GroupElementsUser{
         interface_num_in_group.resize(entity_element.nb_sides);
         add_entity_element(entity_element);
     }
-    //Constructeur simplifié
+    ///Constructeur simplifié
     GroupElementsUser(){
         group_interfaces_id.resize(3);
         map_global_nodes.resize(0);
         local_nodes.resize(DIM);
     }
-    // Ajout d'un entity_element au group
+    /// Ajout d'un entity_element au group
     bool add_entity_element(EntityElementUser &entity_element){
         bool entity_element_added = false;
         if(entity_element.valid_flags(flags, flags_names)){
@@ -164,7 +164,7 @@ struct GroupElementsUser{
         }
     }
     
-    // Définition des tailles des listes pour utilisation sous GPU
+    /// Définition des tailles des listes pour utilisation sous GPU
     void initialize_GPU(Patterns &patterns){
         int threadsPerBlock = 48;
         int n_group_blocks = std::ceil( nb_elements / threadsPerBlock );  // obtenir l'entier superieur
@@ -206,7 +206,7 @@ struct GroupElementsUser{
         }        
         
     }
-    // Affichage pour vérification
+    /// Affichage pour vérification
     void affiche(){
         PRINT("group_elements-----------------------------------------------------------");
         PRINT(id);

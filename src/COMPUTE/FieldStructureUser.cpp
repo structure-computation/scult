@@ -117,7 +117,7 @@ BasicVec< int > FieldStructureUser::find_index_group_edges(int edge_id_) {
 
 
 // méthodes d'assignation **************************************************************************************************************************************
-void FieldStructureUser::assign_material_id_to_group_elements(DataUser &data_user) {
+void FieldStructureUser::assign_material_id_to_group_elements(DataUser &data_user) {/*
     for(int i_data_group=0; i_data_group<data_user.group_elements.size(); i_data_group++){
         for(int i_mat=0; i_mat<data_user.behaviour_materials.size(); i_mat++){
             if(data_user.group_elements[i_data_group].id_material==data_user.behaviour_materials[i_mat].id){
@@ -126,14 +126,14 @@ void FieldStructureUser::assign_material_id_to_group_elements(DataUser &data_use
             }
         }
     }
-}
+*/}
 
-void FieldStructureUser::assign_material_properties_to_group_elements(DataUser &data_user, BasicVec<BasicVec< TYPE > > &mat_prop) {
+void FieldStructureUser::assign_material_properties_to_group_elements(DataUser &data_user, BasicVec<BasicVec< TYPE > > &mat_prop) {/*
     for(int i_group=0; i_group<group_elements.size(); i_group++)
         group_elements[i_group].mat_prop=mat_prop[group_elements[i_group].material_id];
-}
+*/}
 
-void FieldStructureUser::assign_link_id_to_group_interfaces(DataUser &data_user) {
+void FieldStructureUser::assign_link_id_to_group_interfaces(DataUser &data_user) {/*
     for(int i_data_group=0; i_data_group<data_user.group_interfaces.size(); i_data_group++){
         for(int i_link=0; i_link<data_user.behaviour_links.size(); i_link++){
             if(data_user.group_interfaces[i_data_group].id_link==data_user.behaviour_links[i_link].id){
@@ -142,15 +142,15 @@ void FieldStructureUser::assign_link_id_to_group_interfaces(DataUser &data_user)
             }
         }
     }
-}
+*/}
 
-void FieldStructureUser::assign_link_properties_to_group_interfaces(DataUser &data_user, BasicVec<BasicVec< TYPE > > &link_prop) {
+void FieldStructureUser::assign_link_properties_to_group_interfaces(DataUser &data_user, BasicVec<BasicVec< TYPE > > &link_prop) {/*
     for(int i_group=0; i_group<group_interfaces.size(); i_group++)
         if(group_interfaces[i_group].link_id!=-1)
             group_interfaces[i_group].link_prop=link_prop[group_interfaces[i_group].link_id];
-}
+*/}
 
-void FieldStructureUser::assign_bc_id_to_group_interfaces(DataUser &data_user) {
+void FieldStructureUser::assign_bc_id_to_group_interfaces(DataUser &data_user) {/*
     for(int i_data_group=0; i_data_group<data_user.group_edges.size(); i_data_group++){
         for(int i_bc=0; i_bc<data_user.behaviour_bc.size(); i_bc++){
             if(data_user.group_edges[i_data_group].id_CL==data_user.behaviour_bc[i_bc].id){
@@ -163,7 +163,7 @@ void FieldStructureUser::assign_bc_id_to_group_interfaces(DataUser &data_user) {
             }
         }
     }
-}
+*/}
 
 
 
