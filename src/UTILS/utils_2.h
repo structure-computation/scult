@@ -20,7 +20,7 @@
 #include <math.h>
 
 #include "Sc2String.h"
-#include "PARAMETERS/Parameters.h"
+//1#include "PARAMETERS/Parameters.h"
 #include "../../LMT/include/io/ioexception.h"
 #include "../../LMT/include/containers/vec.h"
 #include "../../LMT/include/codegen/codegen.h"
