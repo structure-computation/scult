@@ -244,7 +244,7 @@ struct ReaderBuilder{
                 struct_level -= 1;
                 read_level -= 2;
                 
-                cpp_read << "{std::cerr << \"Mauvais nom dans calcul.json : \" << name" << struct_level << " << std::endl;assert(0);}\n"; /// Viens apres le dernier 'else' des attributs de l'objet
+                cpp_read << "{std::cerr << \"Mauvais nom dans calcul.json : \" << name" << struct_level + 1 << " << std::endl;assert(0);}\n"; /// Viens apres le dernier 'else' des attributs de l'objet
                 cpp_read << indentation(read_level) << "    }\n";
                 cpp_read << indentation(read_level) << "}else ";
             }
@@ -298,7 +298,7 @@ struct ReaderBuilder{
                 struct_level -= 1;
                 read_level -= 3;
                 
-                cpp_read << "{std::cerr << \"Mauvais nom dans calcul.json : \" << name" << struct_level << " << std::endl;assert(0);}\n"; /// Viens apres le dernier 'else' des attributs de l'objet
+                cpp_read << "{std::cerr << \"Mauvais nom dans calcul.json : \" << name" << struct_level + 1 << " << std::endl;assert(0);}\n"; /// Viens apres le dernier 'else' des attributs de l'objet
                 cpp_read << indentation(read_level) << "        }\n";
                 cpp_read << indentation(read_level) << "    }\n";
                 

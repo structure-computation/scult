@@ -211,13 +211,13 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                 input.str(value_as_string2);
                                 input >> options.convergence_method_LATIN.convergence_rate;
                                 input.clear();
-                        } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
+                        } else {std::cerr << "Mauvais nom dans calcul.json : " << name2 << std::endl;assert(0);}
                     }
                 }else if(name1 == "precision_calcul"){
                     ; /// valeur ignoree
                 } else if(name1 == "mode"){
                         options.mode = value_as_string1;
-                } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
             }
         }else if(name0 == "multiresolution_parameters"){
             const Object& object0 = value0.get_obj();
@@ -293,10 +293,10 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                     input.str(value_as_string2);
                                     input >> multiresolution_parameters.collection_vec[j1].id_in_calcul;
                                     input.clear();
-                            } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
+                            } else {std::cerr << "Mauvais nom dans calcul.json : " << name2 << std::endl;assert(0);}
                         }
                     }
-                }else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                }else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
             }
         }else if(name0 == "interfaces"){
             const Array& array0 = value0.get_array();
@@ -349,7 +349,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                             input.clear();
                     } else if(name1 == "origine"){
                         ; /// valeur ignoree
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else if(name0 == "mesh"){
@@ -399,7 +399,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                         input.str(value_as_string1);
                         input >> mesh.nb_inter;
                         input.clear();
-                } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
             }
         }else if(name0 == "volumic_forces"){
             const Array& array0 = value0.get_array();
@@ -434,7 +434,9 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                             volumic_forces_vec[j0].dy = value_as_string1;
                     } else if(name1 == "dz"){
                             volumic_forces_vec[j0].dz = value_as_string1;
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else if(name1 == "selected"){
+                        ; /// valeur ignoree
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else if(name0 == "materials"){
@@ -610,7 +612,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                         ; /// valeur ignoree
                     } else if(name1 == "reference"){
                         ; /// valeur ignoree
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else if(name0 == "boundary_conditions"){
@@ -652,7 +654,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                             input.clear();
                     } else if(name1 == "condition_type"){
                             boundary_conditions_vec[j0].condition_type = value_as_string1;
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else if(name0 == "time_steps"){
@@ -721,7 +723,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                     input.str(value_as_string2);
                                     input >> time_steps.collection_vec[j1].nb_time_steps;
                                     input.clear();
-                            } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
+                            } else {std::cerr << "Mauvais nom dans calcul.json : " << name2 << std::endl;assert(0);}
                         }
                     }
                 }else if(name1 == "parameter_collection"){
@@ -776,7 +778,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                                 input.str(value_as_string3);
                                                 input >> time_steps.parameter_collection_vec[j1].stepFunctions_vec[j2].step_id;
                                                 input.clear();
-                                        } else {std::cerr << "Mauvais nom dans calcul.json : " << name2 << std::endl;assert(0);}
+                                        } else {std::cerr << "Mauvais nom dans calcul.json : " << name3 << std::endl;assert(0);}
                                     }
                                 }
                             }else if(name2 == "alias_name"){
@@ -793,10 +795,10 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                     input.str(value_as_string2);
                                     input >> time_steps.parameter_collection_vec[j1].id_in_calcul;
                                     input.clear();
-                            } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
+                            } else {std::cerr << "Mauvais nom dans calcul.json : " << name2 << std::endl;assert(0);}
                         }
                     }
-                }else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                }else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
             }
         }else if(name0 == "edges"){
             const Array& array0 = value0.get_array();
@@ -883,7 +885,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                             input.str(value_as_string1);
                             input >> edges_vec[j0].boundary_condition_id;
                             input.clear();
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else if(name0 == "links"){
@@ -961,7 +963,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                         ; /// valeur ignoree
                     } else if(name1 == "comp_complexe"){
                             links_vec[j0].comp_complexe = value_as_string1;
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else if(name0 == "pieces"){
@@ -1011,7 +1013,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                             input.clear();
                     } else if(name1 == "origine"){
                         ; /// valeur ignoree
-                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name0 << std::endl;assert(0);}
+                    } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
         }else {std::cerr << "Mauvais nom dans calcul.json : " << name0;assert(0);}

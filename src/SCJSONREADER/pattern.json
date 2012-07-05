@@ -76,7 +76,8 @@
       "name": "string",
       "dx": "string",
       "dy": "string",
-      "dz": "string"
+      "dz": "string",
+      "selected":"null"
     }
   ],
   "materials": [

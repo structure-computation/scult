@@ -507,7 +507,7 @@ bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Json
                     return false;
             }
             return true;
-        }else if(edge.geometry=="equation"){
+        }else if(edge.geometry=="parametrized"){
             for(int num_point=0; num_point<size_vertex_point; num_point++){
                 if(!GeomTest::pt_match_equation(vertex_point[num_point],edge.equation))
                     return false;
@@ -523,7 +523,7 @@ bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Json
 //*
 void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {/* A REVOIR
     PRINT("Visualisation des bords respectant un critère donné -------");
-    Sc2String name_visu_hdf; 
+    Sc2String name_visu_hdf;
     name_visu_hdf << data_user.mesh_directory << "/visu_geometry.h5";
     Hdf hdf( name_visu_hdf );
     Sc2String name;
@@ -531,6 +531,8 @@ void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {/
     name << "/Level_" << num_level << "/Geometry";
     Sc2String name_group_1;
     name_group_1 << name << "/elements_1";
+    BasicVec<bool> edge_to_visualize;
+    
     
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         group_interfaces[i_group].to_visualize.resize(group_interfaces[i_group].nb_interfaces,0);
@@ -551,30 +553,34 @@ void GeometryUser::visualize_group_edges_within_geometry(DataUser &data_user) {/
             }
         }
     }
-//*/}
+//*/
+}
 //*/
 
 //*
 void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
-    std::cout << " - split des interfaces";
+    std::cout << " - split des interfaces" << std::endl;
+    PRINT(nb_group_interfaces);
     /// Pour chaque groupe d'interface du HDF5
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         /// si l'interface est sur un bord de la structure
         if(group_interfaces[i_group].type == 0){
-            /// on stockera les id (dans le JSON) des edges assignes a une interface du groupe
+            /// on stockera les id des edges (dans le JSON) assignes a une interface du groupe
             BasicVec< int > edge_assigned;
             edge_assigned.resize(group_interfaces[i_group].nb_interfaces,-1); /// -1 signifie "l'ensemble des bords libres" (CL par defaut)
             /// ainsi que le fait d'avoir deja assigne un edge
             BasicVec<bool> edge_found;
             edge_found.resize(data_user.edges_vec.size(),false);
-            /// Pour chaque combinaison {interface,bord (defini dans le JSON)}
+            PRINT(data_user.edges_vec.size());
+            /// Pour chaque combinaison {interface,bord}
             for(int i_edge=0; i_edge<data_user.edges_vec.size(); i_edge++){
+                PRINT(group_interfaces[i_group].nb_interfaces);
                 for(int i_inter=0; i_inter<group_interfaces[i_group].nb_interfaces; i_inter++){
                     if(edge_assigned[i_inter]==-1 and do_respect_geometry(i_group, i_inter, data_user.edges_vec[i_edge])){
                         /// si l'interface 'i_inter' n'est pas encore assigne a un edge...
                         /// et si tous les noeuds de l'interface 'i_inter' (du groupe 'i_group') respectent la condition definie par le bord 'i_edge'
                         edge_assigned[i_inter] = data_user.edges_vec[i_edge].id_in_calcul;
-                        edge_found[i_edge] = false;
+                        edge_found[i_edge] = true;
                     }
                 }
             }
@@ -1115,11 +1121,9 @@ void GeometryUser::write_hdf5_in_parallel(Sc2String file_output_hdf5, int rank) 
     write_nodes_hdf5(hdf,name_geometry);
     
     //ecriture des groupes d'elements specifiques a chaque processeur    
-    PRINT("write_pieces");
     for (unsigned i_group=0;i_group<repartition_mpi_group_elements[rank].size();i_group++){
     //for (unsigned i_group=0;i_group<2;i_group++){
         //ecriture des groupes d'elements specifiques a chaque processeur    
-        PRINT(i_group);
         int ng=repartition_mpi_group_elements[rank][i_group];
         int id=find_group_elements(ng)->id;
        // PRINT(group_elements[ng].id);
@@ -1145,6 +1149,7 @@ void GeometryUser::write_hdf5_in_parallel(Sc2String file_output_hdf5, int rank) 
         if(group_interfaces[i_group_inter].type!=1)
             write_group_interfaces_hdf5(hdf,name_geometry,i_group_inter);
     }
+    std::cout << "Ecriture d'un HDF5 sous : " << file_output_hdf5 << std::endl;
 }
 
 void GeometryUser::write_hdf5(Sc2String file_output_hdf5) {

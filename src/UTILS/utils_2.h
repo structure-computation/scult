@@ -29,6 +29,169 @@
 using namespace Metil;
 using namespace LMT;
 
+/* Penser a creer un test pour HDF5
+void compare_hdfS(const Sc2String& name_file_hdf5_1, const Sc2String& name_file_hdf5_2){
+    BasicVec<Sc2String> tags_hdf5;
+    BasicVec<TYPE> results1;
+    BasicVec<TYPE> results2;
+    
+    if (FileExists(name_file_hdf5_1.c_str())==0) {
+        std::cerr << "Le fichier hdf5 "<< name_file_hdf5_1 << " n'existe pas " << std::endl;
+        assert(0);
+    }
+    std::cout << " - Ouverture de " << name_file_hdf5_1 << std::endl;
+    Hdf hdf_1( name_file_hdf5_1.c_str(),false,true );
+    
+    if (FileExists(name_file_hdf5_2.c_str())==0) {
+        std::cerr << "Le fichier hdf5 "<< name_file_hdf5_2 << " n'existe pas " << std::endl;
+        assert(0);
+    }
+    std::cout << " - Ouverture de " << name_file_hdf5_2 << std::endl;
+    Hdf hdf_2( name_file_hdf5_2.c_str(),false,true );
+    
+    dim=DIM;
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/global_connectivities_3");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/id_adjacent_groups");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/id_group_interface_edges");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/id_group_interface_interiors");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/id_group_interface_links");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_connectivities_3");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_0/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_1/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_1/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_2/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_2/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_3/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_0/sides/side_3/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/global_connectivities_3");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/id_adjacent_groups");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/id_group_interface_edges");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/id_group_interface_interiors");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/id_group_interface_links");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_connectivities_3");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_0/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_1/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_1/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_2/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_2/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_3/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_0/list_1/sides/side_3/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/sides/side_0/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/sides/side_1/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_0/sides/side_1/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/sides/side_0/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/sides/side_1/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_1/sides/side_1/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/sides/side_0/num_in_group");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/sides/side_1/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_2/sides/side_1/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_3/sides/side_0/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/global_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/global_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/global_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/local_connectivities_0");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/local_connectivities_1");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/local_connectivities_2");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/local_nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/local_nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/local_nodes/z");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/map_global_nodes");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/sides/side_0/interface_group_id");
+    tag_hdf5.push_back("/Level_0/Geometry/elements_1/list_4/sides/side_0/num_in_group");
+    
+    tag_hdf5.push_back("/Level_0/Geometry/nodes/x");
+    tag_hdf5.push_back("/Level_0/Geometry/nodes/y");
+    tag_hdf5.push_back("/Level_0/Geometry/nodes/z");
+    
+    for(int i_tag = 0; i < tags_hdf5.size(); i++){
+        Sc2String tag = tags_hdf5[i];
+        results1.read_from(hdf_1,tag);
+        results1.read_from(hdf_2,tag);
+        if(results1.size()!=results2.size()){
+            std::cerr << std::endl << "Tailles differentes dans " << tag << std::endl;
+        }
+        for(int i = 0; i < results1.size(); i++){
+            if(std::abs(results1[i]-results2[i]) > 1.e-6){
+                std::cerr << std::endl << "Valeurs differentes dans " << tag << "   ligne " << i << std::endl;
+                break;
+            }
+        }
+    }
+}
+*/
 
 template<typename T> void debug(const Sc2String& name, const T& val){
     std::cout << name << " : '";
