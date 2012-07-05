@@ -45,6 +45,7 @@ class DataUser: public ScJsonReader{
     int nb_sst;
     int nb_inter;
     int nb_groups_elem;
+
     int nb_groups_inter;/*
     BasicVec<Json_pieces>     &group_elements;
     BasicVec<Json_edges>      &group_edges;
@@ -64,6 +65,7 @@ class DataUser: public ScJsonReader{
     
     ///lecture du json pour les differente structure de données------------------------------------------------------------
     void read_json_calcul();
+
     
     ///ecriture des .cpp read_prop pour compilation à la volée------------------------------------------------------------
     void write_entete_h( StringWithSepInCppLineMaker &file);

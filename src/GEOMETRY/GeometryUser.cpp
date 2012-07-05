@@ -155,13 +155,25 @@ void GeometryUser::affiche() {
 //     }
    
     PRINT(nb_group_interfaces);
+    int nb_group_interfaces_0 = 0;
+    int nb_group_interfaces_1 = 0;
     int nb_group_interfaces_2 = 0;
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
+        if(group_interfaces[i_group].type == 0){
+            nb_group_interfaces_0 += 1 ;
+            group_interfaces[i_group].affiche();
+        }
+        if(group_interfaces[i_group].type == 1){
+            nb_group_interfaces_1 += 1 ;
+            group_interfaces[i_group].affiche();
+        }
         if(group_interfaces[i_group].type == 2){
             nb_group_interfaces_2 += 1 ;
             group_interfaces[i_group].affiche();
         }
     }
+    PRINT(nb_group_interfaces_0);
+    PRINT(nb_group_interfaces_1);
     PRINT(nb_group_interfaces_2);
 }
 
@@ -507,7 +519,7 @@ bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Json
                     return false;
             }
             return true;
-        }else if(edge.geometry=="parametrized"){
+        }else if(edge.geometry=="parameterized"){
             for(int num_point=0; num_point<size_vertex_point; num_point++){
                 if(!GeomTest::pt_match_equation(vertex_point[num_point],edge.equation))
                     return false;
@@ -562,6 +574,8 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
     std::cout << " - split des interfaces" << std::endl;
     PRINT(nb_group_interfaces);
     /// Pour chaque groupe d'interface du HDF5
+    //affiche();
+    //PRINT(group_interfaces.size());
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         /// si l'interface est sur un bord de la structure
         if(group_interfaces[i_group].type == 0){
@@ -577,6 +591,7 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
                 PRINT(group_interfaces[i_group].nb_interfaces);
                 for(int i_inter=0; i_inter<group_interfaces[i_group].nb_interfaces; i_inter++){
                     if(edge_assigned[i_inter]==-1 and do_respect_geometry(i_group, i_inter, data_user.edges_vec[i_edge])){
+                        //PRINT("ok");
                         /// si l'interface 'i_inter' n'est pas encore assigne a un edge...
                         /// et si tous les noeuds de l'interface 'i_inter' (du groupe 'i_group') respectent la condition definie par le bord 'i_edge'
                         edge_assigned[i_inter] = data_user.edges_vec[i_edge].id_in_calcul;
@@ -586,6 +601,8 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
             }
             for(int i_edge=0; i_edge<data_user.edges_vec.size()-1; i_edge++){
                 if(edge_found[i_edge]){ /// si le bord correspond a une interface, on separe le groupe
+                    PRINT(group_interfaces[i_group].id);
+                    PRINT(data_user.edges_vec[i_edge].id_in_calcul);
                     int id = group_interfaces.size();
                     GroupInterfacesUser *group_interface_temp = group_interfaces.push_back();
                     group_interface_temp->split_from_group(group_interfaces[i_group], edge_assigned, data_user.edges_vec[i_edge].id_in_calcul, id, mesh_nodes, group_elements);
@@ -593,7 +610,9 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
             }
         }
     }
+    //PRINT(group_interfaces.size());
     nb_group_interfaces = group_interfaces.size();
+    affiche();
 }//*/
 
 

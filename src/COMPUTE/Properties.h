@@ -84,13 +84,14 @@ public:
         link_prop_name[7] = "Lr";
         
         
-        BC_step_prop_name.resize(6);
+        BC_step_prop_name.resize(7);
         BC_step_prop_name[0] = "fct_spatiale_x";      
         BC_step_prop_name[1] = "fct_spatiale_y";                   
         BC_step_prop_name[2] = "fct_spatiale_z";                 
         BC_step_prop_name[3] = "fct_temporelle_x";            
         BC_step_prop_name[4] = "fct_temporelle_y";               
         BC_step_prop_name[5] = "fct_temporelle_z";
+        BC_step_prop_name[6] = "normal_function";
         
         
         BCv_step_prop_name.resize(8);
