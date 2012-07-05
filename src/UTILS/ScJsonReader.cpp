@@ -5,7 +5,7 @@
 using namespace json_spirit;
 using namespace Metil;
 
-#define DEBUG_SCJSONREADER true
+#define DEBUG_SCJSONREADER false
 
 
 const ScJsonReader::Json_interfaces* ScJsonReader::find_interfaces_pointer(int id_) const {
@@ -888,10 +888,6 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                     } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
-            //Ajout du groupe en fin des groupes d'edge (comportement generique pour tous les edges non assignees
-            //edges_vec[array0.size()].id_in_calcul=-1;
-            //edges_vec[array0.size()].criteria="all";
-            //edges_vec[array0.size()].boundary_condition_id=-1;
         }else if(name0 == "links"){
             const Array& array0 = value0.get_array();
             links_vec.resize(array0.size());
@@ -934,9 +930,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                     } else if(name1 == "comp_generique"){
                             links_vec[j0].comp_generique = value_as_string1;
                     } else if(name1 == "Ep"){
-                            input.str(value_as_string1);
-                            input >> links_vec[j0].Ep;
-                            input.clear();
+                            links_vec[j0].Ep = value_as_string1;
                     } else if(name1 == "updated_at"){
                         ; /// valeur ignoree
                     } else if(name1 == "description"){

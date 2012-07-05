@@ -213,7 +213,7 @@
       "name_select": "null",
       "name": "string",
       "comp_generique": "string",
-      "Ep": "real",
+      "Ep": "string",
       "updated_at": "null",
       "description": "null",
       "jeu": "null",

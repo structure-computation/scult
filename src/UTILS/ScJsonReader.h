@@ -39,6 +39,7 @@ public:
     Json_multiresolution_parameters multiresolution_parameters;
 
     struct Json_interfaces{
+        Json_interfaces(){link_id = -1;}
         int id;
         int group;
         int assigned;
@@ -191,7 +192,7 @@ public:
         Sc2String R;
         Sc2String name;
         Sc2String comp_generique;
-        TYPEREEL Ep;
+        Sc2String Ep;
         Sc2String Dp;
         Sc2String Lr;
         Sc2String Lp;

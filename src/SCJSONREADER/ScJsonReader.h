@@ -191,7 +191,7 @@ public:
         Sc2String R;
         Sc2String name;
         Sc2String comp_generique;
-        TYPEREEL Ep;
+        Sc2String Ep;
         Sc2String Dp;
         Sc2String Lr;
         Sc2String Lp;

@@ -930,9 +930,7 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                     } else if(name1 == "comp_generique"){
                             links_vec[j0].comp_generique = value_as_string1;
                     } else if(name1 == "Ep"){
-                            input.str(value_as_string1);
-                            input >> links_vec[j0].Ep;
-                            input.clear();
+                            links_vec[j0].Ep = value_as_string1;
                     } else if(name1 == "updated_at"){
                         ; /// valeur ignoree
                     } else if(name1 == "description"){
