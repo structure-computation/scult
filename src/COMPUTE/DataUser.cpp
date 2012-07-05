@@ -84,6 +84,14 @@ void DataUser::initialisation(Sc2String id_model_, Sc2String id_calcul_){
 //*************************************************************************************************************
 void DataUser::read_json_calcul(){
     read_json(file_calcul); /// Appel a la fonction de lecture generee
+    //Ajout du groupe en fin des groupes d'edge (comportement generique pour tous les edges non assignees
+    PRINT(edges_vec.size());
+    Json_edges edge_temp ;
+    edge_temp.id_in_calcul=-1;
+    edge_temp.criteria="all";
+    edge_temp.boundary_condition_id=-1;
+    edges_vec.push_back(edge_temp);
+    PRINT(edges_vec.size());
 }
 
 //*************************************************************************************************************
