@@ -612,7 +612,7 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
     }
     //PRINT(group_interfaces.size());
     nb_group_interfaces = group_interfaces.size();
-    affiche();
+    //affiche();
 }//*/
 
 
@@ -981,8 +981,8 @@ void GeometryUser::write_group_elements_skin_hdf5(Hdf &hdf, Sc2String name_geome
 //     else { std::cout << " Il y aura des problemes dans l'affichage " << std::endl ; }
 
     id_reformated <<ng;
-PRINT(ng);
-PRINT(group_elements[ng].id);
+//PRINT(ng);
+//PRINT(group_elements[ng].id);
         Sc2String name_elements="elements_0_skin";
         Sc2String name_list=name_geometry; name_list << "/"<< name_elements <<"/list_" << id_reformated ;
         BasicVec < Sc2String , 3 > name_direction("x","y","z");
@@ -1146,7 +1146,7 @@ void GeometryUser::write_hdf5_in_parallel(Sc2String file_output_hdf5, int rank) 
         int ng=repartition_mpi_group_elements[rank][i_group];
         int id=find_group_elements(ng)->id;
        // PRINT(group_elements[ng].id);
-        PRINT(group_elements[id].id);
+        //PRINT(group_elements[id].id);
         write_group_elements_hdf5(hdf,name_geometry,id);
         write_group_elements_skin_hdf5(hdf,name_geometry,id);
 //     std::cout << i_group << std::endl;
