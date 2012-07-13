@@ -39,7 +39,6 @@ public:
     Json_multiresolution_parameters multiresolution_parameters;
 
     struct Json_interfaces{
-        Json_interfaces(){link_id = -1;}
         int id;
         int group;
         int assigned;
@@ -73,6 +72,12 @@ public:
     };
     BasicVec<Json_volumic_forces> volumic_forces_vec;
 
+    struct Json_thermal_load{
+        Sc2String name;
+        Sc2String function;
+    };
+    Json_thermal_load thermal_load;
+
     struct Json_materials{
         Sc2String name;
         int id_in_calcul;
@@ -84,6 +89,7 @@ public:
         Sc2String comp_el;
         Sc2String comp_pl;
         Sc2String comp_en;
+        Sc2String comp_mes;
         Sc2String rho;
         TYPEREEL dir_1_x;
         TYPEREEL dir_1_y;

@@ -439,31 +439,6 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                     } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }
-        }else if(name0 == "thermal_load"){
-            const Object& object0 = value0.get_obj();
-            for(Object::size_type i0 = 0;i0 < object0.size(); ++i0){
-                const Sc2String& name1 = object0[i0].name_;
-                const Value& value1 = object0[i0].value_;
-                Sc2String value_as_string1 = "";
-                if(value1.type() == bool_type){
-                    value_as_string1 << value1.get_bool();
-                }else if(value1.type() == int_type){
-                    value_as_string1 << value1.get_int();
-                }else if(value1.type() == real_type){
-                    value_as_string1 << value1.get_real();
-                }else if(value1.type() == str_type){
-                    if(value1.get_str()!="null")
-                        value_as_string1 << value1.get_str();
-                }else if(value1.type() == null_type){
-                    value_as_string1 = "";
-                }
-                if(DEBUG_SCJSONREADER) std::cout << "    Reading " << name1 << " : " << value_as_string1 << std::endl;
-                if(name1 == "name"){
-                        thermal_load.name = value_as_string1;
-                } else if(name1 == "function"){
-                        thermal_load.function = value_as_string1;
-                } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
-            }
         }else if(name0 == "materials"){
             const Array& array0 = value0.get_array();
             materials_vec.resize(array0.size());
@@ -511,8 +486,6 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                             materials_vec[j0].comp_pl = value_as_string1;
                     } else if(name1 == "comp_en"){
                             materials_vec[j0].comp_en = value_as_string1;
-                    } else if(name1 == "comp_mes"){
-                            materials_vec[j0].comp_mes = value_as_string1;
                     } else if(name1 == "rho"){
                             materials_vec[j0].rho = value_as_string1;
                     } else if(name1 == "dir_1_x"){

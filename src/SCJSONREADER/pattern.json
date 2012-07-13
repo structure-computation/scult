@@ -80,6 +80,10 @@
       "selected":"null"
     }
   ],
+  "thermal_load": {
+    "name": "string",
+    "function": "string"
+  },
   "materials": [
     {
       "name": "string",
@@ -92,6 +96,7 @@
       "comp_el": "string",
       "comp_pl": "string",
       "comp_en": "string",
+      "comp_mes": "string",
       "rho": "string",
       "dir_1_x": "real",
       "dir_1_y": "real",
