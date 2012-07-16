@@ -10,6 +10,9 @@
 //
 //
 
+#ifndef FIELDSTRUCTUREUSER_H
+#define FIELDSTRUCTUREUSER_H
+
 #ifdef METIL_COMP_DIRECTIVE
     #pragma gpu_flag --compiler-options -fpermissive
 #endif
@@ -25,9 +28,6 @@
 #include "FieldStructureGroupInterfacesUser.h"
 
 using namespace Metil;
-
-#ifndef FIELDSTRUCTUREUSER_H
-#define FIELDSTRUCTUREUSER_H
 
 class FieldStructureUser{
     public:
@@ -81,6 +81,7 @@ class FieldStructureUser{
       //Methode d'initialisation----------------------------------------------------------------------------------------------------------------------
       FieldStructureUser();
       FieldStructureUser(GeometryUser &geometry_);
+      void load_geometry_user(GeometryUser &geometry_);
       
       void assign_material_id_to_group_elements(DataUser &data_user);                  // assignation des id des materiaux aux group_elements
       void assign_material_properties_to_group_elements(DataUser &data_user, BasicVec<BasicVec<TYPE> > &mat_prop);      // assignation des proprietes materiaux aux group_elements
@@ -90,7 +91,7 @@ class FieldStructureUser{
 
       void initialize_GPU();                                                           // initialisation pour calcul sur GPU
       
-      void write_hdf5_in_parallel(String file_output, GeometryUser &geometry_user, String name_fields, int pt_cur, TYPE val_time, int rank); //ecriture des champs de structure dans un fichier hdf5 specifie sur un processeur
+      void write_hdf5_in_parallel(Sc2String file_output, GeometryUser &geometry_user, Sc2String name_fields, int pt_cur, TYPE val_time, int rank); //ecriture des champs de structure dans un fichier hdf5 specifie sur un processeur
       
       //Methode de niveau sup-------------------------------------------------------------------------------------------------------------------------
 //       void  calculate_ddr(GeometryUser &geometry_);              //calcul des directions de recherche pour la strategie de type multi (sur les groupes d'interfaces)

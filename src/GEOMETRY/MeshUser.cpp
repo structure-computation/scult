@@ -33,16 +33,27 @@ bool MeshUser::FileExists( const char* FileName ){
     fp = fopen( FileName, "rb" );
     if( fp != NULL )
     {
-    fclose( fp );
-    return true;
+        fclose( fp );
+        return true;
+    }
+    return false;
+}
+
+bool MeshUser::FileExists( Sc2String FileName ){
+    FILE* fp = NULL;
+    fp = fopen( FileName.c_str(), "rb" );
+    if( fp != NULL )
+    {
+        fclose( fp );
+        return true;
     }
     return false;
 }
 
 void MeshUser::read_mesh_user(){
-    std::string name_file_vol = mesh_directory + "/" + name_mesh_user + "_volume.bdf";
-    std::string name_file_skin = mesh_directory + "/" + name_mesh_user + "_skin.bdf";
-    std::string file = mesh_directory + "/" + name_mesh_user + extension;
+    Sc2String name_file_vol = mesh_directory + "/" + name_mesh_user + "_volume.bdf";
+    Sc2String name_file_skin = mesh_directory + "/" + name_mesh_user + "_skin.bdf";
+    Sc2String file = mesh_directory + "/" + name_mesh_user + extension;
     std::cout << file << std::endl;
     
     if(extension == ".bdf"){
@@ -62,19 +73,19 @@ void MeshUser::read_mesh_user(){
 
 
 
-void MeshUser::read_json_id(std::string file){
+void MeshUser::read_json_id(Sc2String file){
   
     std::ifstream json( file.c_str() );
     if(!json){
         std::cout << "cannot open file " << file << std::endl;
-        exit(0);
+        assert(0);
     }
     std::ostringstream stream;
-    std::string str;
+    Sc2String str;
     while( getline( json, str ) ){
         stream << str << std::endl;
     }
-    std::string json_text(stream.str());
+    Sc2String json_text(stream.str());
     
     Value value_i;
     read( json_text, value_i );
@@ -83,14 +94,14 @@ void MeshUser::read_json_id(std::string file){
     for( Object::size_type i = 0; i != input.size(); ++i )
     {
         const Pair& pair_id = input[i];
-        const std::string& name_id  = pair_id.name_;
+        const Sc2String& name_id  = pair_id.name_;
         const Value& value_id= pair_id.value_;
         if(name_id=="identite_calcul"){//lecture des donnees de maillage
             Object obj=value_id.get_obj();
             for( Object::size_type i = 0; i != obj.size(); ++i )
             {
                 const Pair& pair = obj[i];
-                const std::string& name  = pair.name_;
+                const Sc2String& name  = pair.name_;
                 const Value&  value = pair.value_;
 
                 if( name == "id_model" )
@@ -98,9 +109,7 @@ void MeshUser::read_json_id(std::string file){
                     int id_model= value.get_int();
                     std::stringstream stemp;
                     stemp << model_path << "model_" << id_model;
-                    //creation du repertoire model_i s'il n'existe pas
-                    //name_directory = stemp.str();
-		    std::cout << name_directory << std::endl;
+                    std::cout << name_directory << std::endl;
                 }
             }
         }
@@ -108,24 +117,15 @@ void MeshUser::read_json_id(std::string file){
     for( Object::size_type i = 0; i != input.size(); ++i )
     {
         const Pair& pair_id = input[i];
-        const std::string& name_id  = pair_id.name_;
+        const Sc2String& name_id  = pair_id.name_;
         const Value& value_id= pair_id.value_;
         if(name_id=="mesh"){
             Object obj=value_id.get_obj();
             for( Object::size_type i = 0; i != obj.size(); ++i )
             {
                 const Pair& pair = obj[i];
-                const std::string& name  = pair.name_;
+                const Sc2String& name  = pair.name_;
                 const Value&  value = pair.value_;
-//                 if( name == "mesh_directory" )
-//                 {
-//                     mesh_directory = value.get_str(); 
-//                     mesh_directory = name_directory+"/"+mesh_directory;
-//                 }
-//                 else if( name == "mesh_name" )//lecture du nom du maillage
-//                 {
-//                     name_mesh_user= value.get_str(); 
-//                 }
                 if( name == "extension" )
                 {
                     extension= value.get_str();
@@ -134,60 +134,6 @@ void MeshUser::read_json_id(std::string file){
         }
     }
 }
-
-// struct HashElem {
-//     template<int n>
-//     int operator()( const BasicVec<int,n> &e ) const {
-//         return sum( e );
-//     }
-//     template<class TE>
-//     int operator()( const TE *e ) const {
-//         return operator()( e->mesh_connectivity );
-//     }
-// };
-// struct EquaElem {
-//     template<class TE,class TV>
-//     bool operator()( const TE *a, const TV &b ) const {
-//         return all( a->mesh_connectivity == b );
-//     }
-//     template<class TE>
-//     bool operator()( const TE *a, const TE *b ) const {
-//         return all( a->mesh_connectivity == b->mesh_connectivity );
-//     }
-// };
-// 
-// template<class H,int n>
-// void add_child( MeshUser &mesh, EntityElementUser &elem, int num_side, H &h, BasicVec<int,n> con ) {
-//     typename H::Item *item = h.get_item( con ); // si ça existe déjà, on fait rien
-//     if ( not item ) {
-//         #warning creation d une interface -> mettre les attributs
-//         EntityInterfaceUser *inter = mesh.list_interfaces.push_back(); // création d'une interface, puis on prend son pointeur
-//         item = h.set_item( inter );
-//     }
-//     ///
-//     #warning à vérifier
-//     elem.interfaces_global_num[ num_side ] = item->value->id;
-// }
-// 
-// void MeshUser::create_list_interfaces() {
-//     HashSet<EntityInterfaceUser *,HashElem,EquaElem,1024> h;
-//     for( ST num_elem = 0; num_elem < list_elements.size(); ++num_elem ) {
-//         EntityElementUser &elem = list_elements[ num_elem ];
-//         //
-//         switch ( elem.pattern_base_id ){
-//         case 2: // tetra
-//             #warning verifier les jacobiens
-//             add_child( *this, elem, 0, h, BasicVec<int,3>( elem.mesh_connectivity[ 0 ], elem.mesh_connectivity[ 1 ], elem.mesh_connectivity[ 2 ] ) );
-//             add_child( *this, elem, 1, h, BasicVec<int,3>( elem.mesh_connectivity[ 0 ], elem.mesh_connectivity[ 1 ], elem.mesh_connectivity[ 3 ] ) );
-//             add_child( *this, elem, 2, h, BasicVec<int,3>( elem.mesh_connectivity[ 0 ], elem.mesh_connectivity[ 2 ], elem.mesh_connectivity[ 3 ] ) );
-//             add_child( *this, elem, 3, h, BasicVec<int,3>( elem.mesh_connectivity[ 1 ], elem.mesh_connectivity[ 2 ], elem.mesh_connectivity[ 3 ] ) );
-//             break;
-//         default:
-//             TODO;
-//         }
-// 
-//     }
-// }
 
 
 struct EntitySideUser{
@@ -215,7 +161,7 @@ void MeshUser::test_create_list_interfaces(){
 //     PRINT(h.size());
     BasicVec< EntitySideUser > list_sides;
     for( int num_elem = 0; num_elem < list_elements.size(); ++num_elem ) {
-//         std::cout << "elem " << num_elem << std::endl;
+        std::cout << "\rElements a traiter : " << list_elements.size()-num_elem << "          ";
         Patterns::Types current_type = patterns.find_type(list_elements[num_elem].pattern_base_id);
         //PRINT(current_type.nb_sides);
         for( int num_side = 0; num_side < current_type.nb_sides; ++num_side ){
@@ -246,8 +192,10 @@ void MeshUser::test_create_list_interfaces(){
 //     for( int  num_side = 0; num_side < list_sides.size(); ++num_side ){
 //         PRINT(list_sides[num_side].mesh_connectivity);
 //     }
+    std::cout << std::endl;
 
     for( int  num_side = 0; num_side < list_sides.size(); ++num_side ){
+        std::cout << "\rCotes a traiter : " << list_sides.size() - num_side << "          ";
 //         PRINT(num_side);
 //         PRINT(list_sides[num_side].mesh_connectivity);
 //          PRINT(list_sides[num_side].assigned);
@@ -322,15 +270,16 @@ void MeshUser::test_create_list_interfaces(){
                     } 
                 }
             }
-            nb_interfaces = nb_interfaces + 1;
+            nb_interfaces += 1;
         }
 /*        else{std::cerr << "list_side["<<num_side<<"] non assigned " << std::endl; assert(0);}*/
     }
+    std::cout << std::endl;
 }
 
 
 
-void MeshUser::create_mesh(std::string model_path, std::string file){
+void MeshUser::create_mesh(Sc2String model_path, Sc2String file){
     model_path = model_path;
     std::cout << "** read_json ***************************************************************************************************" << std::endl;
     read_json_id( file );
@@ -341,8 +290,7 @@ void MeshUser::create_mesh(std::string model_path, std::string file){
     std::cout << "** read_mesh_user ok" << std::endl;
     
     std::cout << "** create interfaces *******************************************************************************************" << std::endl;
-    #warning verifier les jacobiens
-    test_create_list_interfaces(); 
+    test_create_list_interfaces();
     PRINT(nb_interfaces);
     PRINT(list_interfaces.size());
     
@@ -353,9 +301,10 @@ void MeshUser::create_mesh(std::string model_path, std::string file){
     
     std::cout << "** create elements *********************************************************************************************" << std::endl;
     for( int i_elem = 0; i_elem < nb_elements; i_elem++ ){
+        std::cout << "\rElements a traiter : " << nb_elements-i_elem << "          ";
         create_list_elements( i_elem );
     }
-    std::cout << "** create elements ok" << std::endl;
+    std::cout << std::endl << "** create elements ok" << std::endl;
     
 }
 

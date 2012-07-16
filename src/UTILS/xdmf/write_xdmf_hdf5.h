@@ -13,6 +13,6 @@
 #define XDMF_HDF
 #include <Metil/Hdf.h>
 
-void write_xdmf_from_hdf5(String output_xdmf, String input_hdf5, String name_geometry, int skin, String name_fields,  BasicVec<String> attributs);
+void write_xdmf_from_hdf5(Sc2String output_xdmf, Sc2String input_hdf5, Sc2String name_geometry, int skin, Sc2String name_fields,  BasicVec<Sc2String> attributs);
 
 #endif

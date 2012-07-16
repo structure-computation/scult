@@ -15,10 +15,12 @@
 
 using namespace Metil;
 
+#include "../UTILS/Sc2String.h"
+
 struct Patterns{
     //atributs **********************************************************************************************
     struct Types{
-        std::string name, base_xdmf, base_skin_xdmf ;
+        Sc2String name, base_xdmf, base_skin_xdmf ;
         int id ;
         int dim ;
         int nb_nodes ;

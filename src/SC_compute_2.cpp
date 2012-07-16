@@ -28,8 +28,8 @@ int main( int argc, char **argv ) {
     // ######################
     
     static const int dim = DIM;
-    std::string id_model = argv[ 1 ];
-    std::string id_calcul = argv[ 2 ];
+    Sc2String id_model = argv[ 1 ];
+    Sc2String id_calcul = argv[ 2 ];
      
     // ******************************************************************************************************************
     //lecture des données utilisateur (fichier de calcul .json) et compilation à la volée 

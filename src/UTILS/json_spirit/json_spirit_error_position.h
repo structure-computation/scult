@@ -21,11 +21,11 @@ namespace json_spirit
     struct Error_position
     {
         Error_position();
-        Error_position( unsigned int line, unsigned int column, const std::string& reason );
+        Error_position( unsigned int line, unsigned int column, const Sc2String& reason );
         bool operator==( const Error_position& lhs ) const;
         unsigned int line_;
         unsigned int column_;
-        std::string reason_;
+        Sc2String reason_;
     };
 
     inline Error_position::Error_position()
@@ -34,7 +34,7 @@ namespace json_spirit
     {
     }
 
-    inline Error_position::Error_position( unsigned int line, unsigned int column, const std::string& reason )
+    inline Error_position::Error_position( unsigned int line, unsigned int column, const Sc2String& reason )
     :   line_( line )
     ,   column_( column )
     ,   reason_( reason )

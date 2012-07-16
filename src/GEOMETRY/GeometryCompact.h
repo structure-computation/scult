@@ -10,6 +10,8 @@
 //
 //
 
+#ifndef GEOMETRY_COMPACT_H
+#define GEOMETRY_COMPACT_H
 
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
@@ -21,8 +23,6 @@
 
 using namespace Metil;
 
-#ifndef GEOMETRY_COMPACT_H
-#define GEOMETRY_COMPACT_H
 
 //fonctions sur la géometrie compactée
 

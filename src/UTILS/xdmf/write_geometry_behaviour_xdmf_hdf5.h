@@ -13,11 +13,11 @@
 #include "containers/vec.h"
 #include "struct_geometry_hdf.h"
 
-void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, Geometry_Hdf &Geometry, int num_level)
+void write_xdmf_geom_behaviour_pattern_3(Sc2String output_xdmf, Sc2String input_hdf5, Geometry_Hdf &Geometry, int num_level)
 {
     
     std::ofstream f(output_xdmf.c_str());
-    String name_geometry, name_elements_0;
+    Sc2String name_geometry, name_elements_0;
     name_geometry << ":/Level_" << num_level << "/Geometry" ;
     name_elements_0 << name_geometry << "/elements_0" ;
    
@@ -25,26 +25,26 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
     f << "<Xdmf Version=\"2.0\">" << endl; 
     f << "  <Domain>" << endl;
     //ecriture des donnees de noeuds
-    f <<"           <DataItem Name=\"X\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " \">" << input_hdf5.c_str() << name_geometry.c_str() << "/nodes/x </DataItem>" << endl;
-    f <<"           <DataItem Name=\"Y\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " \">" << input_hdf5.c_str() << name_geometry.c_str() << "/nodes/y </DataItem>" << endl;
-    f <<"           <DataItem Name=\"Z\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " \">" << input_hdf5.c_str() << name_geometry.c_str() << "/nodes/z </DataItem>" << endl;
+    f <<"           <DataItem Name=\"X\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " \">" << input_hdf5 << name_geometry << "/nodes/x </DataItem>" << endl;
+    f <<"           <DataItem Name=\"Y\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " \">" << input_hdf5 << name_geometry << "/nodes/y </DataItem>" << endl;
+    f <<"           <DataItem Name=\"Z\" Format=\"HDF\" NumberType=\"Float\" Precision=\"8\" Dimensions=\" "<< nb_nodes << " \">" << input_hdf5 << name_geometry << "/nodes/z </DataItem>" << endl;
 
     //ecriture des donnees de connectivites des elements_0
     for(unsigned i=0; i< Geometry.nb_list_elements_0; i++){
-        String name_list;
+        Sc2String name_list;
         name_list << name_elements_0 <<"/list_" <<  i;
         int nb_elems=Geometry.elements_0.list_tetra[i].c0.size();
         for(unsigned j=0;j<4 ; j++){
-            String name_data_item;
+            Sc2String name_data_item;
             name_data_item << "piece_" << i << "_c" << j;
-            String data_item;
+            Sc2String data_item;
             data_item << name_list << "/c" <<j ;
-            f <<"           <DataItem Name=\"" << name_data_item.c_str() << "\" Format=\"HDF\"  Dimensions=\" "<< nb_elems << " 1\">" << input_hdf5.c_str() << data_item.c_str() <<" </DataItem>" << endl;
+            f <<"           <DataItem Name=\"" << name_data_item << "\" Format=\"HDF\"  Dimensions=\" "<< nb_elems << " 1\">" << input_hdf5 << data_item <<" </DataItem>" << endl;
         }
-        String name_behaviour;
+        Sc2String name_behaviour;
         name_behaviour << "behaviour_0_" <<i;
         int num_behaviour=Geometry.elements_0.num_behaviour[i];
-        f <<"           <DataItem Name=\"" << name_behaviour.c_str() << "\" Dimensions=\" "<< nb_elems << " 1\"> " ; 
+        f <<"           <DataItem Name=\"" << name_behaviour << "\" Dimensions=\" "<< nb_elems << " 1\"> " ; 
         for(unsigned j=0;j<nb_elems; j++){
             f << num_behaviour << " ";
         }
@@ -53,23 +53,23 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
     }
 
     //ecriture des donnees de connectivites des elements_1 (bords et liaisons uniquement)
-    String name_elements_1;     
+    Sc2String name_elements_1;     
     name_elements_1 << name_geometry << "/elements_1" ;
     for(unsigned i=0; i< Geometry.nb_list_elements_1_edge; i++){
-        String name_list;
+        Sc2String name_list;
         name_list << name_elements_1 <<"/list_" <<  i;
         int nb_elems=Geometry.elements_1_edge.list_triangle[i].c0.size();
         for(unsigned j=0;j<3 ; j++){
-            String name_data_item;
+            Sc2String name_data_item;
             name_data_item << "edge_" <<  i << "_c" << j;
-            String data_item;
+            Sc2String data_item;
             data_item << name_list << "/c" <<j ;
-            f <<"           <DataItem Name=\"" << name_data_item.c_str() << "\" Format=\"HDF\"  Dimensions=\" "<< nb_elems << " 1\">" << input_hdf5.c_str() << data_item.c_str() <<" </DataItem>" << endl;
+            f <<"           <DataItem Name=\"" << name_data_item << "\" Format=\"HDF\"  Dimensions=\" "<< nb_elems << " 1\">" << input_hdf5 << data_item <<" </DataItem>" << endl;
         }
-        String name_behaviour;
+        Sc2String name_behaviour;
         name_behaviour << "behaviour_1_edge_" <<i;
         int num_behaviour=Geometry.elements_1_edge.num_behaviour[i];
-        f <<"           <DataItem Name=\"" << name_behaviour.c_str() << "\"  Dimensions=\" "<< nb_elems << " 1\"> " ; 
+        f <<"           <DataItem Name=\"" << name_behaviour << "\"  Dimensions=\" "<< nb_elems << " 1\"> " ; 
         for(unsigned j=0;j<nb_elems; j++){
             f << num_behaviour << " ";
         }
@@ -77,45 +77,45 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
         
     }
     for(unsigned i=0; i< Geometry.nb_list_elements_1_link; i++){
-        String name_list;
+        Sc2String name_list;
         name_list << name_elements_1 <<"/list_" <<  i+Geometry.nb_list_elements_1_edge+Geometry.nb_list_elements_1_interior;
         int nb_elems=Geometry.elements_1_link.list_triangle[i].c0.size();    
         for(unsigned j=0;j<3 ; j++){
-            String name_data_item;
+            Sc2String name_data_item;
             name_data_item << "link_" << i << "_c" << j;
-            String data_item;
+            Sc2String data_item;
             data_item << name_list << "/c" << j;
-            f <<"           <DataItem Name=\"" << name_data_item.c_str() << "\" Format=\"HDF\"  Dimensions=\" "<< nb_elems << " 1\">" << input_hdf5.c_str() << data_item.c_str() <<" </DataItem>" << endl;
+            f <<"           <DataItem Name=\"" << name_data_item << "\" Format=\"HDF\"  Dimensions=\" "<< nb_elems << " 1\">" << input_hdf5 << data_item <<" </DataItem>" << endl;
         }
-        String name_behaviour;
+        Sc2String name_behaviour;
         name_behaviour << "behaviour_1_link_" <<i;
         int num_behaviour=Geometry.elements_1_link.num_behaviour[i];
-        f <<"           <DataItem Name=\"" << name_behaviour.c_str() << "\"  Dimensions=\" "<< nb_elems << " 1\"> " ; 
+        f <<"           <DataItem Name=\"" << name_behaviour << "\"  Dimensions=\" "<< nb_elems << " 1\"> " ; 
         for(unsigned j=0;j<nb_elems; j++){
             f << num_behaviour << " ";
         }
         f <<" </DataItem>" << endl;    
     }
 
-//    f <<"           <DataItem Name=\"num_group_patterns\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_patterns << " 1\">" << input_hdf5.c_str() << ":/Level_" <<num_level <<"/Geometry/num_group_patterns </DataItem>" << endl;
-// f <<"           <DataItem Name=\"type\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_inter << " 1\">" << input_hdf5.c_str() << ":/Level_" <<num_level <<"/Geometry/type </DataItem>" << endl;
-// f <<"           <DataItem Name=\"num_group_interfaces\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_inter << " 1\">" << input_hdf5.c_str() << ":/Level_" <<num_level <<"/Geometry/num_group_interfaces </DataItem>" << endl;
+//    f <<"           <DataItem Name=\"num_group_patterns\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_patterns << " 1\">" << input_hdf5 << ":/Level_" <<num_level <<"/Geometry/num_group_patterns </DataItem>" << endl;
+// f <<"           <DataItem Name=\"type\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_inter << " 1\">" << input_hdf5 << ":/Level_" <<num_level <<"/Geometry/type </DataItem>" << endl;
+// f <<"           <DataItem Name=\"num_group_interfaces\" Format=\"HDF\" NumberType=\"Int\" Dimensions=\" "<< nb_inter << " 1\">" << input_hdf5 << ":/Level_" <<num_level <<"/Geometry/num_group_interfaces </DataItem>" << endl;
 
     //ecriture de la geometrie_0 (pieces)
     f<< "           <Grid Name=\"Geometry_0\" GridType=\"Tree\">" << endl;
     for(unsigned i=0; i< Geometry.nb_list_elements_0; i++){
-        String name_list;
+        Sc2String name_list;
         name_list << "piece_" <<  i;
         int nb_elems=Geometry.elements_0.list_tetra[i].c0.size();
-        String name_behaviour;
+        Sc2String name_behaviour;
         name_behaviour << "behaviour_0_" <<i;
-        f<<"                    <Grid Name=\""<< name_list.c_str() <<"\">" << endl;
+        f<<"                    <Grid Name=\""<< name_list <<"\">" << endl;
         f<<"                            <Topology Type=\"Tetrahedron\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
         f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  4 \" ItemType=\"Function\" Function=\"JOIN($0 , $1 , $2  , $3)\"> " <<endl;
         for(unsigned j=0;j<4 ; j++){
-            String name_data_item;
+            Sc2String name_data_item;
             name_data_item << "piece_" << i << "_c" << j;
-            f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item.c_str() <<"\"] </DataItem> " << endl;
+            f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item <<"\"] </DataItem> " << endl;
         }
         f<<"                                     </DataItem> " <<endl;
         f<<"                            </Topology>" <<endl;
@@ -125,7 +125,7 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
         f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"Z\"] </DataItem> " << endl;
         f<<"                            </Geometry>" <<endl;
         f<<"                            <Attribute Name=\"Materiau\" Center=\"Cell\" AttributeType=\"Scalar\" Dimensions=\" "<< nb_elems << " 1 \">" << endl;
-        f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_behaviour.c_str() << "\"] </DataItem> " << endl;
+        f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_behaviour << "\"] </DataItem> " << endl;
         f<<"                            </Attribute>"<<endl;
         f<<"                    </Grid>"<< endl;
     }
@@ -135,19 +135,19 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
     f<< "           <Grid Name=\"Geometry_1\" GridType=\"Tree\">" << endl;
         f<< "           <Grid Name=\"Edges\" GridType=\"Tree\">" << endl;
         for(unsigned i=0; i< Geometry.nb_list_elements_1_edge; i++){
-            String name_list;
+            Sc2String name_list;
             name_list << "edge_" <<  i;
             int nb_elems=Geometry.elements_1_edge.list_triangle[i].c0.size();
-            String name_behaviour;
+            Sc2String name_behaviour;
             name_behaviour << "behaviour_1_edge_" <<i;
 
-            f<<"                    <Grid Name=\""<< name_list.c_str() <<"\">" << endl;
+            f<<"                    <Grid Name=\""<< name_list <<"\">" << endl;
             f<<"                            <Topology Type=\"Triangle\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
             f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  3 \" ItemType=\"Function\" Function=\"JOIN($0 , $1 , $2  )\"> " <<endl;
             for(unsigned j=0;j<3 ; j++){
-                String name_data_item;
+                Sc2String name_data_item;
                 name_data_item << "edge_" << i << "_c" << j;
-                f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item.c_str() <<"\"] </DataItem> " << endl;
+                f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item <<"\"] </DataItem> " << endl;
             }
             f<<"                                     </DataItem> " <<endl;
             f<<"                            </Topology>" <<endl;
@@ -157,7 +157,7 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
             f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"Z\"] </DataItem> " << endl;
             f<<"                            </Geometry>" <<endl;
             f<<"                            <Attribute Name=\"Comportement\" Center=\"Cell\" AttributeType=\"Scalar\" Dimensions=\" "<< nb_elems << " 1 \">" << endl;
-            f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_behaviour.c_str() << "\"] </DataItem> " << endl;
+            f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_behaviour << "\"] </DataItem> " << endl;
             f<<"                            </Attribute>"<<endl;
             f<<"                    </Grid>"<< endl;
         }
@@ -165,20 +165,20 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
     f<< "               <Grid Name=\"Links\" GridType=\"Tree\">" << endl;
     
     for(unsigned i=0; i< Geometry.nb_list_elements_1_link; i++){
-        String name_list;
+        Sc2String name_list;
         name_list << "link_" <<  i;
         int nb_elems=Geometry.elements_1_link.list_triangle[i].c0.size();
         int num_behaviour=Geometry.elements_1_link.num_behaviour[i];
-        String name_behaviour;
+        Sc2String name_behaviour;
         name_behaviour << "behaviour_1_link_" <<i;
 
-        f<<"                    <Grid Name=\" "<< name_list.c_str() <<"\">" << endl;
+        f<<"                    <Grid Name=\" "<< name_list <<"\">" << endl;
         f<<"                            <Topology Type=\"Triangle\" NumberOfElements=\" "<< nb_elems << " \" >" << endl;
         f<<"                                    <DataItem Dimensions=\" "<< nb_elems << "  3 \" ItemType=\"Function\" Function=\"JOIN($0 , $1 , $2  )\"> " <<endl;
         for(unsigned j=0;j<3 ; j++){
-            String name_data_item;
+            Sc2String name_data_item;
             name_data_item << "link_" << i << "_c" << j;
-            f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item.c_str() <<"\"] </DataItem> " << endl;
+            f<<"                                            <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_data_item <<"\"] </DataItem> " << endl;
         }
         f<<"                                     </DataItem> " <<endl;
         f<<"                            </Topology>" <<endl;
@@ -188,7 +188,7 @@ void write_xdmf_geom_behaviour_pattern_3(String output_xdmf, String input_hdf5, 
         f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\"Z\"] </DataItem> " << endl;
         f<<"                            </Geometry>" <<endl;
         f<<"                            <Attribute Name=\"Comportement\" Center=\"Cell\" AttributeType=\"Scalar\" Dimensions=\" "<< nb_elems << " 1 \">" << endl;
-        f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_behaviour.c_str() << "\"] </DataItem> " << endl;
+        f<<"                                    <DataItem Reference=\"XML\"> /Xdmf/Domain/DataItem[@Name=\""<< name_behaviour << "\"] </DataItem> " << endl;
         f<<"                            </Attribute>"<<endl;
         f<<"                    </Grid>"<< endl;
     }

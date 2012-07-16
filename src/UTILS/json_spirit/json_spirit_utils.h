@@ -37,7 +37,7 @@ namespace json_spirit
         }
     }
 
-    typedef std::map< std::string, Value > Mapped_obj;
+    typedef std::map< Sc2String, Value > Mapped_obj;
 
 #ifndef BOOST_NO_STD_WSTRING
     typedef std::map< std::wstring, wValue > wMapped_obj;

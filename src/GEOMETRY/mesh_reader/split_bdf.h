@@ -21,7 +21,7 @@ namespace Metil {
 /// lire un fichier bdf (bulkdata) genere par gmsh (option freefield) dans un maillage LMT note m 
 inline void split_bdf(std::ofstream &osv,std::ofstream &oss, std::ifstream &is, int &dimension) throw(std::runtime_error) {
 
-    BasicVec<std::string> elem_skin;
+    BasicVec<Sc2String> elem_skin;
     if (dimension==2){elem_skin.resize(1); elem_skin[0]="CBAR";}
     else if (dimension==3){elem_skin.resize(1); elem_skin[0]="CTRIA3"; }
     
@@ -29,7 +29,7 @@ inline void split_bdf(std::ofstream &osv,std::ofstream &oss, std::ifstream &is, 
         if (! is )
             throw std::runtime_error("bdf file is corrupted ");
 
-        std::string str2;
+        Sc2String str2;
         getline(is,str2);
         
         // Evaluation du contexte
@@ -48,7 +48,7 @@ inline void split_bdf(std::ofstream &osv,std::ofstream &oss, std::ifstream &is, 
             oss << str2 <<std::endl;
             //verification si *N est present sur la ligne, si oui insertion de la ligne suivante
             if(str2.find("*N")<str2.size()){
-                std::string str3;
+                Sc2String str3;
                 getline(is,str3);
                 osv << str3 <<std::endl;
                 oss << str3 <<std::endl;
@@ -62,7 +62,7 @@ inline void split_bdf(std::ofstream &osv,std::ofstream &oss, std::ifstream &is, 
         }
 	
         for(int i=0;i<elem_skin.size();i++){
-            if(str2.find(elem_skin[i].c_str())<str2.size()){
+            if(str2.find(elem_skin[i])<str2.size()){
                 oss << str2 <<std::endl;
             }
             else{
@@ -74,7 +74,7 @@ inline void split_bdf(std::ofstream &osv,std::ofstream &oss, std::ifstream &is, 
 
 
 /// put bdf file and output filess
-inline void split_bdf(const std::string &fic_name_volume, const std::string &fic_name_skin,const std::string &fic_name, int dimension) throw(std::runtime_error) {
+inline void split_bdf(const Sc2String &fic_name_volume, const Sc2String &fic_name_skin,const Sc2String &fic_name, int dimension) throw(std::runtime_error) {
     // ouverture du fichier a lire
     std::ifstream my_file_r( fic_name.c_str() );
     //ouverture des fichiers a ecrire

@@ -10,8 +10,9 @@
 //
 //
 
+#include "../Sc2String.h"
+
 #include "containers/vec.h"
-#include <Metil/String.h>
 
 #include <Metil/BasicVec.h>
 #include <Metil/CudaMetil.h>
@@ -36,11 +37,11 @@ using namespace std;
 //ecriture de la geometry
 void LEVEL::read_geometry_hdf(DATA_USER &data_user, string type){
     string name_hdf=data_user.name_directory+"/MESH/mesh.h5";
-    Hdf hdf( name_hdf.c_str() );
+    Hdf hdf( name_hdf );
     
     //creation des patterns de base
     
-    String name;
+    Sc2String name;
     name << "/Level_" << num_level << "/Geometry";
     Geometry.read_from(hdf,name);
 /*    nb.sst=Geometry.nb_sst[0];
@@ -113,9 +114,9 @@ void LEVEL::read_geometry_hdf(DATA_USER &data_user, string type){
 //Ecriture du comportement associe aux patterns et aux interfaces
 // void LEVEL::read_behaviours_hdf(DATA_USER &data_user, string type){
 //     string name_hdf=data_user.name_directory+"/MESH/mesh.h5";
-//     Hdf hdf( name_hdf.c_str() );
+//     Hdf hdf( name_hdf );
 // 
-//     String name;
+//     Sc2String name;
 //     name << "/Level_" << num_level << "/Behaviours";
 //     Behaviours.read_from(hdf,name);
 // 

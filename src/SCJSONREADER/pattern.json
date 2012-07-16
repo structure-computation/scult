@@ -1,0 +1,250 @@
+{
+  "action": "null",
+  "calcul_time": "null",
+  "controller": "null",
+  "created_at": "null",
+  "ctype": "null",
+  "description": "null",
+  "D2type": "null",
+  "estimated_calcul_time": "null",
+  "forcasts": "null",
+  "gpu_allocated": "null",
+  "id": "null",
+  "last_saved": "null",
+  "launch_autorisation": "null",
+  "launch_date": "null",
+  "log_type": "null",
+  "name": "null",
+  "result_date": "null",
+  "state": "null",
+  "sc_model_id": "null",
+  "updated_at": "null",
+  "used_memory": "null",
+  "user_id": "null",
+  "workspace_member_id": "null",
+  "options": {
+    "convergence_method_LATIN": {
+      "max_iteration": "int",
+      "convergence_rate": "real"
+    },
+    "precision_calcul": "null",
+    "mode": "string"
+  },
+  "multiresolution_parameters": {
+    "multiresolution_type": "string",
+    "resolution_number": "int",
+    "collection": [
+      {
+        "parametric_function": "string",
+        "nb_value": "int",
+        "alias_name": "string",
+        "name": "string",
+        "nominal_value": "real",
+        "max_value": "real",
+        "min_value": "real",
+        "id_in_calcul": "int"
+      }
+    ]
+  },
+  "interfaces": [
+    {
+      "id": "int",
+      "group": "int",
+      "assigned": "int",
+      "link_id": "int",
+      "adj_num_group": "string",
+      "name": "string",
+      "type": "string",
+      "id_in_calcul": "int",
+      "origine": "null"
+    }
+  ],
+  "mesh": {
+    "model_directory": "string",
+    "nb_sst": "int",
+    "nb_groups_elem": "int",
+    "mesh_directory": "string",
+    "extension": "string",
+    "nb_ddl": "int",
+    "nb_groups_inter": "int",
+    "mesh_name": "string",
+    "nb_inter": "int"
+  },
+  "volumic_forces": [
+    {
+      "gamma": "string",
+      "name": "string",
+      "dx": "string",
+      "dy": "string",
+      "dz": "string",
+      "selected":"null"
+    }
+  ],
+  "thermal_load": {
+    "name": "string",
+    "function": "string"
+  },
+  "materials": [
+    {
+      "name": "string",
+      "id_in_calcul": "int",
+      "type_num": "int",
+      "mtype": "string",
+      "mtype_isotrope": "string",
+      "mtype_orthotrope": "string",
+      "comp": "string",
+      "comp_el": "string",
+      "comp_pl": "string",
+      "comp_en": "string",
+      "comp_mes": "string",
+      "rho": "string",
+      "dir_1_x": "real",
+      "dir_1_y": "real",
+      "dir_1_z": "real",
+      "dir_2_x": "real",
+      "dir_2_y": "real",
+      "dir_2_z": "real",
+      "dir_3_x": "real",
+      "dir_3_y": "real",
+      "dir_3_z": "real",
+      "alpha_1": "string",
+      "alpha_2": "string",
+      "alpha_3": "string",
+      "E_1": "string",
+      "E_2": "string",
+      "E_3": "string",
+      "nu_12": "string",
+      "nu_13": "string",
+      "nu_23": "string",
+      "cis_1": "string",
+      "cis_2": "string",
+      "cis_3": "string",
+      "type_plast": "string",
+      "R0": "string",
+      "k_p": "string",
+      "m_p": "string",
+      "coeff_plast_cinematique": "string",
+      "type_endo": "string",
+      "Yo": "string",
+      "Yc": "string",
+      "Ycf": "string",
+      "dmax": "real",
+      "a": "real",
+      "couplage": "real",
+      "effet_retard": "bool",
+      "b_c": "real",
+      "tau_c": "real",
+      "viscosite": "string",
+      "state": "null",
+      "name_select": "null",
+      "updated_at": "null",
+      "description": "null",
+      "id_from_database": "null",
+      "family": "null",
+      "id_select": "null",
+      "created_at": "null",
+      "workspace_id": "null",
+      "reference": "null"
+    }
+  ],
+  "boundary_conditions": [
+    {
+      "name": "string",
+      "description": "null",
+      "spatial_function_x": "string",
+      "spatial_function_y": "string",
+      "spatial_function_z": "string",
+      "id_in_calcul": "int",
+      "condition_type": "string"
+    }
+  ],
+  "time_steps": {
+    "time_scheme": "string",
+    "collection": [
+      {
+        "name": "string",
+        "initial_time": "real",
+        "final_time": "real",
+        "time_step": "real",
+        "id_in_calcul": "int",
+        "nb_time_steps": "int"
+      }
+    ],
+    "parameter_collection": [
+      {
+        "stepFunctions": [
+          {
+            "temporal_function_t": "string",
+            "step_id": "int"
+          }
+        ],
+        "alias_name": "string",
+        "name": "string",
+        "description": "null",
+        "id_param": "int",
+        "id_in_calcul": "int"
+      }
+    ]
+  },
+  "edges": [
+    {
+      "id_in_calcul": "int",
+      "assigned":"int",
+      "name": "string",
+      "criteria": "string",
+      "geometry": "string",
+      "description": "null",
+      "direction_x": "real",
+      "direction_y": "real",
+      "direction_z": "real",
+      "point_1_x": "real",
+      "point_1_y": "real",
+      "point_1_z": "real",
+      "point_2_x": "real",
+      "point_2_y": "real",
+      "point_2_z": "real",
+      "radius": "real",
+      "equation": "string",
+      "boundary_condition_id": "int"
+    }
+  ],
+  "links": [
+    {
+      "state": "null",
+      "type_num": "int",
+      "p": "string",
+      "f": "string",
+      "R": "string",
+      "name_select": "null",
+      "name": "string",
+      "comp_generique": "string",
+      "Ep": "string",
+      "updated_at": "null",
+      "description": "null",
+      "jeu": "null",
+      "id_from_database": "null",
+      "family": "null",
+      "id_select": "null",
+      "Dp": "string",
+      "created_at": "null",
+      "Lr": "string",
+      "Lp": "string",
+      "id_in_calcul": "int",
+      "workspace_id": "null",
+      "reference": "null",
+      "comp_complexe": "string"
+    }
+  ],
+  "pieces": [
+    {
+      "id": "null",
+      "material_id": "int",
+      "group": "int",
+      "assigned": "int",
+      "name": "string",
+      "identificateur": "null",
+      "id_in_calcul": "int",
+      "origine": "null"
+    }
+  ]
+}

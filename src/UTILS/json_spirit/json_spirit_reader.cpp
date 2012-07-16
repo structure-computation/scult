@@ -8,12 +8,12 @@
 
 using namespace json_spirit;
 
-bool json_spirit::read( const std::string& s, Value& value )
+bool json_spirit::read( const Sc2String& s, Value& value )
 {
     return read_string( s, value );
 }
 
-void json_spirit::read_or_throw( const std::string& s, Value& value )
+void json_spirit::read_or_throw( const Sc2String& s, Value& value )
 {
     read_string_or_throw( s, value );
 }
@@ -28,12 +28,12 @@ void json_spirit::read_or_throw( std::istream& is, Value& value )
     read_stream_or_throw( is, value );
 }
 
-bool json_spirit::read( std::string::const_iterator& begin, std::string::const_iterator end, Value& value )
+bool json_spirit::read( Sc2String::const_iterator& begin, Sc2String::const_iterator end, Value& value )
 {
     return read_range( begin, end, value );
 }
 
-void json_spirit::read_or_throw( std::string::const_iterator& begin, std::string::const_iterator end, Value& value )
+void json_spirit::read_or_throw( Sc2String::const_iterator& begin, Sc2String::const_iterator end, Value& value )
 {
     begin = read_range_or_throw( begin, end, value );
 }
@@ -72,12 +72,12 @@ void json_spirit::read_or_throw( std::wstring::const_iterator& begin, std::wstri
 
 #endif
 
-bool json_spirit::read( const std::string& s, mValue& value )
+bool json_spirit::read( const Sc2String& s, mValue& value )
 {
     return read_string( s, value );
 }
 
-void json_spirit::read_or_throw( const std::string& s, mValue& value )
+void json_spirit::read_or_throw( const Sc2String& s, mValue& value )
 {
     read_string_or_throw( s, value );
 }
@@ -92,12 +92,12 @@ void json_spirit::read_or_throw( std::istream& is, mValue& value )
     read_stream_or_throw( is, value );
 }
 
-bool json_spirit::read( std::string::const_iterator& begin, std::string::const_iterator end, mValue& value )
+bool json_spirit::read( Sc2String::const_iterator& begin, Sc2String::const_iterator end, mValue& value )
 {
     return read_range( begin, end, value );
 }
 
-void json_spirit::read_or_throw( std::string::const_iterator& begin, std::string::const_iterator end, mValue& value )
+void json_spirit::read_or_throw( Sc2String::const_iterator& begin, Sc2String::const_iterator end, mValue& value )
 {
     begin = read_range_or_throw( begin, end, value );
 }

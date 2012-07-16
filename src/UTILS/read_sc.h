@@ -37,7 +37,7 @@ namespace LMT
 
 /// read sc format
 	template<class TM>
-	void read_sc_mesh ( TM &m, std::string &name_geom ) throw ( std::runtime_error )
+	void read_sc_mesh ( TM &m, Sc2String &name_geom ) throw ( std::runtime_error )
 	{
 
 		Vec<TYPE> nodes;
@@ -60,7 +60,7 @@ namespace LMT
 	}
 
 	template<class TM>
-	void read_sc ( TM &m, std::string &name_geom, std::string &name_result ) throw ( std::runtime_error )
+	void read_sc ( TM &m, Sc2String &name_geom, Sc2String &name_result ) throw ( std::runtime_error )
 	{
 
 		Vec<TYPE> nodes;

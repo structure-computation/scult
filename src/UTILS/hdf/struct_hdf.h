@@ -2,7 +2,7 @@
 #define STRUCT_HDF
 
 
-#include <Metil/String.h>
+#include "../Sc2String.h"
 
 #include <Metil/BasicVec.h>
 #include <Metil/CudaMetil.h>
@@ -16,14 +16,14 @@ using namespace Metil;
 
 
 struct Nodes_pattern_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         x.write_to( hdf, name + "/x" );
         y.write_to( hdf, name + "/y" );
 #if DIM==3
         z.write_to( hdf, name + "/z" );
 #endif
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         x.read_from( hdf, name + "/x" );
         y.read_from( hdf, name + "/y" );
 #if DIM==3
@@ -34,7 +34,7 @@ struct Nodes_pattern_Hdf{
 };
 
 struct Elements_pattern_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         c0.write_to( hdf, name + "/c0" );
         c1.write_to( hdf, name + "/c1" );
         c2.write_to( hdf, name + "/c2" );
@@ -42,7 +42,7 @@ struct Elements_pattern_Hdf{
         c3.write_to( hdf, name + "/c3" );
 #endif
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         c0.read_from( hdf, name + "/c0" );
         c1.read_from( hdf, name + "/c1" );
         c2.read_from( hdf, name + "/c2" );
@@ -55,7 +55,7 @@ struct Elements_pattern_Hdf{
 
 
 struct Displacements_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         x.write_to( hdf, name + "/x" );
         y.write_to( hdf, name + "/y" );
 #if DIM==3       
@@ -66,7 +66,7 @@ struct Displacements_Hdf{
 };
 
 struct Tensor6_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         xx.write_to( hdf, name + "/xx" );
         yy.write_to( hdf, name + "/yy" );
         xy.write_to( hdf, name + "/xy" );
@@ -81,11 +81,11 @@ struct Tensor6_Hdf{
 
 
 class Behaviours_Hdf{ 
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {   
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {   
         interfaces.write_to(hdf, name+"/interfaces");
         patterns.write_to(hdf, name+"/patterns");
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {   
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {   
         interfaces.read_from(hdf, name+"/interfaces");
         patterns.read_from(hdf, name+"/patterns");
     }     
@@ -95,7 +95,7 @@ class Behaviours_Hdf{
 
 
 class Fields_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         nodes_in_patterns.write_to(hdf,name+"/nodes");
         elements_in_patterns.write_to(hdf,name+"/elements");
         sigma.write_to(hdf,name+"/sigma");

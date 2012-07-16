@@ -1,0 +1,6 @@
+Utilisation de DataUserUpdater.exe:
+
+Cet exécutable met à jour les fichiers ScJsonReader.h et ScJsonReader.cpp grâce a un fichier au format JSON : pattern.json. Les adresses de ces fichiers peuvent être modifiées dans run.cpp.
+La classe ScJsonReader s'utilise alors en parent publique de DataUser en calquant sa strucutre de données sur celle du fichier JSON et en fournissant une fonction de lecture pour la remplir.
+
+Pour plus de spécifications, regarder dans run.cpp

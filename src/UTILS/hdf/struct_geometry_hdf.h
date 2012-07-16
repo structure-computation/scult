@@ -6,14 +6,14 @@
 using namespace Metil;
 
 struct Nodes_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         x.write_to( hdf, name + "/x" );
         y.write_to( hdf, name + "/y" );
 #if DIM==3
         z.write_to( hdf, name + "/z" );
 #endif
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         x.read_from( hdf, name + "/x" );
         y.read_from( hdf, name + "/y" );
 #if DIM==3
@@ -24,11 +24,11 @@ struct Nodes_Hdf{
 };
 
 struct Element_Bar_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         c0.write_to( hdf, name + "/c0" );
         c1.write_to( hdf, name + "/c1" );
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         c0.read_from( hdf, name + "/c0" );
         c1.read_from( hdf, name + "/c1" );
     }
@@ -36,12 +36,12 @@ struct Element_Bar_Hdf{
 };
 
 struct Element_Triangle_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         c0.write_to( hdf, name + "/c0" );
         c1.write_to( hdf, name + "/c1" );
         c2.write_to( hdf, name + "/c2" );
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         c0.read_from( hdf, name + "/c0" );
         c1.read_from( hdf, name + "/c1" );
         c2.read_from( hdf, name + "/c2" );
@@ -50,13 +50,13 @@ struct Element_Triangle_Hdf{
 };
 
 struct Element_Tetra_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         c0.write_to( hdf, name + "/c0" );
         c1.write_to( hdf, name + "/c1" );
         c2.write_to( hdf, name + "/c2" );
         c3.write_to( hdf, name + "/c3" );
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         c0.read_from( hdf, name + "/c0" );
         c1.read_from( hdf, name + "/c1" );
         c2.read_from( hdf, name + "/c2" );
@@ -66,11 +66,11 @@ struct Element_Tetra_Hdf{
 };
 
 struct Elements_1_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name , int &nb_list) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name , int &nb_list) {
         
         //ecriture des bars
         for(unsigned i=0;i<list_bar.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i+nb_list;
             list_bar[i].write_to(hdf, name_group); 
             hdf.add_tag(name_group,"base","bar");
@@ -79,7 +79,7 @@ struct Elements_1_Hdf{
         nb_list+=list_bar.size();
         //ecriture des triangles
         for(unsigned i=0;i<list_triangle.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i+nb_list;
             list_triangle[i].write_to(hdf, name_group );
             //ajout du tag correspondant
@@ -89,14 +89,14 @@ struct Elements_1_Hdf{
         nb_list+=list_triangle.size();  
     }
     
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         for(unsigned i=0;i<list_bar.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i;
             list_bar[i].read_from(hdf, name + "/list_"+i );  
         }
         for(unsigned i=0;i<list_triangle.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i;
             list_triangle[i].read_from(hdf, name + "/list_"+i );  
         }
@@ -107,11 +107,11 @@ struct Elements_1_Hdf{
 };
 
 struct Elements_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name , int &nb_list) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name , int &nb_list) {
         
         //ecriture des bars
         for(unsigned i=0;i<list_bar.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i+nb_list;
             list_bar[i].write_to(hdf, name_group); 
             hdf.add_tag(name_group,"base","bar");
@@ -119,7 +119,7 @@ struct Elements_Hdf{
         }
         nb_list+=list_bar.size();
         for(unsigned i=0;i<list_triangle.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i+nb_list;
             list_triangle[i].write_to(hdf, name_group );
             //ajout du tag correspondant
@@ -129,7 +129,7 @@ struct Elements_Hdf{
         }
         nb_list+=list_triangle.size();        
         for(unsigned i=0;i<list_tetra.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i+nb_list;
             list_tetra[i].write_to(hdf, name_group);  
             //ajout du tag correspondant
@@ -141,15 +141,15 @@ struct Elements_Hdf{
 
         
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
 
         for(unsigned i=0;i<list_triangle.size();i++){
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i;
             list_triangle[i].read_from(hdf, name + "/list_"+i );  
         }
         for(unsigned i=0;i<list_tetra.size();i++){ 
-            String name_group ;
+            Sc2String name_group ;
             name_group << name << "/list_" << i;
             list_tetra[i].read_from(hdf, name + "/list_"+i );  
         }
@@ -157,13 +157,13 @@ struct Elements_Hdf{
     BasicVec<Element_Bar_Hdf> list_bar; //liste d'elements bar
     BasicVec<Element_Tetra_Hdf> list_tetra; //liste d'elements triangulaires
     BasicVec<Element_Triangle_Hdf> list_triangle; //liste d'elements triangulaires
-    BasicVec<String> name_in_hdf5; //nom de la liste dans le fichier hdf5
-    BasicVec<String> behaviour; //nom du comportement associé à chaque liste
+    BasicVec<Sc2String> name_in_hdf5; //nom de la liste dans le fichier hdf5
+    BasicVec<Sc2String> behaviour; //nom du comportement associé à chaque liste
     BasicVec<int> num_behaviour; //nom du comportement associé à chaque liste
 };
 
 struct Sides_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         i0.write_to( hdf, name + "/i0" );
         i1.write_to( hdf, name + "/i1" );
         i2.write_to( hdf, name + "/i2" );
@@ -171,7 +171,7 @@ struct Sides_Hdf{
         i3.write_to( hdf, name + "/i3" );
 #endif
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         i0.read_from( hdf, name + "/i0" );
         i1.read_from( hdf, name + "/i1" );
         i2.read_from( hdf, name + "/i2" );
@@ -184,14 +184,14 @@ struct Sides_Hdf{
 
 
 struct Elements_children_Hdf{
-    template<class Hdf> void write_to( Hdf &hdf, const String &name ) {
+    template<class Hdf> void write_to( Hdf &hdf, const Sc2String &name ) {
         c0.write_to( hdf, name + "/c0" );
         c1.write_to( hdf, name + "/c1" );
 #if DIM==3       
         c2.write_to( hdf, name + "/c2" );
 #endif        
     }
-    template<class Hdf> void read_from( Hdf &hdf, const String &name ) {
+    template<class Hdf> void read_from( Hdf &hdf, const Sc2String &name ) {
         c0.read_from( hdf, name + "/c0" );
         c1.read_from( hdf, name + "/c1" );
 #if DIM==3       
@@ -215,8 +215,8 @@ class Geometry_Hdf{
     int nb_list_elements_1_interior; //nombre de listes d'elements a l'interieur des pieces
     int nb_list_elements_1_link; //nombre de listes d'elements des liaisons (entre deux pieces)
     
-    void write_to( Hdf &hdf, const String &name );
-    void read_from( Hdf &hdf, const String &name );
+    void write_to( Hdf &hdf, const Sc2String &name );
+    void read_from( Hdf &hdf, const Sc2String &name );
 };
 
 

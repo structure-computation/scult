@@ -16,12 +16,12 @@ void json_spirit::write_formatted( const Value& value, std::ostream& os )
     write_stream( value, os, true );
 }
 
-std::string json_spirit::write( const Value& value )
+Sc2String json_spirit::write( const Value& value )
 {
     return write_string( value, false );
 }
 
-std::string json_spirit::write_formatted( const Value& value )
+Sc2String json_spirit::write_formatted( const Value& value )
 {
     return write_string( value, true );
 }
@@ -60,12 +60,12 @@ void json_spirit::write_formatted( const mValue& value, std::ostream& os )
     write_stream( value, os, true );
 }
 
-std::string json_spirit::write( const mValue& value )
+Sc2String json_spirit::write( const mValue& value )
 {
     return write_string( value, false );
 }
 
-std::string json_spirit::write_formatted( const mValue& value )
+Sc2String json_spirit::write_formatted( const mValue& value )
 {
     return write_string( value, true );
 }

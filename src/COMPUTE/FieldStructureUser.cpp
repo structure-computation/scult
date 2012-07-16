@@ -21,9 +21,13 @@ using namespace Metil;
 
 // fonctions d'initialisation ----------------------------------------------------------------------------------------------------------------------------
 
-FieldStructureUser::FieldStructureUser(){};
+FieldStructureUser::FieldStructureUser(){}
 
 FieldStructureUser::FieldStructureUser(GeometryUser &geometry_){
+    load_geometry_user(geometry_);
+}
+
+void FieldStructureUser::load_geometry_user(GeometryUser &geometry_){
     num_level = geometry_.num_level;
     dim = geometry_.dim;
     nb_group_elements =  geometry_.group_elements.size();
@@ -39,8 +43,7 @@ FieldStructureUser::FieldStructureUser(GeometryUser &geometry_){
     for(int i_group=0; i_group<nb_group_interfaces; i_group++){
         group_interfaces[i_group].initialize(geometry_, i_group, properties);
     }
-    
-};
+}
 
 // FieldStructureUser::FieldStructureUser(GeometryUser &geometry_, Sst<DIM,TYPE> &S){
 //     FieldStructureUser(geometry_);
@@ -114,7 +117,7 @@ BasicVec< int > FieldStructureUser::find_index_group_edges(int edge_id_) {
 
 
 // méthodes d'assignation **************************************************************************************************************************************
-void FieldStructureUser::assign_material_id_to_group_elements(DataUser &data_user) {
+void FieldStructureUser::assign_material_id_to_group_elements(DataUser &data_user) {/*
     for(int i_data_group=0; i_data_group<data_user.group_elements.size(); i_data_group++){
         for(int i_mat=0; i_mat<data_user.behaviour_materials.size(); i_mat++){
             if(data_user.group_elements[i_data_group].id_material==data_user.behaviour_materials[i_mat].id){
@@ -123,14 +126,14 @@ void FieldStructureUser::assign_material_id_to_group_elements(DataUser &data_use
             }
         }
     }
-}
+*/}
 
-void FieldStructureUser::assign_material_properties_to_group_elements(DataUser &data_user, BasicVec<BasicVec< TYPE > > &mat_prop) {
+void FieldStructureUser::assign_material_properties_to_group_elements(DataUser &data_user, BasicVec<BasicVec< TYPE > > &mat_prop) {/*
     for(int i_group=0; i_group<group_elements.size(); i_group++)
         group_elements[i_group].mat_prop=mat_prop[group_elements[i_group].material_id];
-}
+*/}
 
-void FieldStructureUser::assign_link_id_to_group_interfaces(DataUser &data_user) {
+void FieldStructureUser::assign_link_id_to_group_interfaces(DataUser &data_user) {/*
     for(int i_data_group=0; i_data_group<data_user.group_interfaces.size(); i_data_group++){
         for(int i_link=0; i_link<data_user.behaviour_links.size(); i_link++){
             if(data_user.group_interfaces[i_data_group].id_link==data_user.behaviour_links[i_link].id){
@@ -139,15 +142,15 @@ void FieldStructureUser::assign_link_id_to_group_interfaces(DataUser &data_user)
             }
         }
     }
-}
+*/}
 
-void FieldStructureUser::assign_link_properties_to_group_interfaces(DataUser &data_user, BasicVec<BasicVec< TYPE > > &link_prop) {
+void FieldStructureUser::assign_link_properties_to_group_interfaces(DataUser &data_user, BasicVec<BasicVec< TYPE > > &link_prop) {/*
     for(int i_group=0; i_group<group_interfaces.size(); i_group++)
         if(group_interfaces[i_group].link_id!=-1)
             group_interfaces[i_group].link_prop=link_prop[group_interfaces[i_group].link_id];
-}
+*/}
 
-void FieldStructureUser::assign_bc_id_to_group_interfaces(DataUser &data_user) {
+void FieldStructureUser::assign_bc_id_to_group_interfaces(DataUser &data_user) {/*
     for(int i_data_group=0; i_data_group<data_user.group_edges.size(); i_data_group++){
         for(int i_bc=0; i_bc<data_user.behaviour_bc.size(); i_bc++){
             if(data_user.group_edges[i_data_group].id_CL==data_user.behaviour_bc[i_bc].id){
@@ -160,7 +163,7 @@ void FieldStructureUser::assign_bc_id_to_group_interfaces(DataUser &data_user) {
             }
         }
     }
-}
+*/}
 
 
 
@@ -202,13 +205,13 @@ void FieldStructureUser::initialize_GPU() {
 //     }  
 // };
 
-void FieldStructureUser::write_hdf5_in_parallel(String file_output, GeometryUser &geometry_user, String name_group_fields, int pt_cur, TYPE val_time, int rank){
+void FieldStructureUser::write_hdf5_in_parallel(Sc2String file_output, GeometryUser &geometry_user, Sc2String name_group_fields, int pt_cur, TYPE val_time, int rank){
 
-    Hdf hdf_file( file_output.c_str() );
+    Hdf hdf_file( file_output );
    
     //write_fields_global_nodes_hdf5(hdf_file,name_fields,pt_cur);
 
-    String name_fields; name_fields << name_group_fields <<"/pt_"<< pt_cur;    
+    Sc2String name_fields; name_fields << name_group_fields <<"/pt_"<< pt_cur;    
 //     for(unsigned i_group=0;i_group<geometry_user.group_elements.size();i_group++){
 //         PRINT(geometry_user.find_index_group_elements(i_group));
 //         PRINT(find_index_group_elements(i_group));
@@ -243,18 +246,18 @@ void FieldStructureUser::write_hdf5_in_parallel(String file_output, GeometryUser
     hdf_file.write_tag(name_fields+"/elements_0/explode_displacements","nb_comp",DIM);
     hdf_file.write_tag(name_fields+"/elements_0_skin/explode_displacements","nb_comp",DIM);
     int nb_comp_tensor=DIM*(DIM+1)/2, nb_comp_vector=DIM;
-    BasicVec< BasicVec<String>, 3 > list_name_field_elements;
+    BasicVec< BasicVec<Sc2String>, 3 > list_name_field_elements;
     BasicVec<BasicVec<int>, 3 > list_nb_comp;
     for(int i=0;i<2;i++){
-        list_name_field_elements[i]=BasicVec<String>("sigma","epsilon","sigma_von_mises","material_behaviour","num_processor");
+        list_name_field_elements[i]=BasicVec<Sc2String>("sigma","epsilon","sigma_von_mises","material_behaviour","num_processor");
         list_nb_comp[i]=BasicVec<int>(nb_comp_tensor,nb_comp_tensor,1,1,1);
     }
-    list_name_field_elements[2]=BasicVec<String>("F","W","Fchap","Wchap");
+    list_name_field_elements[2]=BasicVec<Sc2String>("F","W","Fchap","Wchap");
     list_nb_comp[2]=BasicVec<int>(nb_comp_vector,nb_comp_vector,nb_comp_vector);
-    BasicVec<String,3> group_type("elements_0","elements_0_skin");
+    BasicVec<Sc2String,3> group_type("elements_0","elements_0_skin");
     for(int i=0;i<2;i++){
         for(int j=0;j<list_name_field_elements[i].size();j++){
-            String name_field=name_fields+"/"+group_type[i]+"/"+list_name_field_elements[i][j];
+            Sc2String name_field=name_fields+"/"+group_type[i]+"/"+list_name_field_elements[i][j];
             //PRINT(name_field);
             hdf_file.add_tag(name_field,"type","Elem");
             hdf_file.write_tag(name_field,"nb_comp",list_nb_comp[i][j]);
