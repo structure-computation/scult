@@ -39,6 +39,7 @@ public:
     Json_multiresolution_parameters multiresolution_parameters;
 
     struct Json_interfaces{
+        Json_interfaces(){link_id = -1;}
         int id;
         int group;
         int assigned;
