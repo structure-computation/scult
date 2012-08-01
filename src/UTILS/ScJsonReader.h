@@ -39,6 +39,7 @@ public:
     Json_multiresolution_parameters multiresolution_parameters;
 
     struct Json_interfaces{
+        Json_interfaces(){link_id = -1;}
         int id;
         int group;
         int assigned;
@@ -192,18 +193,36 @@ public:
     BasicVec<Json_edges> edges_vec;
 
     struct Json_links{
-        int type_num;
-        Sc2String p;
-        Sc2String f;
-        Sc2String R;
         Sc2String name;
-        Sc2String comp_generique;
-        Sc2String Ep;
-        Sc2String Dp;
-        Sc2String Lr;
-        Sc2String Lp;
+        Sc2String family;
+        Sc2String description;
         int id_in_calcul;
+        int type_num;
+        Sc2String comp_generique;
         Sc2String comp_complexe;
+        int Ep_type;
+        Sc2String Ep_n;
+        Sc2String Ep_x;
+        Sc2String Ep_y;
+        Sc2String Ep_z;
+        Sc2String Preload_z;
+        Sc2String Preload_y;
+        Sc2String Preload_x;
+        Sc2String Preload_n;
+        Sc2String f;
+        Sc2String Fcr_t;
+        Sc2String Fcr_n;
+        Sc2String Rop;
+        Sc2String kp;
+        Sc2String np;
+        Sc2String Kn;
+        Sc2String Knc;
+        Sc2String Kt;
+        Sc2String Yo;
+        Sc2String Yc;
+        Sc2String alpha;
+        Sc2String gamma;
+        Sc2String n;
     };
     BasicVec<Json_links> links_vec;
 
