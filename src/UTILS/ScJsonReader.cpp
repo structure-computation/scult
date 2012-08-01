@@ -5,7 +5,7 @@
 using namespace json_spirit;
 using namespace Metil;
 
-#define DEBUG_SCJSONREADER false
+#define DEBUG_SCJSONREADER true
 
 
 const ScJsonReader::Json_interfaces* ScJsonReader::find_interfaces_pointer(int id_) const {
