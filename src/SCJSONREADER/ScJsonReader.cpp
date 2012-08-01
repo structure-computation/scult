@@ -938,56 +938,88 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                         value_as_string1 = "";
                     }
                     if(DEBUG_SCJSONREADER) std::cout << "    Reading " << name1 << " : " << value_as_string1 << std::endl;
-                    if(name1 == "state"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "type_num"){
-                            input.str(value_as_string1);
-                            input >> links_vec[j0].type_num;
-                            input.clear();
-                    } else if(name1 == "p"){
-                            links_vec[j0].p = value_as_string1;
-                    } else if(name1 == "f"){
-                            links_vec[j0].f = value_as_string1;
-                    } else if(name1 == "R"){
-                            links_vec[j0].R = value_as_string1;
-                    } else if(name1 == "name_select"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "name"){
+                    if(name1 == "name"){
                             links_vec[j0].name = value_as_string1;
-                    } else if(name1 == "comp_generique"){
-                            links_vec[j0].comp_generique = value_as_string1;
-                    } else if(name1 == "Ep"){
-                            links_vec[j0].Ep = value_as_string1;
-                    } else if(name1 == "updated_at"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "description"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "jeu"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "id_from_database"){
-                        ; /// valeur ignoree
                     } else if(name1 == "family"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "id_select"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "Dp"){
-                            links_vec[j0].Dp = value_as_string1;
-                    } else if(name1 == "created_at"){
-                        ; /// valeur ignoree
-                    } else if(name1 == "Lr"){
-                            links_vec[j0].Lr = value_as_string1;
-                    } else if(name1 == "Lp"){
-                            links_vec[j0].Lp = value_as_string1;
+                            links_vec[j0].family = value_as_string1;
+                    } else if(name1 == "description"){
+                            links_vec[j0].description = value_as_string1;
                     } else if(name1 == "id_in_calcul"){
                             input.str(value_as_string1);
                             input >> links_vec[j0].id_in_calcul;
                             input.clear();
+                    } else if(name1 == "type_num"){
+                            input.str(value_as_string1);
+                            input >> links_vec[j0].type_num;
+                            input.clear();
+                    } else if(name1 == "comp_generique"){
+                            links_vec[j0].comp_generique = value_as_string1;
+                    } else if(name1 == "comp_complexe"){
+                            links_vec[j0].comp_complexe = value_as_string1;
+                    } else if(name1 == "Ep_type"){
+                            input.str(value_as_string1);
+                            input >> links_vec[j0].Ep_type;
+                            input.clear();
+                    } else if(name1 == "Ep_n"){
+                            links_vec[j0].Ep_n = value_as_string1;
+                    } else if(name1 == "Ep_x"){
+                            links_vec[j0].Ep_x = value_as_string1;
+                    } else if(name1 == "Ep_y"){
+                            links_vec[j0].Ep_y = value_as_string1;
+                    } else if(name1 == "Ep_z"){
+                            links_vec[j0].Ep_z = value_as_string1;
+                    } else if(name1 == "Preload_z"){
+                            links_vec[j0].Preload_z = value_as_string1;
+                    } else if(name1 == "Preload_y"){
+                            links_vec[j0].Preload_y = value_as_string1;
+                    } else if(name1 == "Preload_x"){
+                            links_vec[j0].Preload_x = value_as_string1;
+                    } else if(name1 == "Preload_n"){
+                            links_vec[j0].Preload_n = value_as_string1;
+                    } else if(name1 == "f"){
+                            links_vec[j0].f = value_as_string1;
+                    } else if(name1 == "Fcr_t"){
+                            links_vec[j0].Fcr_t = value_as_string1;
+                    } else if(name1 == "Fcr_n"){
+                            links_vec[j0].Fcr_n = value_as_string1;
+                    } else if(name1 == "Rop"){
+                            links_vec[j0].Rop = value_as_string1;
+                    } else if(name1 == "kp"){
+                            links_vec[j0].kp = value_as_string1;
+                    } else if(name1 == "np"){
+                            links_vec[j0].np = value_as_string1;
+                    } else if(name1 == "Kn"){
+                            links_vec[j0].Kn = value_as_string1;
+                    } else if(name1 == "Knc"){
+                            links_vec[j0].Knc = value_as_string1;
+                    } else if(name1 == "Kt"){
+                            links_vec[j0].Kt = value_as_string1;
+                    } else if(name1 == "Yo"){
+                            links_vec[j0].Yo = value_as_string1;
+                    } else if(name1 == "Yc"){
+                            links_vec[j0].Yc = value_as_string1;
+                    } else if(name1 == "alpha"){
+                            links_vec[j0].alpha = value_as_string1;
+                    } else if(name1 == "gamma"){
+                            links_vec[j0].gamma = value_as_string1;
+                    } else if(name1 == "n"){
+                            links_vec[j0].n = value_as_string1;
                     } else if(name1 == "workspace_id"){
                         ; /// valeur ignoree
                     } else if(name1 == "reference"){
                         ; /// valeur ignoree
-                    } else if(name1 == "comp_complexe"){
-                            links_vec[j0].comp_complexe = value_as_string1;
+                    } else if(name1 == "updated_at"){
+                        ; /// valeur ignoree
+                    } else if(name1 == "name_select"){
+                        ; /// valeur ignoree
+                    } else if(name1 == "id_from_database"){
+                        ; /// valeur ignoree
+                    } else if(name1 == "id_select"){
+                        ; /// valeur ignoree
+                    } else if(name1 == "state"){
+                        ; /// valeur ignoree
+                    } else if(name1 == "created_at"){
+                        ; /// valeur ignoree
                     } else {std::cerr << "Mauvais nom dans calcul.json : " << name1 << std::endl;assert(0);}
                 }
             }

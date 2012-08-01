@@ -1,6 +1,27 @@
 {
-  "state": "null",
+  "action": "null",
+  "calcul_time": "null",
+  "controller": "null",
+  "created_at": "null",
+  "ctype": "null",
+  "description": "null",
+  "D2type": "null",
+  "estimated_calcul_time": "null",
+  "forcasts": "null",
+  "gpu_allocated": "null",
   "id": "null",
+  "last_saved": "null",
+  "launch_autorisation": "null",
+  "launch_date": "null",
+  "log_type": "null",
+  "name": "null",
+  "result_date": "null",
+  "state": "null",
+  "sc_model_id": "null",
+  "updated_at": "null",
+  "used_memory": "null",
+  "user_id": "null",
+  "workspace_member_id": "null",
   "options": {
     "convergence_method_LATIN": {
       "max_iteration": "int",
@@ -49,16 +70,20 @@
     "mesh_name": "string",
     "nb_inter": "int"
   },
-  "sc_model_id": "int",
   "volumic_forces": [
     {
       "gamma": "string",
       "name": "string",
       "dx": "string",
       "dy": "string",
-      "dz": "string"
+      "dz": "string",
+      "selected":"null"
     }
   ],
+  "thermal_load": {
+    "name": "string",
+    "function": "string"
+  },
   "materials": [
     {
       "name": "string",
@@ -71,6 +96,7 @@
       "comp_el": "string",
       "comp_pl": "string",
       "comp_en": "string",
+      "comp_mes": "string",
       "rho": "string",
       "dir_1_x": "real",
       "dir_1_y": "real",
@@ -121,8 +147,6 @@
       "reference": "null"
     }
   ],
-  "name": "null",
-  "forcasts": "null",
   "boundary_conditions": [
     {
       "name": "string",
@@ -134,8 +158,6 @@
       "condition_type": "string"
     }
   ],
-  "description": "null",
-  "last_saved": "null",
   "time_steps": {
     "time_scheme": "string",
     "collection": [
@@ -186,35 +208,48 @@
       "boundary_condition_id": "int"
     }
   ],
-  "action": "null",
   "links": [
     {
-      "state": "null",
-      "type_num": "int",
-      "p": "string",
-      "f": "string",
-      "R": "string",
-      "name_select": "null",
       "name": "string",
-      "comp_generique": "string",
-      "Ep": "real",
-      "updated_at": "null",
-      "description": "null",
-      "jeu": "null",
-      "id_from_database": "null",
-      "family": "null",
-      "id_select": "null",
-      "Dp": "string",
-      "created_at": "null",
-      "Lr": "string",
-      "Lp": "string",
+      "family": "string",
+      "description": "string",
       "id_in_calcul": "int",
+      "type_num": "int",
+      "comp_generique": "string",
+      "comp_complexe": "string",
+      "Ep_Type": "int",
+      "Ep_n": "string",
+      "Ep_x": "string",
+      "Ep_y": "string",
+      "Ep_z": "string",
+      "Preload_z": "string",
+      "Preload_y": "string",
+      "Preload_x": "string",
+      "Preload_n": "string",
+      "f": "string",
+      "Fcr_t": "string",
+      "Fcr_n": "string",
+      "Rop": "string",
+      "kp": "string",
+      "np": "string",
+      "Kn": "string",
+      "Knc": "string",
+      "Kt": "string",
+      "Yo": "string",
+      "Yc": "string",
+      "alpha": "string",
+      "gamma": "string",
+      "n": "string",
       "workspace_id": "null",
       "reference": "null",
-      "comp_complexe": "string"
+      "updated_at": "null",
+      "name_select": "null",
+      "id_from_database": "null",
+      "id_select": "null",
+      "state": "null",
+      "created_at": "null"
     }
   ],
-  "controller": "null",
   "pieces": [
     {
       "id": "null",
