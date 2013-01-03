@@ -111,6 +111,24 @@ void MeshUser::read_json_id(Sc2String file){
                     stemp << model_path << "model_" << id_model;
                     std::cout << name_directory << std::endl;
                 }
+                if ( name == "unite" ){
+		    Sc2String unity=value.get_str();
+		    if (unity=="m"){
+		      scale_factor=1000;
+		    }
+		    else if (unity=="dm"){
+		      scale_factor=100;
+		    }
+		    else if (unity=="cm"){
+		      scale_factor=10;
+		    }
+		    else if (unity=="dam"){
+		      scale_factor=10000;
+		    }
+		    else{
+		      scale_factor=1;
+		    }
+		}                
             }
         }
     }
@@ -130,6 +148,7 @@ void MeshUser::read_json_id(Sc2String file){
                 {
                     extension= value.get_str();
                 }
+
             }
         }
     }

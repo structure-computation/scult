@@ -37,6 +37,7 @@ class MeshUser{
         //******************************************************************************************
         static const int dim=DIM;
         Patterns patterns;
+	TYPE scale_factor;	//facteur d'échelle pour convertir le maillage en mm
 
         //nom et chemins de fichier--------------------------------
         Sc2String model_path;            //chemin d'acces au repertoire model
@@ -93,6 +94,7 @@ class MeshUser{
             
             nb_elements = 0;
             nb_interfaces = 0;
+	    scale_factor = 1;
         }
         void read_bdf(const Sc2String fic_name); 	 //Lecture du mesh donne par l'utilisateur
         void read_unv(const Sc2String fic_name);       //Lecture du mesh donne par l'utilisateur
