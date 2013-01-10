@@ -100,6 +100,7 @@ class MeshUser{
         bool FileExists( const char* FileName );     //vérification de l'existance d'un fichier
         bool FileExists( Sc2String FileName );     //vérification de l'existance d'un fichier
         void read_mesh_user();                       //lecture du fichier de maillage utilisateur
+        void read_mesh_user(Sc2String path);         //lecture du fichier de maillage file
         void change_mesh_connectivity( int i_elem ); //modification de la connetivité d'un élément si le jacobien est négatif
         void create_list_interfaces( int i_elem );   //création des interface
         void create_list_elements( int i_elem );     //création des elements relatif au patterns à partir des élements
@@ -107,6 +108,9 @@ class MeshUser{
         void test_create_list_interfaces();               ///< la boucle for est dedans
 
         void create_mesh( Sc2String model_path, Sc2String file ); //étape de création du maillage
+        
+        void create_mesh_unv(Sc2String path, Sc2String extention_);   //pour read_unv dans scwal 
+        void create_mesh_scwal(Sc2String path, Sc2String extention_); //pour scult dans scwal
 };
 
 #endif //MESH_USER_H

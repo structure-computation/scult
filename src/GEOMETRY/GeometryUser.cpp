@@ -139,6 +139,47 @@ GeometryUser::GeometryUser(MeshUser &mesh_) {
 
 }
 
+GeometryUser::GeometryUser(MeshUser &mesh_, Sc2String path_hdf) {
+    std::cout << "**********************************************************************************************************************" << std::endl;
+    std::cout << "** create geometry_user  *********************************************************************************************" << std::endl;
+    std::cout << "**********************************************************************************************************************" << std::endl;
+    dim = DIM;
+
+    std::cout << "** create nodes          *********************************************************************************************" << std::endl;
+    mesh_nodes = mesh_.mesh_pos_nodes;
+    nodes = mesh_.elements_pos_nodes;
+
+    std::cout << "** create group_elements *********************************************************************************************" << std::endl;
+    initialize_group_elements_from_MeshUser(mesh_);
+
+    std::cout << "** create group_interfaces *******************************************************************************************" << std::endl;
+    initialize_group_interfaces_from_MeshUser(mesh_);
+    
+    std::cout << "** vérification            *******************************************************************************************" << std::endl;
+    affiche();
+}
+
+void GeometryUser::initialisation(MeshUser &mesh_, Sc2String path_hdf) {
+    std::cout << "**********************************************************************************************************************" << std::endl;
+    std::cout << "** create geometry_user  *********************************************************************************************" << std::endl;
+    std::cout << "**********************************************************************************************************************" << std::endl;
+    dim = DIM;
+
+    std::cout << "** create nodes          *********************************************************************************************" << std::endl;
+    mesh_nodes = mesh_.mesh_pos_nodes;
+    nodes = mesh_.elements_pos_nodes;
+
+    std::cout << "** create group_elements *********************************************************************************************" << std::endl;
+    initialize_group_elements_from_MeshUser(mesh_);
+
+    std::cout << "** create group_interfaces *******************************************************************************************" << std::endl;
+    initialize_group_interfaces_from_MeshUser(mesh_);
+    
+    std::cout << "** vérification            *******************************************************************************************" << std::endl;
+    affiche();
+}
+
+
 void GeometryUser::initialisation(Sc2String id_model, Sc2String id_calcul) {
     dim = DIM;
     model_path = "/share/sc2/Developpement/MODEL/";
@@ -146,6 +187,11 @@ void GeometryUser::initialisation(Sc2String id_model, Sc2String id_calcul) {
     calcul_path = model_path + "model_" + id_model + "/calcul_" + id_calcul ;
     calcul_file = calcul_path + "/calcul.json" ;
     name_file_hdf5 << mesh_path << "/visu_geometry.h5";
+}
+
+void GeometryUser::initialisation(Sc2String _name_file_hdf5) {
+    dim = DIM;
+    name_file_hdf5 = _name_file_hdf5;
 }
 
 void GeometryUser::affiche() {
@@ -586,6 +632,14 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
             BasicVec<bool> edge_found;
             edge_found.resize(data_user.edges_vec.size(),false);
             PRINT(data_user.edges_vec.size());
+            //PRINT(data_user.edges_vec[0].id_in_calcul);
+            //PRINT(data_user.edges_vec[0].assigned);
+            //PRINT(data_user.edges_vec[0].criteria);
+            //PRINT(data_user.edges_vec[0].geometry);
+            //PRINT(data_user.edges_vec[0].equation);
+            //PRINT(data_user.edges_vec[0].boundary_condition_id);
+            
+            
             /// Pour chaque combinaison {interface,bord}
             for(int i_edge=0; i_edge<data_user.edges_vec.size(); i_edge++){
                 PRINT(group_interfaces[i_group].nb_interfaces);
