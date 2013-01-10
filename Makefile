@@ -19,7 +19,7 @@ OPTDEBUG = -ne -j$(NB_COMP_PROC) -ggdb -g3 -ffast-math -fexpensive-optimizations
 GLOB_VAR = -D$(MACHINE_TYPE) -DDIM=$(DIM) -DTYPE=double -DTYPEREEL=double -DLDL -DWITH_CHOLMOD -DWITH_UMFPACK
 
 
-all: clean codegen DEBUG RELEASE JSONREADER
+all: DEBUG RELEASE JSONREADER
 
 
 DEBUG :

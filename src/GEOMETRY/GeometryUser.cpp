@@ -107,7 +107,12 @@ GeometryUser::GeometryUser(MeshUser &mesh_) {
     dim = DIM;
 
     std::cout << "** create nodes          *********************************************************************************************" << std::endl;
-    mesh_nodes = mesh_.mesh_pos_nodes;
+    PRINT( mesh_.scale_factor);
+    mesh_nodes.resize(DIM);
+    for (int di=0;di<DIM;di++) {
+	mesh_nodes[di] = mesh_.scale_factor*mesh_.mesh_pos_nodes[di];
+    }    
+    //mesh_nodes = mesh_.scale_factor*mesh_.mesh_pos_nodes;
     nodes = mesh_.elements_pos_nodes;
 
     std::cout << "** create group_elements *********************************************************************************************" << std::endl;
