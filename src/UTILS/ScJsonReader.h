@@ -61,6 +61,7 @@ public:
         int nb_groups_inter;
         Sc2String mesh_name;
         int nb_inter;
+	Sc2String name_calcul;
     };
     Json_mesh mesh;
 
