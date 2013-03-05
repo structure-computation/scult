@@ -66,12 +66,21 @@ void MeshUser::read_mesh_user(){
     else if(extension == ".unv"){
         read_unv( file );
     }else{
-    std::cout << "extension de fichier non reconnue" << std::endl;
-    assert(0);
+        std::cout << "extension de fichier non reconnue" << std::endl;
+        assert(0);
     }
 }
 
-
+void MeshUser::read_mesh_user(Sc2String path){
+    std::cout << path << std::endl;
+    
+    if(extension == ".unv"){
+        read_unv( path );
+    }else{
+        std::cout << "extension de fichier non reconnue" << std::endl;
+        assert(0);
+    }
+}
 
 void MeshUser::read_json_id(Sc2String file){
   
@@ -326,4 +335,34 @@ void MeshUser::create_mesh(Sc2String model_path, Sc2String file){
     std::cout << std::endl << "** create elements ok" << std::endl;
     
 }
+
+// pour scwal
+void MeshUser::create_mesh_unv(Sc2String path, Sc2String extention_){
+    extension = extention_;
+    std::cout << "** read_mesh_user **********************************************************************************************" << std::endl;
+    read_mesh_user(path);
+    std::cout << "** read_mesh_user ok" << std::endl;
+}
+
+void MeshUser::create_mesh_scwal(Sc2String path, Sc2String extention_){
+    extension = extention_;
+    std::cout << "** read_mesh_user **********************************************************************************************" << std::endl;
+    read_mesh_user(path);
+    std::cout << "** read_mesh_user ok" << std::endl;
+    
+    std::cout << "** create interfaces *******************************************************************************************" << std::endl;
+    test_create_list_interfaces();
+    PRINT(nb_interfaces);
+    PRINT(list_interfaces.size());
+    std::cout << "** create interfaces ok" << std::endl;
+    
+    std::cout << "** create elements *********************************************************************************************" << std::endl;
+    for( int i_elem = 0; i_elem < nb_elements; i_elem++ ){
+        std::cout << "\rElements a traiter : " << nb_elements-i_elem << "          ";
+        create_list_elements( i_elem );
+    }
+    std::cout << std::endl << "** create elements ok" << std::endl;
+}
+
+
 

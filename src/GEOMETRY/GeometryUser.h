@@ -93,8 +93,11 @@ class GeometryUser{
       ///Methode d'initialisation----------------------------------------------------------------------------------------------------------------------
       GeometryUser();
       GeometryUser(Sc2String id_model, Sc2String id_calcul);
-      GeometryUser(MeshUser &mesh_);
+      GeometryUser(MeshUser &mesh_);                                    /// initialisation et traitement à partir d'un maillage pour scult
+      GeometryUser(MeshUser &mesh_, Sc2String path_hdf);                /// initialisation et traitement à partir d'un maillage pour scwal
+      void initialisation(MeshUser &mesh_, Sc2String path_hdf);         /// initialisation et traitement à partir d'un maillage pour scwal
       void initialisation(Sc2String id_model, Sc2String id_calcul);     /// même fonction que le constructeur ayant les mêmes arguments
+      void initialisation(Sc2String _name_file_hdf5);                   /// fonction d'initialisation pour scwal
       void initialize_group_elements_from_MeshUser(MeshUser &mesh_);    /// initialisation à partir des elements du maillage
       void initialize_group_interfaces_from_MeshUser(MeshUser &mesh_);  /// initialisation à partir des interfaces du maillage
       
