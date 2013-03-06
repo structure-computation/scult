@@ -32,6 +32,7 @@ class DataUser: public ScJsonReader{
     Sc2String extension;              /// extention pour le nom du fichier de mesh
     Sc2String name_directory;         /// nom du repertoire pour sauvegarder le motif
     Sc2String mesh_directory;         /// nom du repertoire pour sauvegarder les meshs  
+    Sc2String name_calcul;         /// nom du calcul donne dans l'interface
     Sc2String calcul_path;            /// chemin d'acces au repertoire model
     Sc2String result_path;            /// chemin d'acces au repertoire model
     Sc2String file_calcul;            /// fichier json pour le calcul

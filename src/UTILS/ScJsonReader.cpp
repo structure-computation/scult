@@ -150,6 +150,10 @@ void ScJsonReader::read_json(const Sc2String& file_path){
         } else if(name0 == "log_type"){
             ; /// valeur ignoree
         } else if(name0 == "name"){
+	  Sc2String value_as_string1 = "";
+	  value_as_string1 << value0.get_str();
+	  mesh.name_calcul=value_as_string1;
+	  if(DEBUG_SCJSONREADER) std::cout  << value_as_string1 << std::endl;
             ; /// valeur ignoree
         } else if(name0 == "result_date"){
             ; /// valeur ignoree
