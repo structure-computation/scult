@@ -111,49 +111,54 @@ void read_unv_elements(BasicVec< EntityElementUser > &list_elements, std::istrea
 }
 
 
-void read_unv_groups(BasicVec< EntityElementUser > &list_elements, std::istream &is, map<int,int> &map_num_element) {
-  string str;
+void read_unv_groups(BasicVec< EntityElementUser > &list_elements, std::istream &is, map<int,int> &map_num_element, map<int,Sc2String> &map_num_group_name_group) {
+    string str;
    
     while (true) {
-    getline(is,str);
-    istringstream s(str);
-    int num_group;
-    s >> num_group;
-    if (num_group==-1)
-      return;
-
-//     PRINT(num_group);
-    int temp;
-    for(unsigned i=0;i<6;i++)
-        s >> temp;
-    int nb_elements;
-    s >> nb_elements;
-    getline(is,str);
-    int nb=0;
-    while(nb!=nb_elements){
         getline(is,str);
         istringstream s(str);
-        int num;
-        BasicVec<int> data;
-        while ( s ) {
-                s >> num;
-                data.push_back(num);
+        int num_group;
+        s >> num_group;
+        if (num_group==-1)
+          return;
+
+    //     PRINT(num_group);
+        int temp;
+        for(unsigned i=0;i<6;i++)
+            s >> temp;
+        int nb_elements;
+        s >> nb_elements;
+        getline(is,str);
+        Sc2String name_group;
+        name_group << str;
+        //PRINT(name_group);
+        map_num_group_name_group[num_group] = name_group;
+        
+        int nb=0;
+        while(nb!=nb_elements){
+            getline(is,str);
+            istringstream s(str);
+            int num;
+            BasicVec<int> data;
+            while ( s ) {
+                    s >> num;
+                    data.push_back(num);
+            }
+            if(data.size()==9){
+                nb+=2;
+                int rep1=map_num_element[data[1]]; 
+                int rep2=map_num_element[data[5]]; 
+                list_elements[rep1].num_piece_in_mesh=num_group; 
+                list_elements[rep2].num_piece_in_mesh=num_group;
+            } 
+            else if(data.size()==5){
+                nb+=1;            
+                int rep1=map_num_element[data[1]]; 
+                list_elements[rep1].num_piece_in_mesh=num_group; 
+            }
+            else {std::cerr << "probleme de lecture des groupes" << std::endl; }
         }
-        if(data.size()==9){
-            nb+=2;
-            int rep1=map_num_element[data[1]]; 
-            int rep2=map_num_element[data[5]]; 
-            list_elements[rep1].num_piece_in_mesh=num_group; 
-            list_elements[rep2].num_piece_in_mesh=num_group;
-        } 
-        else if(data.size()==5){
-            nb+=1;            
-            int rep1=map_num_element[data[1]]; 
-            list_elements[rep1].num_piece_in_mesh=num_group; 
-        }
-        else {std::cerr << "probleme de lecture des groupes" << std::endl; }
-    }
-    if(nb!=nb_elements){std::cerr << "probleme de lecture des groupes : taille assignée différente de la taille donnée "<< std::endl;}
+        if(nb!=nb_elements){std::cerr << "probleme de lecture des groupes : taille assignée différente de la taille donnée "<< std::endl;}
    } 
 }
 
@@ -164,6 +169,7 @@ void MeshUser::read_unv(const Sc2String fic_name) {
         throw std::runtime_error( "opening of "+fic_name+" has failed.");
     }
     map<int,int> map_num_element;
+    //map<int,std::string> map_num_group_name_group;
     /*  int old,news=0;*/
     while (true) {
         Sc2String str;
@@ -184,8 +190,8 @@ void MeshUser::read_unv(const Sc2String fic_name) {
             for(unsigned i=0;i<list_elements.size();i++){change_mesh_connectivity(i);}
             break;
         case (2467):
-            std::cout <<"Lecture des groupes" << endl;
-            read_unv_groups(list_elements,is,map_num_element);
+            std::cout <<"\tLecture des groupes" << endl;
+            read_unv_groups(list_elements,is,map_num_element, map_num_group_name_group);
             break;
         }
     }

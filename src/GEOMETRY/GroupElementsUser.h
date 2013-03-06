@@ -20,8 +20,8 @@
 #include <Metil/String.h>
 
 #include "Patterns.h"
-// #include <boost/concept_check.hpp>
 #include <boost/concept_check.hpp>
+#include <map>
 
 using namespace Metil;
 
@@ -34,6 +34,8 @@ struct GroupElementsUser{
   
     /// attributs du groupe------------------------------------------
     int id;
+    int num_in_mesh;
+    Sc2String name_in_mesh;
     int processor_rank;         //numero du processeur sur lequel est traite le groupe d'element (sst)
     int nb_elements;
     int nb_nodes;
@@ -86,9 +88,12 @@ struct GroupElementsUser{
     }
     
     ///Constructeur
-    GroupElementsUser(int id_, EntityElementUser &entity_element){
+//     GroupElementsUser(int id_, EntityElementUser &entity_element, MeshUser &mesh){
+    GroupElementsUser(int id_, EntityElementUser &entity_element, std::map<int,Sc2String> &map_num_group_name_group){
         //std::cout << "ajout d'un group_elements n° " << id_ << std::endl;
         id = id_;
+        num_in_mesh = entity_element.num_piece_in_mesh;
+        name_in_mesh = map_num_group_name_group[num_in_mesh];
         nb_elements = 0;
         flags = entity_element.flags;
         flags_names = entity_element.flags_names;
@@ -213,6 +218,7 @@ struct GroupElementsUser{
         PRINT(pattern_id);
         PRINT(pattern_base_id);
         PRINT(nb_elements);
+        PRINT(name_in_mesh);
 
 //         PRINT(map_global_nodes);
 //         PRINT(local_nodes[0]);
