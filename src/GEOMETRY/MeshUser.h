@@ -21,6 +21,7 @@
 
 #include <Metil/BasicVec.h>
 #include <Metil/StructCompactor.h>
+#include <map>
 
 #include "Patterns.h"
 #include "EntityElementUser.h"
@@ -56,6 +57,8 @@ class MeshUser{
         BasicVec< BasicVec< TYPE > > mesh_pos_nodes;	        //liste des coordonnées des noeuds du mesh 
         BasicVec< BasicVec< TYPE > > elements_pos_nodes;        //liste des coordonnées des noeuds du maillage transformé en patterns
         
+        //liste des groupe d'éléments du maillage
+        std::map<int,Sc2String> map_num_group_name_group;
         
         //liste des elements du maillage
         BasicVec< EntityElementUser > list_elements;

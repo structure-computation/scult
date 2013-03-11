@@ -289,7 +289,7 @@ void GeometryUser::initialize_group_elements_from_MeshUser(MeshUser &mesh) {
             }
         }
         if (add_group_elements) {
-            GroupElementsUser current_group(group_elements.size(), mesh.list_elements[i_elem]);
+            GroupElementsUser current_group(group_elements.size(), mesh.list_elements[i_elem], mesh.map_num_group_name_group);
             group_elements.push_back(current_group);
             nb_group_elements = group_elements.size();
         }
@@ -1002,6 +1002,9 @@ void GeometryUser::write_group_elements_hdf5(Hdf &hdf, Sc2String name_geometry, 
     hdf.write_tag(name_list,"pattern_base_id",group_elements[ng].pattern_base_id);
     hdf.write_tag(name_list,"id",group_elements[ng].id);
     hdf.write_tag(name_list,"nb_elements",group_elements[ng].nb_elements);
+    hdf.write_tag(name_list,"num_in_mesh",group_elements[ng].num_in_mesh);
+    hdf.add_tag(name_list,"name_in_mesh",group_elements[ng].name_in_mesh);
+    //PRINT(group_elements[ng].name_in_mesh);
 
     //sauvegarde des sides pour chaque element (repere du groupe et du numéro local dans le groupe de l'interface voisine)
     for(unsigned nside=0;nside<group_elements[ng].interface_group_id.size();nside++){
@@ -1310,6 +1313,10 @@ void GeometryUser::read_tag_group_elements_hdf5(Hdf &hdf, Sc2String &name, bool 
         hdf.read_tag(name_list.c_str(),"pattern_id",group_elements[id].pattern_id,1);
         hdf.read_tag(name_list.c_str(),"pattern_base_id",group_elements[id].pattern_base_id,1);
         hdf.read_tag(name_list.c_str(),"nb_elements",group_elements[id].nb_elements,1);
+        hdf.read_tag(name_list.c_str(),"num_in_mesh",group_elements[ng].num_in_mesh,1);
+        String name_in_mesh;
+        hdf.read_tag(name_list.c_str(),"name_in_mesh",name_in_mesh,1);
+        group_elements[ng].name_in_mesh = name_in_mesh.c_str();
     }
 }
 
