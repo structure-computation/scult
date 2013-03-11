@@ -184,6 +184,7 @@ void MeshUser::read_unv(const Sc2String fic_name) {
             for(unsigned i=0;i<list_elements.size();i++){change_mesh_connectivity(i);}
             break;
         case (2467):
+        case (2477): // Pour lire egalement les groupes des unv generes par gmsh
             std::cout <<"Lecture des groupes" << endl;
             read_unv_groups(list_elements,is,map_num_element);
             break;
