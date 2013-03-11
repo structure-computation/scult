@@ -994,6 +994,10 @@ void DataUser::read_json_calcul(){
         const Pair& pair_groups = input[i];
         const Sc2String& name_groups  = pair_groups.name_;
         const Value& value_groups= pair_groups.value_;
+        if(name_groups=="name"){//lecture du nom du calcul
+            std::cout << " - reading name calcul " <<  std::endl;
+	    name_calcul=value_groups.get_str();
+        }
         
         if(name_groups=="mesh"){//lecture des donnees de maillage
             const Object obj=value_groups.get_obj();

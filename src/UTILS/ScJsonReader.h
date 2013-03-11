@@ -24,14 +24,12 @@ public:
         Sc2String multiresolution_type;
         int resolution_number;
         struct Json_collection{
-            Sc2String parametric_function;
-            int nb_value;
-            Sc2String alias_name;
+            Sc2String function;
+            int nb_values;
             Sc2String name;
-            TYPEREEL nominal_value;
-            TYPEREEL max_value;
-            TYPEREEL min_value;
+            Sc2String type;
             int id_in_calcul;
+            BasicVec<Sc2String> values;
         };
         BasicVec<Json_collection> collection_vec;
 
@@ -61,6 +59,7 @@ public:
         int nb_groups_inter;
         Sc2String mesh_name;
         int nb_inter;
+	Sc2String name_calcul;
     };
     Json_mesh mesh;
 

@@ -150,6 +150,10 @@ void ScJsonReader::read_json(const Sc2String& file_path){
         } else if(name0 == "log_type"){
             ; /// valeur ignoree
         } else if(name0 == "name"){
+	  Sc2String value_as_string1 = "";
+	  value_as_string1 << value0.get_str();
+	  mesh.name_calcul=value_as_string1;
+	  if(DEBUG_SCJSONREADER) std::cout  << value_as_string1 << std::endl;
             ; /// valeur ignoree
         } else if(name0 == "result_date"){
             ; /// valeur ignoree
@@ -267,28 +271,14 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                 value_as_string2 = "";
                             }
                             if(DEBUG_SCJSONREADER) std::cout << "        Reading " << name2 << " : " << value_as_string2 << std::endl;
-                            if(name2 == "parametric_function"){
-                                    multiresolution_parameters.collection_vec[j1].parametric_function = value_as_string2;
-                            } else if(name2 == "nb_value"){
+                            if(name2 == "function"){
+                                    multiresolution_parameters.collection_vec[j1].function = value_as_string2;
+                            } else if(name2 == "nb_values"){
                                     input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].nb_value;
+                                    input >> multiresolution_parameters.collection_vec[j1].nb_values;
                                     input.clear();
-                            } else if(name2 == "alias_name"){
-                                    multiresolution_parameters.collection_vec[j1].alias_name = value_as_string2;
                             } else if(name2 == "name"){
                                     multiresolution_parameters.collection_vec[j1].name = value_as_string2;
-                            } else if(name2 == "nominal_value"){
-                                    input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].nominal_value;
-                                    input.clear();
-                            } else if(name2 == "max_value"){
-                                    input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].max_value;
-                                    input.clear();
-                            } else if(name2 == "min_value"){
-                                    input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].min_value;
-                                    input.clear();
                             } else if(name2 == "id_in_calcul"){
                                     input.str(value_as_string2);
                                     input >> multiresolution_parameters.collection_vec[j1].id_in_calcul;
