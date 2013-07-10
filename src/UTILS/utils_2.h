@@ -411,9 +411,11 @@ static bool pt_on_sphere(const BasicVec<TYPEREEL,2> &pt, const BasicVec<TYPEREEL
         flag=true;
     return flag;
 }
-static bool pt_on_sphere(const BasicVec<TYPEREEL,3> &pt, const BasicVec<TYPEREEL,3> &box, TYPEREEL radius, const double eps=1e-3){
+static bool pt_on_sphere(const BasicVec<TYPEREEL,3> &pt, const BasicVec<TYPEREEL,3> &box, TYPEREEL radius, double eps=1e-3){
     bool flag=false;
     TYPEREEL r = std::sqrt(norm_2_p2( pt-box ));
+    //PRINT(box[0]);
+    //if( std::abs( r-radius ) <= 0.1) PRINT(r-radius); 
     if( std::abs( r-radius ) <= eps)
         flag=true;
     return flag;
@@ -478,6 +480,10 @@ static bool pt_match_equation(const BasicVec<TYPEREEL,2> &pt, const Sc2String &e
     for(unsigned d2=0;d2<2;++d2)//boucle sur les inconnues possibles (dimension des vecteurs)
 	var[symbols[d2]] = pt[d2];
     data = (TYPEREEL)expr.subs_numerical(var);
+    
+    PRINT(equation);
+    PRINT(pt[0]);
+    PRINT(data);
     
     if( std::abs( data ) <= eps )
         flag=true;

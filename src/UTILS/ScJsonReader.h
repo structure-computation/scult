@@ -186,6 +186,7 @@ public:
         TYPEREEL point_2_y;
         TYPEREEL point_2_z;
         TYPEREEL radius;
+        TYPEREEL epsilon;
         Sc2String equation;
         int boundary_condition_id;
     };

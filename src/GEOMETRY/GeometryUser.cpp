@@ -519,6 +519,7 @@ bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Json
     points[1][0] = edge.point_2_x;
     points[1][1] = edge.point_2_y;
     points[1][2] = edge.point_2_z;
+    //PRINT(points[0][0]);
     BasicVec< TYPEREEL, DIM > pdirection;
     pdirection[0] = edge.direction_x;
     pdirection[1] = edge.direction_y;
@@ -566,7 +567,7 @@ bool GeometryUser::do_respect_geometry(int i_group, int num_edge, DataUser::Json
             return true;
         }else if(edge.geometry=="sphere"){
             for(int num_point=0; num_point<size_vertex_point; num_point++){
-                if(!GeomTest::pt_on_sphere(vertex_point[num_point],points[0],edge.radius))
+                if(!GeomTest::pt_on_sphere(vertex_point[num_point],points[0],edge.radius,edge.epsilon))
                     return false;
             }
             return true;
@@ -636,7 +637,7 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
             /// ainsi que le fait d'avoir deja assigne un edge
             BasicVec<bool> edge_found;
             edge_found.resize(data_user.edges_vec.size(),false);
-            PRINT(data_user.edges_vec.size());
+            //PRINT(data_user.edges_vec.size());
             //PRINT(data_user.edges_vec[0].id_in_calcul);
             //PRINT(data_user.edges_vec[0].assigned);
             //PRINT(data_user.edges_vec[0].criteria);
@@ -647,7 +648,7 @@ void GeometryUser::split_group_edges_within_geometry(DataUser &data_user) {
             
             /// Pour chaque combinaison {interface,bord}
             for(int i_edge=0; i_edge<data_user.edges_vec.size(); i_edge++){
-                PRINT(group_interfaces[i_group].nb_interfaces);
+                //PRINT(group_interfaces[i_group].nb_interfaces);
                 for(int i_inter=0; i_inter<group_interfaces[i_group].nb_interfaces; i_inter++){
                     if(edge_assigned[i_inter]==-1 and do_respect_geometry(i_group, i_inter, data_user.edges_vec[i_edge])){
                         //PRINT("ok");

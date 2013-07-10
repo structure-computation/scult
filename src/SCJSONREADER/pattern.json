@@ -204,6 +204,7 @@
       "point_2_y": "real",
       "point_2_z": "real",
       "radius": "real",
+      "epsilon": "real",
       "equation": "string",
       "boundary_condition_id": "int"
     }

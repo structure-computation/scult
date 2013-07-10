@@ -119,6 +119,7 @@ void read_unv_groups(BasicVec< EntityElementUser > &list_elements, std::istream 
         istringstream s(str);
         int num_group;
         s >> num_group;
+        std::cout << num_group << endl;
         if (num_group==-1)
           return;
 
