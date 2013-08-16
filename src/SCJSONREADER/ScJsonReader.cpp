@@ -267,28 +267,16 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                                 value_as_string2 = "";
                             }
                             if(DEBUG_SCJSONREADER) std::cout << "        Reading " << name2 << " : " << value_as_string2 << std::endl;
-                            if(name2 == "parametric_function"){
-                                    multiresolution_parameters.collection_vec[j1].parametric_function = value_as_string2;
+                            if(name2 == "function"){
+                                    multiresolution_parameters.collection_vec[j1].function = value_as_string2;
                             } else if(name2 == "nb_value"){
                                     input.str(value_as_string2);
                                     input >> multiresolution_parameters.collection_vec[j1].nb_value;
                                     input.clear();
-                            } else if(name2 == "alias_name"){
-                                    multiresolution_parameters.collection_vec[j1].alias_name = value_as_string2;
                             } else if(name2 == "name"){
                                     multiresolution_parameters.collection_vec[j1].name = value_as_string2;
-                            } else if(name2 == "nominal_value"){
-                                    input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].nominal_value;
-                                    input.clear();
-                            } else if(name2 == "max_value"){
-                                    input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].max_value;
-                                    input.clear();
-                            } else if(name2 == "min_value"){
-                                    input.str(value_as_string2);
-                                    input >> multiresolution_parameters.collection_vec[j1].min_value;
-                                    input.clear();
+                            } else if(name2 == "type"){
+                                    multiresolution_parameters.collection_vec[j1].type = value_as_string2;
                             } else if(name2 == "id_in_calcul"){
                                     input.str(value_as_string2);
                                     input >> multiresolution_parameters.collection_vec[j1].id_in_calcul;
@@ -905,6 +893,10 @@ void ScJsonReader::read_json(const Sc2String& file_path){
                     } else if(name1 == "radius"){
                             input.str(value_as_string1);
                             input >> edges_vec[j0].radius;
+                            input.clear();
+                    } else if(name1 == "epsilon"){
+                            input.str(value_as_string1);
+                            input >> edges_vec[j0].epsilon;
                             input.clear();
                     } else if(name1 == "equation"){
                             edges_vec[j0].equation = value_as_string1;

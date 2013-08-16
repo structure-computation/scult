@@ -24,13 +24,10 @@ public:
         Sc2String multiresolution_type;
         int resolution_number;
         struct Json_collection{
-            Sc2String parametric_function;
+            Sc2String function;
             int nb_value;
-            Sc2String alias_name;
             Sc2String name;
-            TYPEREEL nominal_value;
-            TYPEREEL max_value;
-            TYPEREEL min_value;
+            Sc2String type;
             int id_in_calcul;
         };
         BasicVec<Json_collection> collection_vec;
@@ -186,6 +183,7 @@ public:
         TYPEREEL point_2_y;
         TYPEREEL point_2_z;
         TYPEREEL radius;
+        TYPEREEL epsilon;
         Sc2String equation;
         int boundary_condition_id;
     };

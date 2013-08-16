@@ -35,14 +35,11 @@
     "resolution_number": "int",
     "collection": [
       {
-        "parametric_function": "string",
+        "function": "string",
         "nb_value": "int",
-        "alias_name": "string",
         "name": "string",
-        "nominal_value": "real",
-        "max_value": "real",
-        "min_value": "real",
-        "id_in_calcul": "int"
+        "type": "string",
+        "id_in_calcul": "int",
       }
     ]
   },

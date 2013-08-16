@@ -13,6 +13,7 @@ public:
         struct Json_convergence_method_LATIN{
             int max_iteration;
             TYPEREEL convergence_rate;
+            bool multiscale;
         };
         Json_convergence_method_LATIN convergence_method_LATIN;
 
@@ -138,6 +139,37 @@ public:
         Sc2String spatial_function_z;
         int id_in_calcul;
         Sc2String condition_type;
+        
+        //pour les liaisons cinématiques
+        TYPEREEL point_1_x;
+        TYPEREEL point_1_y;
+        TYPEREEL point_1_z;
+        
+        TYPEREEL dir_1_x;
+        TYPEREEL dir_1_y;
+        TYPEREEL dir_1_z;
+        TYPEREEL dir_2_x;
+        TYPEREEL dir_2_y;
+        TYPEREEL dir_2_z;
+        TYPEREEL dir_3_x;
+        TYPEREEL dir_3_y;
+        TYPEREEL dir_3_z;
+        
+        Sc2String R_0;
+        Sc2String R_1;
+        Sc2String R_2;
+        Sc2String M_0;
+        Sc2String M_1;
+        Sc2String M_2;
+        
+        bool imp_R_0;
+        bool imp_R_1;
+        bool imp_R_2;
+        bool imp_M_0;
+        bool imp_M_1;
+        bool imp_M_2;
+        
+        
     };
     BasicVec<Json_boundary_conditions> boundary_conditions_vec;
 
